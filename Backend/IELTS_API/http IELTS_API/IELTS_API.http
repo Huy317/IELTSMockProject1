@@ -1,0 +1,22 @@
+@IELTS_API_HostAddress = https://localhost:7290
+
+GET {{IELTS_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{IELTS_API_HostAddress}}/api/tests
+Accept: application/json
+
+###
+
+POST {{IELTS_API_HostAddress}}/api/tests
+Content-Type: application/json
+
+{
+    "name": "IELTS Test 2019",
+    "description": "The IELTS Test in 2019",
+    "bandLevel": 6.5
+}
+
+###
