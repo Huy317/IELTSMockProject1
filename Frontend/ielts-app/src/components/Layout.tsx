@@ -23,31 +23,6 @@ const Layout: React.FC<LayoutProps> = ({
     if (metaDescription) {
       metaDescription.setAttribute('content', description);
     }
-
-    // Load external scripts (Bootstrap JS functionality)
-    const loadScripts = () => {
-      // Bootstrap bundle is typically loaded via CDN or npm package
-      // Theme script for dark/light mode toggle
-      const themeScript = document.createElement('script');
-      themeScript.src = '/assets/js/theme-script.js';
-      themeScript.async = true;
-      document.body.appendChild(themeScript);
-
-      // Custom script for site functionality
-      const customScript = document.createElement('script');
-      customScript.src = '/assets/js/script.js';
-      customScript.async = true;
-      document.body.appendChild(customScript);
-
-      return () => {
-        // Cleanup scripts on unmount
-        document.body.removeChild(themeScript);
-        document.body.removeChild(customScript);
-      };
-    };
-
-    const cleanup = loadScripts();
-    return cleanup;
   }, [title, description]);
 
   return (
