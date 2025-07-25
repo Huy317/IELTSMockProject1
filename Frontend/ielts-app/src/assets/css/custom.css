@@ -1,0 +1,43 @@
+/* Custom styles for IELTS Mock Project */
+
+/* Content wrapper styles */
+.content-wrapper {
+  min-height: 400px;
+  padding: 60px 0;
+}
+
+.content-wrapper h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.content-wrapper p {
+  color: #666;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Override any default link styles */
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* Main wrapper adjustments */
+.main-wrapper {
+  position: relative;
+}
+
+/* Add some responsive adjustments */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 40px 0;
+  }
+  
+  .content-wrapper h1 {
+    font-size: 24px;
+  }
+}
