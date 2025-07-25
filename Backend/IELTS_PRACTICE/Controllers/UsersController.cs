@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IELTS_PRACTICE.Context;
 using IELTS_PRACTICE.Models;
+using IELTS_PRACTICE.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
+using IELTS_PRACTICE.Requests;
 
 namespace IELTS_PRACTICE.Controllers
 {
@@ -14,87 +17,53 @@ namespace IELTS_PRACTICE.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly StudentService _studentService;
 
-        public UsersController(AppDbContext context)
+        public UsersController(StudentService studentService)
         {
-            _context = context;
+            _studentService = studentService;
         }
 
         [HttpGet("GetAllUser")]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _studentService.GetAllUser();
         }
 
         [HttpGet("GetUserByID")]
         public async Task<ActionResult<User>> GetUserByID(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
+            var currentUser = await _studentService.GetUserByID(id);
+            if (currentUser == null) { 
                 return NotFound();
             }
 
-            return user;
+            return Ok(currentUser);
         }
 
         [HttpPut("UpdateUser")]
         public async Task<IActionResult> UpdateUser(Guid id, User user)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
+            var currentUser = await _studentService.UpdateUser(id, user);
+            if (currentUser == null) {
+                return NotFound();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(currentUser);
         }
 
         [HttpPost("CreateUser")]
-        public async Task<ActionResult<User>> CreateUser(User user)
-        {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction("GetUserByID", new { id = user.Id }, user);
+        public async Task<ActionResult<User>> CreateUser(CreateUserRequest request)
+        {     
+            await _studentService.CreateUser(request);
+            return Ok();
         }
 
         [HttpDelete("DeleteUser")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserExists(Guid id)
-        {
-            return _context.Users.Any(e => e.Id == id);
+            await _studentService.DeleteUser(id);
+            return Ok();
         }
     }
 }
