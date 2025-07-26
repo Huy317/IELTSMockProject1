@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using IELTS_API.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace IELTS_API.Models
+namespace IELTS_API.Contexts
 {
     public class TestContext : DbContext
     {

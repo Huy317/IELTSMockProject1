@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using IELTS_API.Models;
+using IELTS_API.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 

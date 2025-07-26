@@ -9,7 +9,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[IELTS_API.Models.TestDTO, IELTS_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[IELTS_API.DTOs.TestDTO, IELTS_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -29,13 +29,13 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "IELTS_API.Models.TestCreateDTO",
+        "Type": "IELTS_API.DTOs.TestCreateDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "IELTS_API.Models.TestDTO",
+        "Type": "IELTS_API.DTOs.TestDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -61,7 +61,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "IELTS_API.Models.TestDTO",
+        "Type": "IELTS_API.DTOs.TestDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -86,7 +86,7 @@
       },
       {
         "Name": "dto",
-        "Type": "IELTS_API.Models.TestUpdateDTO",
+        "Type": "IELTS_API.DTOs.TestUpdateDTO",
         "IsRequired": true
       }
     ],

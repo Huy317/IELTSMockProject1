@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IELTS_API.Models;
+using IELTS_API.DTOs;
+using IELTS_API.Contexts;
 
 namespace IELTS_API.Controllers
 {

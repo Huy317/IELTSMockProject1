@@ -1,6 +1,6 @@
-﻿namespace IELTS_API.Models
+﻿namespace IELTS_API.DTOs
 {
-    public class TestUpdateDTO
+    public class TestCreateDTO
     {
         public string? Name { get; set; }
         public string? Description { get; set; }

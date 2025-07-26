@@ -1,4 +1,4 @@
-﻿namespace IELTS_API.Models
+﻿namespace IELTS_API.DTOs
 {
     public class TestDTO
     {
