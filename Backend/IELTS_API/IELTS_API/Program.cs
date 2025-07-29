@@ -1,5 +1,6 @@
+//using IELTS_API.Contexts;
+using IELTS_API.Services;
 using Microsoft.EntityFrameworkCore;
-using IELTS_API.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddDbContext<TestContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 42))
     )
 );
+
+builder.Services.AddScoped<TestService>();
 
 var app = builder.Build();
 

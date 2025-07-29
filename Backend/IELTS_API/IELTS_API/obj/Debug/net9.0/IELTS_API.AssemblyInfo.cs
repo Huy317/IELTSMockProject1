@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IELTS_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86dd6a359b161229467b962d53a98f8bb77727ff")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eec2b6ba71515ae6c711bf1abcf9514b167681d1")]
 [assembly: System.Reflection.AssemblyProductAttribute("IELTS_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IELTS_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
