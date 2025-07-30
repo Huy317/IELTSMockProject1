@@ -8,6 +8,9 @@
   text-align: left;
   width: 100%;
   max-width: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes logo-spin {
