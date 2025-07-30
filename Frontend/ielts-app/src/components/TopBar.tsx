@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TopBar: React.FC = () => {
+function TopBar() {
   return (
     <div className="header-topbar text-center">
       <div className="container">

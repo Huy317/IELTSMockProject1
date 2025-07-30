@@ -3,7 +3,7 @@ import { Layout } from '../components';
 
 const HomePage: React.FC = () => {
   return (
-    <Layout title="Home - IELTS Mock Project">
+    <Layout>
       <div className="container">
         <div className="row">
           <div className="col-12">

@@ -3,7 +3,7 @@ import './App.css'
 
 function App() {
   return (
-    <Layout title="IELTS Mock Project">
+    <Layout>
       <div className="container">
         <div className="row">
           <div className="col-12">
