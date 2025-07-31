@@ -152,7 +152,7 @@ function Header() {
               <a href="#" id="dark-mode-toggle" className="theme-toggle activate">
                 <i className="isax isax-sun-15"></i>
               </a>
-              <a href="#" id="light-mode-toggle activate" className="theme-toggle">
+              <a href="#" id="light-mode-toggle" className="theme-toggle">
                 <i className="isax isax-moon"></i>
               </a>
             </div>
