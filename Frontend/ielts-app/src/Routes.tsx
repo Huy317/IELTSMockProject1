@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import App from "./App";
 import TestPage from "./pages/TestPage";
+import AdminPage from "./pages/Adminpage";
 
 const router = createBrowserRouter([
     {
@@ -18,6 +19,11 @@ const router = createBrowserRouter([
                 element: <TestPage/>
             }
         ]
+    },
+    {
+        path: "admin",
+        element: <AdminPage />
+        // should reload all
     }
 ]);
 
