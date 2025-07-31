@@ -1,74 +1,15 @@
 /* Custom styles for IELTS Mock Project */
 
-/* Reset body and html to prevent vertical centering */
-html, body {
-  height: auto !important;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  display: block !important;
-  align-items: unset !important;
-  justify-content: unset !important;
-}
-
-/* Ensure main wrapper starts at top */
+/* Ensure main wrapper takes full height and grows */
 .main-wrapper {
-  position: relative;
-  min-height: 100vh;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: stretch !important;
-  justify-content: flex-start !important;
 }
 
-/* Make main content grow to fill space */
+/* Make main content area grow to fill available space */
 main {
   flex: 1;
-  padding-top: 0;
-  margin-top: 0;
-  display: block !important;
-  align-items: unset !important;
-  justify-content: unset !important;
 }
 
-/* Content wrapper styles */
-.content-wrapper {
-  min-height: 400px;
-  padding: 60px 0;
-}
 
-.content-wrapper h1 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.content-wrapper p {
-  color: #666;
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-/* Override any default link styles */
-a {
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: none;
-}
-
-/* Main wrapper adjustments */
-.main-wrapper {
-  position: relative;
-}
-
-/* Add some responsive adjustments */
-@media (max-width: 768px) {
-  .content-wrapper {
-    padding: 40px 0;
-  }
-  
-  .content-wrapper h1 {
-    font-size: 24px;
-  }
-}

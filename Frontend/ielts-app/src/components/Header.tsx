@@ -70,7 +70,7 @@ function Header() {
                   </li>
                 </ul>
               </li>
-              <li className="has-submenu active">
+              <li className="has-submenu">
                 <a href="#">
                   Pages <i className="fas fa-chevron-down"></i>
                 </a>
