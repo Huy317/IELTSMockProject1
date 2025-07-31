@@ -1,4 +1,7 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
+// import custom.css from '../assets/css/custom.css'; // Uncomment if you want to use custom styles
+import '../assets/css/custom.css';
 
 function Header() {
   return (
@@ -32,15 +35,23 @@ function Header() {
               </a>
             </div>
             <ul className="main-nav">
-              <li className="has-submenu megamenu">
-                <a href="/">Home</a>
+              <li className="">
+                {/* <a href="/">Home</a> */}
+                <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+                  Home
+                </NavLink>
               </li>
               <li className="has-submenu">
                 <a href="#">
                   Courses <i className="fas fa-chevron-down"></i>
                 </a>
                 <ul className="submenu">
-                  <li><a href="/course-grid">Course Grid</a></li>
+                  <li>
+                    {/* <a href="/course-grid">Course Grid</a> */}
+                    <NavLink to="/course-grid" className={({ isActive }) => (isActive ? 'active' : '')}>
+                      Course Grid
+                    </NavLink>
+                  </li>
                   <li><a href="/course-resume">Course Resume</a></li>
                 </ul>
               </li>
@@ -141,7 +152,7 @@ function Header() {
               <a href="#" id="dark-mode-toggle" className="theme-toggle activate">
                 <i className="isax isax-sun-15"></i>
               </a>
-              <a href="#" id="light-mode-toggle" className="theme-toggle">
+              <a href="#" id="light-mode-toggle activate" className="theme-toggle">
                 <i className="isax isax-moon"></i>
               </a>
             </div>

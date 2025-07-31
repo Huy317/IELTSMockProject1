@@ -9,12 +9,12 @@ const router = createBrowserRouter([
         element: <App />,
         errorElement: <div>Page not found</div>,
         children: [
-            {
+            {   
                 index: true,
                 element: <HomePage />
             },
             {
-                path: "test",
+                path: "course-grid",
                 element: <TestPage/>
             }
         ]
