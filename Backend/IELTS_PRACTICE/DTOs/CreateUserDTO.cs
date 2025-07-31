@@ -2,7 +2,7 @@
 
 namespace IELTS_PRACTICE.Requests
 {
-    public class CreateUserRequest
+    public class CreateUserDTO
     {
         [Required]
         public String Name { get; set; }

@@ -1,4 +1,5 @@
 ﻿using IELTS_PRACTICE.Context;
+using IELTS_PRACTICE.DTOs;
 using IELTS_PRACTICE.Models;
 using IELTS_PRACTICE.Requests;
 
@@ -29,7 +30,7 @@ namespace IELTS_PRACTICE.Services
             return currentUser;
         }
 
-        public async Task<User> CreateUser(CreateUserRequest request) {
+        public async Task<User> CreateUser(CreateUserDTO request) {
             var user = new User {
                 Id = new Guid(),
                 Name = request.Name,
@@ -46,6 +47,10 @@ namespace IELTS_PRACTICE.Services
             var user = await _context.Users.FindAsync(id);
             _context.Users.Remove(user);
             _context.SaveChanges();
+        }
+
+        public User Login(LoginDTO request) { 
+            return _context.Users.FirstOrDefault(x => x.Name == request.Name && x.Password == request.Password);
         }
     }
 }

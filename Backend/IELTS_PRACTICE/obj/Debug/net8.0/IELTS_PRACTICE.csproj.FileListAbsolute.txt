@@ -247,3 +247,11 @@ C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\De
 C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
 C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\ADMIN\Desktop\PROJECT 1\IELTSMockProject1\Backend\IELTS_PRACTICE\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
