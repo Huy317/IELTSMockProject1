@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 // import custom.css from '../assets/css/custom.css'; // Uncomment if you want to use custom styles
 import '../assets/css/custom.css';

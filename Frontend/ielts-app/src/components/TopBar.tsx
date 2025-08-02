@@ -1,5 +1,3 @@
-import React from 'react';
-
 function TopBar() {
   return (
     <div className="header-topbar text-center">

@@ -1,13 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import App from "./App";
 import TestPage from "./pages/TestPage";
 import AdminPage from "./pages/Adminpage";
+import Layout from "./components/Layout";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />,
+        element: <Layout />,
         errorElement: <div>Page not found</div>,
         children: [
             {   
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
     {
         path: "admin",
         element: <AdminPage />
-        // should reload all
+        
     }
 ]);
 

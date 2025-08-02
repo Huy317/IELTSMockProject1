@@ -1,21 +1,15 @@
-import React from 'react';
 import TopBar from './TopBar';
 import Header from './Header';
 import Footer from './Footer';
+import { Outlet } from 'react-router-dom';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-function Layout({children}: LayoutProps) {
-
-
+function Layout() {
   return (
     <div className="main-wrapper">
       <TopBar />
       <Header />
       <main>
-        {children}
+        <Outlet />
       </main>
       <Footer />
     </div>
