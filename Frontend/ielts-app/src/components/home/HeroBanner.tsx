@@ -13,10 +13,10 @@ function HeroBanner() {
             <div className="banner-content pe-xxl-5">
               <span className="hero-title">The Leader in Online Learning</span>
               <h1 className="mb-4 text-white">
-                Find the Best <span>Courses</span> from the Best <span>Mentors</span> Around the World
+                Find the Best <span>IELTS TESTS</span> from the Best <span>SOURCES</span> Around the World
               </h1>
               <p className="fs-lg text-center text-md-start pb-2 pb-md-3 mb-4">
-                Our specialized online courses are designed to bring the classroom experience to you, no matter where you are.
+                Our specialized mock test platform are designed to bring the IELTS test experience to you, no matter where you are.
               </p>
 
               <form className="banner-search" action="/course-list">
