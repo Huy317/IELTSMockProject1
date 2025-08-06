@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Card from '../utils/Card';
 
 function HeroBanner() {
   return (
@@ -77,7 +77,7 @@ function HeroBanner() {
               <div className="swiper swiper-slider-banner">
                 <div className="swiper-wrapper">
                   <div className="swiper-slide">
-                    <div className="course-item-two course-item mb-0">
+                    {/* <div className="course-item-two course-item mb-0">
                       <div className="course-img">
                         <img src="/assets/img/course/course-22.jpg" alt="img" className="img-fluid" />
                         <div className="position-absolute start-0 top-0 d-flex align-items-start w-100 z-index-2 p-2">
@@ -116,10 +116,11 @@ function HeroBanner() {
                           </Link>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
+                    <Card title='IELTS Simulation Test 1337' participantCount='313' questionCount={30} listening timeMinutes={30} />
                   </div>
                   <div className="swiper-slide">
-                    <div className="course-item course-item-two mb-0">
+                    {/* <div className="course-item course-item-two mb-0">
                       <div className="course-img">
                         <img src="/assets/img/course/course-25.jpg" alt="img" className="img-fluid" />
                         <div className="position-absolute start-0 top-0 d-flex align-items-start w-100 z-index-2 p-2">
@@ -158,10 +159,11 @@ function HeroBanner() {
                           </Link>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
+                    <Card title='IELTS Simulation Test 1338' participantCount='200' questionCount={40} listening reading timeMinutes={40} />
                   </div>
                   <div className="swiper-slide">
-                    <div className="course-item course-item-two mb-0">
+                    {/* <div className="course-item course-item-two mb-0">
                       <div className="course-img">
                         <img src="/assets/img/course/course-24.jpg" alt="img" className="img-fluid" />
                         <div className="position-absolute start-0 top-0 d-flex align-items-start w-100 z-index-2 p-2">
@@ -200,7 +202,8 @@ function HeroBanner() {
                           </Link>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
+                    <Card title='IELTS Simulation Test 1339' participantCount='150' questionCount={50} reading timeMinutes={50} />
                   </div>
                 </div>
               </div>
