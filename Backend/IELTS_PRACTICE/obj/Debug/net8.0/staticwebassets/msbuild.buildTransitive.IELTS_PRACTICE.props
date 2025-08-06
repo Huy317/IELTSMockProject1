@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\IELTS_PRACTICE.props" />
-</Project>
