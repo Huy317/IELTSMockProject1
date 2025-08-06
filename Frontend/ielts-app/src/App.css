@@ -35,3 +35,19 @@
 .read-the-docs {
   color: #888;
 }
+
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make main content area grow to fill available space */
+main {
+  flex: 1;
+}
+
+.active {
+  color: #ff0000; /* Example active link color */
+  font-weight: bold; /* Make active links bold */
+}

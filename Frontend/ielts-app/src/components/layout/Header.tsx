@@ -1,7 +1,5 @@
 import { NavLink } from 'react-router-dom';
-// import custom.css from '../assets/css/custom.css'; // Uncomment if you want to use custom styles
-import '../assets/css/custom.css';
-
+import '../../assets/css/custom.css';
 function Header() {
   return (
     <header className="header-two">
@@ -42,13 +40,13 @@ function Header() {
               </li>
               <li className="has-submenu">
                 <a href="#">
-                  Courses <i className="fas fa-chevron-down"></i>
+                  Tests <i className="fas fa-chevron-down"></i>
                 </a>
                 <ul className="submenu">
                   <li>
                     {/* <a href="/course-grid">Course Grid</a> */}
                     <NavLink to="/course-grid" className={({ isActive }) => (isActive ? 'active' : '')}>
-                      Course Grid
+                      Test List
                     </NavLink>
                   </li>
                   <li><a href="/course-resume">Course Resume</a></li>
@@ -170,3 +168,4 @@ function Header() {
 };
 
 export default Header;
+

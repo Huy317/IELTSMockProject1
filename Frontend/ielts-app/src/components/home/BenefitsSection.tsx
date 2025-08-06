@@ -4,11 +4,11 @@ function BenefitsSection() {
       <div className="container">
         <div className="section-header text-center">
           <span className="fw-medium text-secondary text-decoration-underline mb-2 d-inline-block">
-            Our Benefits
+            Why Choose Our Platform
           </span>
-          <h2>Master the Skills to Drive your Career</h2>
+          <h2>Master IELTS with Free Mock Tests</h2>
           <p>
-            The right course, guided by an expert mentor, can provide invaluable insights, practical skills.
+            Practice with authentic IELTS test formats and get instant feedback to improve your English proficiency and achieve your target band score.
           </p>
         </div>
         <div className="row">
@@ -19,12 +19,11 @@ function BenefitsSection() {
                   <img src="/assets/img/shapes/bg-1.png" alt="img" />
                 </div>
                 <div className="p-4 rounded-pill bg-primary-transparent d-inline-flex">
-                  <i className="isax isax-book-1 fs-24"></i>
+                  <i className="isax isax-star5 fs-24"></i>
                 </div>
-                <h5 className="mt-3 mb-1">Flexible Learning</h5>
+                <h5 className="mt-3 mb-1">Completely Free</h5>
                 <p>
-                  We believe that high-quality education should be accessible to everyone. Our pricing
-                  form in models are designed.
+                  Access unlimited IELTS mock tests without any cost. No hidden fees, no subscriptions - just free, high-quality practice tests for everyone.
                 </p>
               </div>
             </div>
@@ -36,12 +35,11 @@ function BenefitsSection() {
                   <img src="/assets/img/shapes/bg-2.png" alt="img" />
                 </div>
                 <div className="p-4 rounded-pill bg-secondary-transparent d-inline-flex">
-                  <i className="isax isax-bookmark5 fs-24"></i>
+                  <i className="isax isax-task-square5 fs-24"></i>
                 </div>
-                <h5 className="mt-3 mb-1">Lifetime Access</h5>
+                <h5 className="mt-3 mb-1">Authentic Test Format</h5>
                 <p>
-                  When you enroll in our courses, you're not just signing up for a temporary learning
-                  to experience you're making.
+                  Experience real IELTS test conditions with authentic question types, timing, and difficulty levels to prepare you for the actual exam.
                 </p>
               </div>
             </div>
@@ -53,12 +51,11 @@ function BenefitsSection() {
                   <img src="/assets/img/shapes/bg-3.png" alt="img" />
                 </div>
                 <div className="p-4 rounded-pill bg-skyblue-transparent d-inline-flex">
-                  <i className="isax isax-chart-26 fs-24"></i>
+                  <i className="isax isax-chart-21 fs-24"></i>
                 </div>
-                <h5 className="mt-3 mb-1">Expert Instruction</h5>
+                <h5 className="mt-3 mb-1">Instant Results & Feedback</h5>
                 <p>
-                  Our instructors are seasoned professionals with years of experience in their
-                  respective fields & Experts advice
+                  Get immediate scoring and detailed feedback on your performance with personalized recommendations.
                 </p>
               </div>
             </div>

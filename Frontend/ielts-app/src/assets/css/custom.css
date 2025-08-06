@@ -1,6 +1,7 @@
 /* Custom styles for IELTS Mock Project */
 
 /* Ensure main wrapper takes full height and grows */
+
 .main-wrapper {
   flex: 1;
   display: flex;
