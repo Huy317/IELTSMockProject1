@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 interface CardProps {
     title?: string;
     image?: string;
-    participantCount?: number | string;
+    attemptCount?: number | string;
     questionCount?: number | string;
     listening?: boolean;
     reading?: boolean;
@@ -13,7 +13,7 @@ interface CardProps {
 function Card({ title = "No Title",
         image,
         questionCount = 0,
-        participantCount = "Unknown",
+        attemptCount = "Unknown",
         listening = false,
         reading = false,
         timeMinutes = "0",
@@ -38,7 +38,7 @@ function Card({ title = "No Title",
                             <img src="/assets/img/participantCount.png" alt="img" className="img-fluid avatar avatar-sm rounded-circle" />
                         </a>
                         <div className="ms-2">
-                            <a href="javascript:void(0);" className="link-default fs-14 bold">{participantCount} participants</a>
+                            <a href="javascript:void(0);" className="link-default fs-14 bold">{attemptCount} attempts</a>
                         </div>
                     </div>
                     <span className="badge badge-light rounded-pill bg-light d-inline-flex align-items-center fs-13 fw-medium">
