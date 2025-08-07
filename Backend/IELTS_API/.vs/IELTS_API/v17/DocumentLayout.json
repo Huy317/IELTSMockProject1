@@ -3,36 +3,48 @@
   "WorkspaceRootPath": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\contexts\\testcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\contexts\\testcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\models\\test.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\models\\test.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\services\\testservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\services\\testservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\migrations\\testcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\migrations\\testcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\migrations\\20250725123352_initialcreate.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\migrations\\20250725123352_initialcreate.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\controllers\\testscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\controllers\\testscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\contexts\\testcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\contexts\\testcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\ielts_api.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
-      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\ielts_api.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\dtos\\categoryupdatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\dtos\\categoryupdatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\dtos\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\dtos\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|d:\\software engineering\\eiu courses\\cse 310\\ielts website project\\ieltsmockproject1\\backend\\ielts_api\\ielts_api\\dtos\\categorycreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2BE28D8-A546-435E-B2B3-82D2F94FB666}|IELTS_API\\IELTS_API.csproj|solutionrelative:ielts_api\\dtos\\categorycreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,7 +54,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -54,39 +66,114 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "IELTS_API.http",
-              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\IELTS_API.http",
-              "RelativeDocumentMoniker": "IELTS_API\\IELTS_API.http",
-              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\IELTS_API.http",
-              "RelativeToolTip": "IELTS_API\\IELTS_API.http",
-              "ViewState": "AgIAAAIAAAAAAAAAAAA3wBkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-07-22T15:34:43.179Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "TestsController.cs",
-              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Controllers\\TestsController.cs",
-              "RelativeDocumentMoniker": "IELTS_API\\Controllers\\TestsController.cs",
-              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Controllers\\TestsController.cs",
-              "RelativeToolTip": "IELTS_API\\Controllers\\TestsController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAANAAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-29T15:06:52.149Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "TestService.cs",
               "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Services\\TestService.cs",
               "RelativeDocumentMoniker": "IELTS_API\\Services\\TestService.cs",
               "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Services\\TestService.cs",
               "RelativeToolTip": "IELTS_API\\Services\\TestService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-29T15:14:48.7Z"
+              "WhenOpened": "2025-08-01T03:23:55.951Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "TestsController.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Controllers\\TestsController.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\Controllers\\TestsController.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Controllers\\TestsController.cs",
+              "RelativeToolTip": "IELTS_API\\Controllers\\TestsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEAAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-01T03:51:25.202Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "CategoryCreateDTO.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\DTOs\\CategoryCreateDTO.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\DTOs\\CategoryCreateDTO.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\DTOs\\CategoryCreateDTO.cs",
+              "RelativeToolTip": "IELTS_API\\DTOs\\CategoryCreateDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-01T03:55:08.25Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "CategoryDTO.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\DTOs\\CategoryDTO.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\DTOs\\CategoryDTO.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\DTOs\\CategoryDTO.cs",
+              "RelativeToolTip": "IELTS_API\\DTOs\\CategoryDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-01T03:55:08.965Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CategoryUpdateDTO.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\DTOs\\CategoryUpdateDTO.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\DTOs\\CategoryUpdateDTO.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\DTOs\\CategoryUpdateDTO.cs",
+              "RelativeToolTip": "IELTS_API\\DTOs\\CategoryUpdateDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-01T03:55:09.52Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Category.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Models\\Category.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\Models\\Category.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Models\\Category.cs",
+              "RelativeToolTip": "IELTS_API\\Models\\Category.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwoAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T07:01:41.417Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Test.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Models\\Test.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\Models\\Test.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Models\\Test.cs",
+              "RelativeToolTip": "IELTS_API\\Models\\Test.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T07:30:28.093Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CategoriesController.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Controllers\\CategoriesController.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\Controllers\\CategoriesController.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Controllers\\CategoriesController.cs",
+              "RelativeToolTip": "IELTS_API\\Controllers\\CategoriesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-01T03:44:07.755Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "TestContext.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Contexts\\TestContext.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\Contexts\\TestContext.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Contexts\\TestContext.cs",
+              "RelativeToolTip": "IELTS_API\\Contexts\\TestContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-01T03:17:04.14Z"
             },
             {
               "$type": "Document",
@@ -96,58 +183,22 @@
               "RelativeDocumentMoniker": "IELTS_API\\Program.cs",
               "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Program.cs",
               "RelativeToolTip": "IELTS_API\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAADwvx4AAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-29T15:14:26.017Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "TestContext.cs",
-              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Contexts\\TestContext.cs",
-              "RelativeDocumentMoniker": "IELTS_API\\Contexts\\TestContext.cs",
-              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Contexts\\TestContext.cs",
-              "RelativeToolTip": "IELTS_API\\Contexts\\TestContext.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAIwAsAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-29T15:36:15.597Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\appsettings.json",
-              "RelativeDocumentMoniker": "IELTS_API\\appsettings.json",
-              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\appsettings.json",
-              "RelativeToolTip": "IELTS_API\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-29T15:43:57.339Z"
+              "WhenOpened": "2025-08-01T03:14:31.61Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "20250725123352_InitialCreate.Designer.cs",
-              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Migrations\\20250725123352_InitialCreate.Designer.cs",
-              "RelativeDocumentMoniker": "IELTS_API\\Migrations\\20250725123352_InitialCreate.Designer.cs",
-              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Migrations\\20250725123352_InitialCreate.Designer.cs",
-              "RelativeToolTip": "IELTS_API\\Migrations\\20250725123352_InitialCreate.Designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Title": "CategoryService.cs",
+              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Services\\CategoryService.cs",
+              "RelativeDocumentMoniker": "IELTS_API\\Services\\CategoryService.cs",
+              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Services\\CategoryService.cs",
+              "RelativeToolTip": "IELTS_API\\Services\\CategoryService.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAA4wBMAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-29T15:47:20.492Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "TestContextModelSnapshot.cs",
-              "DocumentMoniker": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Migrations\\TestContextModelSnapshot.cs",
-              "RelativeDocumentMoniker": "IELTS_API\\Migrations\\TestContextModelSnapshot.cs",
-              "ToolTip": "D:\\Software Engineering\\EIU Courses\\CSE 310\\IELTS Website Project\\IELTSMockProject1\\Backend\\IELTS_API\\IELTS_API\\Migrations\\TestContextModelSnapshot.cs",
-              "RelativeToolTip": "IELTS_API\\Migrations\\TestContextModelSnapshot.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-29T15:47:34.008Z"
+              "WhenOpened": "2025-08-01T04:07:22.404Z",
+              "EditorCaption": ""
             }
           ]
         }

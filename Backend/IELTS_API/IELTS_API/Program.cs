@@ -1,4 +1,5 @@
 //using IELTS_API.Contexts;
+using IELTS_API.Contexts;
 using IELTS_API.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +19,19 @@ builder.Services.AddSwaggerGen();
 // Add MySQL provider
 builder.Services.AddDbContext<TestContext>(options =>
     options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
+        builder.Configuration.GetConnectionString("TestDB"),
+        new MySqlServerVersion(new Version(8, 0, 42))
+    )
+);
+builder.Services.AddDbContext<CategoryContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("CategoryDB"),
         new MySqlServerVersion(new Version(8, 0, 42))
     )
 );
 
 builder.Services.AddScoped<TestService>();
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 
