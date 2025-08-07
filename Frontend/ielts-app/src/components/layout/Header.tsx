@@ -1,6 +1,6 @@
-import React from 'react';
-
-const Header: React.FC = () => {
+import { NavLink } from 'react-router-dom';
+import '../../assets/css/custom.css';
+function Header() {
   return (
     <header className="header-two">
       <div className="container">
@@ -32,15 +32,23 @@ const Header: React.FC = () => {
               </a>
             </div>
             <ul className="main-nav">
-              <li className="has-submenu megamenu">
-                <a href="/">Home</a>
+              <li className="">
+                {/* <a href="/">Home</a> */}
+                <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+                  Home
+                </NavLink>
               </li>
               <li className="has-submenu">
                 <a href="#">
-                  Courses <i className="fas fa-chevron-down"></i>
+                  Tests <i className="fas fa-chevron-down"></i>
                 </a>
                 <ul className="submenu">
-                  <li><a href="/course-grid">Course Grid</a></li>
+                  <li>
+                    {/* <a href="/course-grid">Course Grid</a> */}
+                    <NavLink to="/course-grid" className={({ isActive }) => (isActive ? 'active' : '')}>
+                      Test List
+                    </NavLink>
+                  </li>
                   <li><a href="/course-resume">Course Resume</a></li>
                 </ul>
               </li>
@@ -70,7 +78,7 @@ const Header: React.FC = () => {
                   </li>
                 </ul>
               </li>
-              <li className="has-submenu active">
+              <li className="has-submenu">
                 <a href="#">
                   Pages <i className="fas fa-chevron-down"></i>
                 </a>
@@ -160,3 +168,4 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
