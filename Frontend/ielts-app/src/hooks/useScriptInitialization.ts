@@ -149,6 +149,42 @@ export const useScriptInitialization = () => {
             }
           ]
         });
+        
+        // Debug: Check if featured course slider elements exist
+        const featuredSliderElements = window.$('.feature-course-slider-2');
+        console.log('Featured course slider elements found:', featuredSliderElements.length);
+        if (featuredSliderElements.length > 0) {
+          console.log('Featured course slider initialized successfully');
+        } else {
+          console.log('Featured course slider elements not found - will retry');
+          // Retry after a short delay
+          setTimeout(() => {
+            window.$('.feature-course-slider-2').not('.slick-initialized').slick({
+              infinite: true,
+              slidesToShow: 3,
+              slidesToScroll: 1,
+              autoplay: true,
+              autoplaySpeed: 4000,
+              arrows: false,
+              dots: false,
+              responsive: [
+                {
+                  breakpoint: 992,
+                  settings: {
+                    slidesToShow: 2,
+                  }
+                },
+                {
+                  breakpoint: 768,
+                  settings: {
+                    slidesToShow: 1,
+                  }
+                }
+              ]
+            });
+            console.log('Featured course slider retry completed');
+          }, 500);
+        }
 
         // Featured instructor slider
         window.$('.featured-instructor-slider').not('.slick-initialized').slick({
@@ -271,8 +307,8 @@ export const useScriptInitialization = () => {
       console.log('All scripts initialized successfully');
     };
 
-    // Small delay to ensure all scripts are loaded
-    const timer = setTimeout(initializeScripts, 200);
+    // Delay to ensure all scripts are loaded and components are mounted
+    const timer = setTimeout(initializeScripts, 500);
 
     return () => clearTimeout(timer);
   }, []);
