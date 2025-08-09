@@ -1,0 +1,34 @@
+.strength-0 {
+    background-color: grey !important;
+}
+.strength-1 {
+    background-color: red !important;
+}
+
+.strength-2 {
+    background-color: orange !important;
+}
+
+.strength-3 {
+    background-color: rgb(55, 0, 255) !important;
+}
+
+.strength-4 {
+    background-color: green !important;
+}
+
+.strength-text-0{
+    color: grey !important;
+}
+.strength-text-1{
+    color: red !important;
+}
+.strength-text-2{
+    color: orange !important;
+}
+.strength-text-3{
+    color: rgb(55, 0, 255) !important;
+}
+.strength-text-4{
+    color: green !important;
+}
