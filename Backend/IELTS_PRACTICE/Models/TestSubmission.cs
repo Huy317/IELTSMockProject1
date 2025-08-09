@@ -10,6 +10,6 @@
         //Navigation
         public User User { get; set; }
         public Test Test { get; set; }
-        public TestSubmissionDetail SubmissionDetail { get; set; }
+        public TestSubmissionDetail TestSubmissionDetail { get; set; }
     }
 }

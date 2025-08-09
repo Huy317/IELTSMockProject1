@@ -3,10 +3,10 @@
     public class Test
     {
         public int Id { get; set; }
-        public String TestName { get; set; }
+        public string TestName { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
-        public String Resource { get; set; }
+        public string Resource { get; set; }
         public Boolean IsActive { get; set; }
         //Navigation
         public ICollection<Question> Questions { get; set; }

@@ -3,18 +3,18 @@
     public class Question
     {
         public int Id { get; set; }
-        public String QuestionType { get; set; }
-        public String Content { get; set; }
-        public String CorrectAnswer {  get; set; }
-        public String Choices {  get; set; }
-        public String Explanation { get; set; }
+        public string QuestionType { get; set; }
+        public string Content { get; set; }
+        public string CorrectAnswer {  get; set; }
+        public string Choices {  get; set; }
+        public string Explanation { get; set; }
         public int ParentId { get; set; }
         public int TypeId { get; set; }
         public int TestId { get; set; }
-        public String Link { get; set; }
+        public string Link { get; set; }
 
         //Navigation
-        public Type Type { get; set; }
+        public TypeSkill TypeSkill { get; set; }
         public Test Test { get; set; }
     }
 }

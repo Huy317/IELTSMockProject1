@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
         public int SubmissionId { get; set; }
-        public String Feedback {  get; set; }
-        public String Answer { get; set; }
+        public string Feedback {  get; set; }
+        public string Answer { get; set; }
         //Navigation
-        public TestSubmission Submission { get; set; }
+        public TestSubmission TestSubmission { get; set; }
     }
 }

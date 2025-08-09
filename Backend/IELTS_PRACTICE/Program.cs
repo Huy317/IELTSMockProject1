@@ -1,3 +1,5 @@
+using IELTS_PRACTICE.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace IELTS_PRACTICE
 {
@@ -13,6 +15,10 @@ namespace IELTS_PRACTICE
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
             var app = builder.Build();
 
