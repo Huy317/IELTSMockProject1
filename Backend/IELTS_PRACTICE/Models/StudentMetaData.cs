@@ -2,8 +2,11 @@
 {
     public class StudentMetaData
     {
-        public String id { get; set; }
+        public String Id { get; set; }
         public String UserId { get; set; }
-        public double TarGetBandScore { get; set; }
+        public double TargetBandScore { get; set; }
+        public double CurrentBandScore { get; set; }
+        //Navigation
+        public User User { get; set; }
     }
 }

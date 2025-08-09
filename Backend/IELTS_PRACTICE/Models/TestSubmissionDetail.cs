@@ -6,5 +6,7 @@
         public int SubmissionId { get; set; }
         public String Feedback {  get; set; }
         public String Answer { get; set; }
+        //Navigation
+        public TestSubmission Submission { get; set; }
     }
 }

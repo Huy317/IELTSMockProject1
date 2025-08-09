@@ -5,8 +5,11 @@
         public int Id { get; set; }
         public int UserId { get; set; }
         public int TestId { get; set; }
-        public DateTime Time {  get; set; }
-
+        public DateTime SubmittedAt {  get; set; }
         public double Score { get; set; }
+        //Navigation
+        public User User { get; set; }
+        public Test Test { get; set; }
+        public TestSubmissionDetail SubmissionDetail { get; set; }
     }
 }
