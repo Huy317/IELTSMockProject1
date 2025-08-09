@@ -1,6 +1,8 @@
-import { useState, type ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './pages.css';
+
+
 const RegisterPage = () => {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
@@ -14,36 +16,46 @@ const RegisterPage = () => {
     const [passwordStrength, setPasswordStrength] = useState(0);
     const [passwordComment, setPasswordComment] = useState('');
 
-    const passwordStrengthState = {
-        0: "",
-        1: "Weak. Must contain at least 8 characters",
-        2: "Average. Must contain at least 1 letter or number",
-        3: "Almost. Must contain special symbol",
-        4: "Strong. Contains letters, numbers, and special characters"
-    }
+    const [alertMessage, setAlertMessage] = useState('');
 
+    let navigate = useNavigate();
+
+    // Calculate password strength -> update the visual bars
     function calculatePasswordStrength(inputPass:string) {
-        let poorRegExp = /[a-z]/;
-        let weakRegExp = /(?=.*?[0-9])/;;
-        let strongRegExp = /(?=.*?[#?!@$%^&*-])/;
+        let poorRegExp = /^(?:[a-zA-Z]+|[0-9]+)$/; // Only letters OR only numbers
+        let weakRegExp = /(?=.*[a-zA-Z])(?=.*[0-9])/; // Both letters AND numbers
+        let strongRegExp = /(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[#?!@$%^&*-])/; // Letters, numbers AND special characters
   
 	    let whitespaceRegExp = /^$|\s+/;
 
         let strength = 0;
+        let comment = "";
 
-        if (inputPass.length >= 8) strength++;
-        if (inputPass.match(poorRegExp)) strength++;
-        if (inputPass.match(weakRegExp)) strength++;
-        if (inputPass.match(strongRegExp)) strength++;
+        if (inputPass.length < 8) {
+            strength = 1;
+            comment = "Weak, must be at least 8 characters";
+        } else if (poorRegExp.test(inputPass)) {
+            strength = 2;
+            comment = "Average, only letters or numbers";
+        } else if (weakRegExp.test(inputPass)) {
+            strength = 3;
+            comment = "Good, must contain special symbol";
+        }
+
+        if (strongRegExp.test(inputPass)) {
+            strength = 4;
+            comment = "Strong, contains letters, numbers, and special characters";
+        }
 
         if (inputPass.match(whitespaceRegExp)) {
             setPasswordStrength(0);
             setPasswordComment("Password cannot contain whitespace");
-            return;
+            return 0;
         }
 
         setPasswordStrength(strength);
-        setPasswordComment(passwordStrengthState[strength as keyof typeof passwordStrengthState]);
+        setPasswordComment(comment);
+        return strength;
     };
 
     function handlePasswordChange(event: ChangeEvent<HTMLInputElement>) {
@@ -52,8 +64,39 @@ const RegisterPage = () => {
         calculatePasswordStrength(inputPass);
     }
 
-    function handleSubmit() {
-        // TODO: Handle registration logic here
+    function registerSuccess(){
+        navigate('/login');
+    }
+    
+    function registerFailed(e : string){
+        setAlertMessage("Error occurs when submitting");
+    }
+
+    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault(); // Prevent page refresh
+
+        // TODO: some kind of notification/text to display the submit status
+        
+
+        if (fullName.trim() === '' || email.trim() === '' || password.trim() === '' || confirmPassword.trim() === '') {
+            console.log('All fields are required');
+            return;
+        }
+
+        if (password !== confirmPassword){
+            console.log('Passwords do not match');
+            return;
+        }
+
+        if (calculatePasswordStrength(password) < 4) {
+            console.log('Password is not strong enough');
+            return;
+        }
+
+        // Register success
+        // TODO: API Call here
+        
+
         console.log('Registration data:', {
             fullName,
             email,
@@ -116,6 +159,7 @@ const RegisterPage = () => {
                                         <img src="../assets/img/logo.svg" className="img-fluid" alt="IELTS Mock Platform Logo" />
                                         <Link to="/" className="link-1">Back to Home</Link>
                                     </div>
+                                    <div className={"alert alert-danger "+(alertMessage != "" ? "d-block" : "d-none")}>{alertMessage}</div>
                                     <h1 className="fs-32 fw-bold topic">Create Your IELTS Account</h1>
                                     <form onSubmit={handleSubmit} className="mb-3 pb-3">
                                         <div className="mb-3 position-relative">
