@@ -1,6 +1,37 @@
-import { Link } from "react-router-dom";
+import { useState, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function LoginPage(){
+
+    let [email, setEmail] = useState('');
+    let [password, setPassword] = useState('');
+    let [rememberMe, setRememberMe] = useState(false);
+
+    let [alertMessage, setAlertMessage] = useState('');
+
+    let navigate = useNavigate();
+
+    function loginSuccess(){
+        navigate('/');
+    }
+
+    function loginFailed(e: string){
+        setAlertMessage(e);
+    }
+
+    function handleSubmit(event: FormEvent<HTMLFormElement>){
+        event.preventDefault();
+
+        if (email.trim() === '' || password.trim() === '') {
+            setAlertMessage("All fields are required");
+            return;
+        }
+
+        // TODO: API CALL HERE
+
+        
+    }
+
     return (
         <div className="login-content">
                 <div className="row">
@@ -54,25 +85,26 @@ function LoginPage(){
                                         {/* <a href="index.html" className="link-1">Back to Home</a> */}
                                         <Link to="/" className="link-1">Back to Home</Link>
                                     </div>
+                                    <div className={"alert alert-danger "+(alertMessage != "" ? "d-block" : "d-none")}>{alertMessage}</div>
                                     <h1 className="fs-32 fw-bold topic">Sign into Your Account</h1>
-                                    <form action="https://dreamslms.dreamstechnologies.com/html/template/instructor-dashboard.html" className="mb-3 pb-3">
+                                    <form onSubmit={handleSubmit} className="mb-3 pb-3">
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">Email<span className="text-danger ms-1">*</span></label>
                                             <div className="position-relative">
-                                                <input type="email" className="form-control form-control-lg"/>
+                                                <input type="email" className="form-control form-control-lg" value={email} onChange={(e) => setEmail(e.target.value)} />
                                                 <span><i className="isax isax-sms input-icon text-gray-7 fs-14"></i></span>
                                             </div>
                                         </div>
                                         <div className="mb-3 position-relative">
-                                            <label className="form-label">Password <span className="text-danger ms-1">*</span></label>
+                                            <label className="form-label">Password <span className="text-danger ms-1" >*</span></label>
                                             <div className="position-relative" id="passwordInput">
-                                                <input type="password" className="pass-inputs form-control form-control-lg"/>
+                                                <input type="password" className="pass-inputs form-control form-control-lg" value={password} onChange={(e) => setPassword(e.target.value)} />
                                                 <span className="isax toggle-passwords isax-eye-slash fs-14"></span>
                                             </div>	
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between mb-4">
                                             <div className="remember-me d-flex align-items-center">
-                                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
                                                 <label className="form-check-label ms-2" htmlFor="flexCheckDefault">
                                                     Remember Me
                                                 </label>

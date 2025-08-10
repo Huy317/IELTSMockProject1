@@ -69,33 +69,36 @@ const RegisterPage = () => {
     }
     
     function registerFailed(e : string){
-        setAlertMessage("Error occurs when submitting");
+        setAlertMessage(e);
     }
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault(); // Prevent page refresh
 
-        // TODO: some kind of notification/text to display the submit status
-        
-
         if (fullName.trim() === '' || email.trim() === '' || password.trim() === '' || confirmPassword.trim() === '') {
-            console.log('All fields are required');
+            registerFailed("All fields are required");
             return;
         }
 
         if (password !== confirmPassword){
-            console.log('Passwords do not match');
+            registerFailed("Passwords do not match");
             return;
         }
 
         if (calculatePasswordStrength(password) < 4) {
-            console.log('Password is not strong enough');
+            registerFailed("Password is not strong enough");
+            return;
+        }
+        
+        if (!agreeToTerms) {
+            registerFailed("You must agree to the terms and conditions");
             return;
         }
 
         // Register success
         // TODO: API Call here
         
+        registerSuccess();
 
         console.log('Registration data:', {
             fullName,
