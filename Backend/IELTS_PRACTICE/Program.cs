@@ -1,5 +1,6 @@
 using IELTS_PRACTICE.Contexts;
 using Microsoft.EntityFrameworkCore;
+using IELTS_PRACTICE.Services;
 
 namespace IELTS_PRACTICE
 {
@@ -19,6 +20,9 @@ namespace IELTS_PRACTICE
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
                 ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
+
+            // Register services
+            builder.Services.AddScoped<IUserService, UserService>();
 
             var app = builder.Build();
 
