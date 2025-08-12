@@ -22,7 +22,7 @@ namespace IELTS_PRACTICE
                 ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
             // Register services
-            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<UserService>();
 
             var app = builder.Build();
 
