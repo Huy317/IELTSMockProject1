@@ -1,4 +1,4 @@
-﻿namespace IELTS_PRACTICE.DTOs
+﻿namespace IELTS_PRACTICE.DTOs.Resquests
 {
     public class StudentCreateDto
     {
