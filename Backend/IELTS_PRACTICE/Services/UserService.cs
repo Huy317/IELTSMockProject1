@@ -15,7 +15,7 @@ namespace IELTS_PRACTICE.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<UserBasicDto>> GetAllUsersAsync()
+        public async Task<List<UserBasicDto>> GetAllUsersAsync()
         {
             return await _context.Users
                 .Select(user => new UserBasicDto
@@ -32,21 +32,18 @@ namespace IELTS_PRACTICE.Services
 
         public async Task<UserBasicDto?> GetUserByIdAsync(int userId)
         {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                return null; // or throw an exception
-            }
-
-            return new UserBasicDto
-            {
-                Id = user.Id,
-                FullName = user.FullName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                Role = user.Role,
-                CreatedAt = user.CreatedAt
-            };
+            return await _context.Users
+                .Where(user => user.Id == userId)
+                .Select(user => new UserBasicDto
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = user.Role,
+                    CreatedAt = user.CreatedAt
+                })
+                .FirstOrDefaultAsync();
         }
 
         public async Task<UserBasicDto> CreateUserAsync(UserCreateDto userDto)
@@ -75,22 +72,31 @@ namespace IELTS_PRACTICE.Services
             };
         }
 
-        public async Task<bool> UpdateUserAsync(int userId, UserUpdateDto userDto)
+        public async Task<UserBasicDto?> UpdateUserAsync(int userId, UserUpdateDto userDto)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
             {
-                return false; // User not found
+                return null; // User not found
             }
 
             user.FullName = userDto.FullName;
             user.Email = userDto.Email;
-            user.Password = userDto.Password;
+            user.Password = userDto.Password; // Ensure password is hashed in a real application
             user.PhoneNumber = userDto.PhoneNumber;
 
-            _context.Entry(user).State = EntityState.Modified;
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
-            return true;
+
+            return new UserBasicDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            };
         }
 
         public async Task<bool> DeleteUserAsync(int userId)
