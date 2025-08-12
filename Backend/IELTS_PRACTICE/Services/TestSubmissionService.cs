@@ -55,5 +55,12 @@ namespace IELTS_PRACTICE.Services
                 Score = newSubmiss.Score,
             };
         }
+
+        public async Task DeleteTestSubmission(int id)
+        {
+            var test = await _context.TestSubmissions.FindAsync(id);
+            _context.TestSubmissions.Remove(test);
+            _context.SaveChanges();
+        }
     }
 }
