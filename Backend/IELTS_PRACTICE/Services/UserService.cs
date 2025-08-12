@@ -6,7 +6,7 @@ using IELTS_PRACTICE.DTOs.Resquests;
 
 namespace IELTS_PRACTICE.Services
 {
-    public class UserService : IUserService
+    public class UserService
     {
         private readonly AppDbContext _context;
 
