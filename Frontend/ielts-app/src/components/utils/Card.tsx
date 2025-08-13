@@ -5,8 +5,7 @@ interface CardProps {
     image?: string;
     attemptCount?: number | string;
     questionCount?: number | string;
-    listening?: boolean;
-    reading?: boolean;
+    type?: string;
     timeMinutes?: string | number;
 }
 
@@ -14,8 +13,7 @@ function Card({ title = "No Title",
         image,
         questionCount = 0,
         attemptCount = "Unknown",
-        listening = false,
-        reading = false,
+        type = "",
         timeMinutes = "0",
     }: CardProps) {
 
@@ -42,7 +40,7 @@ function Card({ title = "No Title",
                         </div>
                     </div>
                     <span className="badge badge-light rounded-pill bg-light d-inline-flex align-items-center fs-13 fw-medium">
-                        {listening && reading ? "Listening/Reading" : listening ? "Listening" : reading ? "Reading" : ""}
+                        {type}
                     </span>
                 </div>
                 

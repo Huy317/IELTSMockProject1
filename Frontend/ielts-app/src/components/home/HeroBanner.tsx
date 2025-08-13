@@ -58,13 +58,13 @@ function HeroBanner() {
               <div className="swiper swiper-slider-banner">
                 <div className="swiper-wrapper">
                   <div className="swiper-slide">
-                    <Card title='IELTS Simulation Test 1337' attemptCount='313' questionCount={30} listening timeMinutes={30} />
+                    <Card title='IELTS Simulation Test 1337' attemptCount='313' questionCount={30} type='Listening' timeMinutes={30} />
                   </div>
                   <div className="swiper-slide">
-                    <Card title='IELTS Simulation Test 1338' attemptCount='200' questionCount={40} listening reading timeMinutes={40} />
+                    <Card title='IELTS Simulation Test 1338' attemptCount='200' questionCount={40} type='Reading' timeMinutes={40} />
                   </div>
                   <div className="swiper-slide">
-                    <Card title='IELTS Simulation Test 1339' attemptCount='150' questionCount={50} reading timeMinutes={50} />
+                    <Card title='IELTS Simulation Test 1339' attemptCount='150' questionCount={50} type='Reading' timeMinutes={50} />
                   </div>
                 </div>
               </div>
