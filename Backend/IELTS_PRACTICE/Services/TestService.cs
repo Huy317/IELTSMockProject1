@@ -43,9 +43,9 @@ namespace IELTS_PRACTICE.Services
             {
                 TestName = rq.TestName,
                 CreatedBy = rq.CreatedBy,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = rq.CreatedAt,
                 Resource = rq.Resource,
-                IsActive = true
+                IsActive = rq.IsActive,
             };
 
             _context.Tests.Add(newTest);
