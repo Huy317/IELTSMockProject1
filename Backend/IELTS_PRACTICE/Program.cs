@@ -23,6 +23,12 @@ namespace IELTS_PRACTICE
 
             // Register services
             builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<QuestionService>();
+            builder.Services.AddScoped<StudentService>();
+            builder.Services.AddScoped<TestService>();
+            builder.Services.AddScoped<TestSubmissionDetailService>();
+            builder.Services.AddScoped<TestSubmissionService>();
+            builder.Services.AddScoped<TypeSkillService>();
 
             var app = builder.Build();
 
