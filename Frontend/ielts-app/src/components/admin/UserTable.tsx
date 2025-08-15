@@ -61,6 +61,8 @@ function UserTable() {
                 </tbody>
             </table>
         </div>
+
+        // TODO: Add pagination
     );
 }
 
