@@ -1,12 +1,17 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from "react-router-dom";
 
+type LoginInputs = {
+    email: string;
+    password: string;
+    rememberMe: boolean;
+}
+
 function LoginPage(){
-
-    let [email, setEmail] = useState('');
-    let [password, setPassword] = useState('');
-    let [rememberMe, setRememberMe] = useState(false);
-
+    
+    const {register, handleSubmit, formState: { errors }} = useForm<LoginInputs>();
+    
     let [alertMessage, setAlertMessage] = useState('');
 
     let navigate = useNavigate();
@@ -19,17 +24,27 @@ function LoginPage(){
         setAlertMessage(e);
     }
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>){
-        event.preventDefault();
+    const onSubmit: SubmitHandler<LoginInputs> = (data) => {
+        // Sanity check: Log the form data
+        console.log('Login form submitted with data:', data);
 
-        if (email.trim() === '' || password.trim() === '') {
-            setAlertMessage("All fields are required");
-            return;
-        }
+        // Clear any previous error messages
+        setAlertMessage('');
 
         // TODO: API CALL HERE
+        // Simulate API call
+        try {
+            console.log('Login attempt with:', {
+                email: data.email,
+                password: data.password,
+                rememberMe: data.rememberMe
+            });
 
-        
+            
+            loginSuccess();
+        } catch (error) {
+            loginFailed('Login failed. Please check your credentials.');
+        }
     }
 
     return (
@@ -87,24 +102,51 @@ function LoginPage(){
                                     </div>
                                     <div className={"alert alert-danger "+(alertMessage != "" ? "d-block" : "d-none")}>{alertMessage}</div>
                                     <h1 className="fs-32 fw-bold topic">Sign into Your Account</h1>
-                                    <form onSubmit={handleSubmit} className="mb-3 pb-3">
+                                    <form onSubmit={handleSubmit(onSubmit)} className="mb-3 pb-3">
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">Email<span className="text-danger ms-1">*</span></label>
                                             <div className="position-relative">
-                                                <input type="email" className="form-control form-control-lg" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                                <input 
+                                                    type="email" 
+                                                    className="form-control form-control-lg" 
+                                                    {...register("email", { 
+                                                        required: "Email is required",
+                                                        pattern: {
+                                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                            message: "Please enter a valid email address"
+                                                        }
+                                                    })}
+                                                />
                                                 <span><i className="isax isax-sms input-icon text-gray-7 fs-14"></i></span>
                                             </div>
+                                            {errors.email && <div className="text-danger mt-1 fs-12">{errors.email.message}</div>}
                                         </div>
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">Password <span className="text-danger ms-1" >*</span></label>
                                             <div className="position-relative" id="passwordInput">
-                                                <input type="password" className="pass-inputs form-control form-control-lg" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                                <input 
+                                                    type="password" 
+                                                    className="pass-inputs form-control form-control-lg" 
+                                                    {...register("password", { 
+                                                        required: "Password is required",
+                                                        minLength: {
+                                                            value: 8,
+                                                            message: "Password must be at least 8 characters"
+                                                        }
+                                                    })}
+                                                />
                                                 <span className="isax toggle-passwords isax-eye-slash fs-14"></span>
-                                            </div>	
+                                            </div>
+                                            {errors.password && <div className="text-danger mt-1 fs-12">{errors.password.message}</div>}
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between mb-4">
                                             <div className="remember-me d-flex align-items-center">
-                                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+                                                <input 
+                                                    className="form-check-input" 
+                                                    type="checkbox" 
+                                                    id="flexCheckDefault" 
+                                                    {...register("rememberMe")}
+                                                />
                                                 <label className="form-check-label ms-2" htmlFor="flexCheckDefault">
                                                     Remember Me
                                                 </label>

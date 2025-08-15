@@ -1,15 +1,20 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import './pages.css';
 
+type Inputs = {
+    fullName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    agreeToTerms: boolean;
+}
 
 const RegisterPage = () => {
-    const [fullName, setFullName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [agreeToTerms, setAgreeToTerms] = useState(false);
 
+    const {register, watch, handleSubmit, formState: { errors }} = useForm<Inputs>();
+    
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -21,6 +26,8 @@ const RegisterPage = () => {
     let navigate = useNavigate();
 
     // Calculate password strength -> update the visual bars
+    // Might remove this since it's a hassle to get to work 💀
+    // react-hook-form error message might be more useful
     function calculatePasswordStrength(inputPass:string) {
         let poorRegExp = /^(?:[a-zA-Z]+|[0-9]+)$/; // Only letters OR only numbers
         let weakRegExp = /(?=.*[a-zA-Z])(?=.*[0-9])/; // Both letters AND numbers
@@ -58,11 +65,16 @@ const RegisterPage = () => {
         return strength;
     };
 
-    function handlePasswordChange(event: ChangeEvent<HTMLInputElement>) {
-        const inputPass = event.currentTarget.value;
-        setPassword(inputPass);
-        calculatePasswordStrength(inputPass);
-    }
+    const watchPassword = watch("password");
+    useEffect(()=>{
+        if (watchPassword) {
+            const strength = calculatePasswordStrength(watchPassword);
+            setPasswordStrength(strength);
+        }else{
+            setPasswordStrength(0);
+            setPasswordComment('');
+        }
+    }, [watchPassword])
 
     function registerSuccess(){
         navigate('/login');
@@ -72,41 +84,41 @@ const RegisterPage = () => {
         setAlertMessage(e);
     }
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault(); // Prevent page refresh
-
-        if (fullName.trim() === '' || email.trim() === '' || password.trim() === '' || confirmPassword.trim() === '') {
-            registerFailed("All fields are required");
-            return;
-        }
-
-        if (password !== confirmPassword){
+    const onSubmit: SubmitHandler<Inputs> = (data) => {
+        // Sanity check: Log the form data
+        console.log('Form submitted with data:', data);
+        
+        // Check if passwords match
+        if (data.password !== data.confirmPassword) {
             registerFailed("Passwords do not match");
             return;
         }
 
-        if (calculatePasswordStrength(password) < 4) {
+        // Check password strength
+        if (calculatePasswordStrength(data.password) < 4) {
             registerFailed("Password is not strong enough");
             return;
         }
-        
-        if (!agreeToTerms) {
+
+        // Check if terms are agreed
+        if (!data.agreeToTerms) {
             registerFailed("You must agree to the terms and conditions");
             return;
         }
 
+        // Clear any previous error messages
+        setAlertMessage('');
+        
         // Register success
         // TODO: API Call here
+        console.log('Registration successful with data:', {
+            fullName: data.fullName,
+            email: data.email,
+            password: data.password,
+            agreeToTerms: data.agreeToTerms
+        });
         
         registerSuccess();
-
-        console.log('Registration data:', {
-            fullName,
-            email,
-            password,
-            confirmPassword,
-            agreeToTerms
-        });
     };
 
     return (
@@ -164,20 +176,25 @@ const RegisterPage = () => {
                                     </div>
                                     <div className={"alert alert-danger "+(alertMessage != "" ? "d-block" : "d-none")}>{alertMessage}</div>
                                     <h1 className="fs-32 fw-bold topic">Create Your IELTS Account</h1>
-                                    <form onSubmit={handleSubmit} className="mb-3 pb-3">
+
+                                    <form onSubmit={handleSubmit(onSubmit)} className="mb-3 pb-3">
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">Full Name<span className="text-danger ms-1">*</span></label>
                                             <div className="position-relative">
                                                 <input
                                                     type="text"
                                                     className="form-control form-control-lg"
-                                                    name="fullName"
-                                                    value={fullName}
-                                                    onChange={(e) => setFullName(e.target.value)}
-                                                    required
+                                                    {...register("fullName", { 
+                                                        required: "Full name is required",
+                                                        minLength: {
+                                                            value: 2,
+                                                            message: "Full name must be at least 2 characters"
+                                                        }
+                                                    })}
                                                 />
                                                 <span><i className="isax isax-user input-icon text-gray-7 fs-14"></i></span>
                                             </div>
+                                            {errors.fullName && <div className="text-danger mt-1 fs-12">{errors.fullName.message}</div>}
                                         </div>
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">Email<span className="text-danger ms-1">*</span></label>
@@ -185,13 +202,18 @@ const RegisterPage = () => {
                                                 <input
                                                     type="email"
                                                     className="form-control form-control-lg"
-                                                    name="email"
-                                                    value={email}
-                                                    onChange={(e) => setEmail(e.target.value)}
-                                                    required
+                                                    {...register("email", { 
+                                                        required: "Email is required",
+                                                        pattern: {
+                                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                            message: "Please enter a valid email address"
+                                                        }
+                                                    })}
                                                 />
+                                                
                                                 <span><i className="isax isax-sms input-icon text-gray-7 fs-14"></i></span>
                                             </div>
+                                            {errors.email && <div className="text-danger mt-1 fs-12">{errors.email.message}</div>}
                                         </div>
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">New Password <span className="text-danger"> *</span></label>
@@ -199,10 +221,21 @@ const RegisterPage = () => {
                                                 <input
                                                     type={showPassword ? "text" : "password"}
                                                     className="pass-inputs form-control form-control-lg"
-                                                    name="password"
-                                                    value={password}
-                                                    onChange={handlePasswordChange}
-                                                    required
+                                                    {...register("password", { 
+                                                        required: "Password is required",
+                                                        minLength: {
+                                                            value: 8,
+                                                            message: "Password must be at least 8 characters"
+                                                        },
+                                                        validate: (value) => {
+                                                            const strength = calculatePasswordStrength(value);
+                                                            if (strength < 4) {
+                                                                return "Password must contain letters, numbers, and special characters";
+                                                            }
+                                                            return true;
+                                                        }
+                                                    })}
+
                                                 />
                                                 <span
                                                     className={`isax toggle-passwords ${showPassword ? 'isax-eye' : 'isax-eye-slash'} text-gray-7 fs-14`}
@@ -220,6 +253,10 @@ const RegisterPage = () => {
                                                 id="passwordInfo">
                                                 {passwordComment}
                                             </div>
+
+                                            {/* UNCOMMENT THIS WHEN SWITCH TO REACT-HOOK-FORM FOR PASSWORD */}
+                                            {/* {errors.password && <div className="text-danger mt-1 fs-12">{errors.password.message}</div>} */}
+                                        
                                         </div>
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">Confirm Password <span className="text-danger"> *</span></label>
@@ -227,10 +264,16 @@ const RegisterPage = () => {
                                                 <input
                                                     type={showConfirmPassword ? "text" : "password"}
                                                     className="pass-inputa form-control form-control-lg"
-                                                    name="confirmPassword"
-                                                    value={confirmPassword}
-                                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                                    required
+                                                    {...register("confirmPassword", { 
+                                                        required: "Please confirm your password",
+                                                        validate: (value) => {
+                                                            const password = watch("password");
+                                                            if (value !== password) {
+                                                                return "Passwords do not match";
+                                                            }
+                                                            return true;
+                                                        }
+                                                    })}
                                                 />
                                                 <span
                                                     className={`isax toggle-passworda ${showConfirmPassword ? 'isax-eye' : 'isax-eye-slash'} text-gray-7 fs-14`}
@@ -238,22 +281,23 @@ const RegisterPage = () => {
                                                     style={{ cursor: 'pointer' }}
                                                 ></span>
                                             </div>
+                                            {errors.confirmPassword && <div className="text-danger mt-1 fs-12">{errors.confirmPassword.message}</div>}
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between mb-4">
                                             <div className="remember-me d-flex align-items-center">
                                                 <input
                                                     className="form-check-input"
                                                     type="checkbox"
-                                                    name="agreeToTerms"
-                                                    checked={agreeToTerms}
-                                                    onChange={(e) => setAgreeToTerms(e.target.checked)}
                                                     id="flexCheckDefault"
-                                                    required
+                                                    {...register("agreeToTerms", { 
+                                                        required: "You must agree to the terms and conditions" 
+                                                    })}
                                                 />
                                                 <label className="form-check-label mb-0 d-inline-flex remember-me fs-14" htmlFor="flexCheckDefault">
                                                     I agree with <Link to="/terms" className="link-2 mx-2">Terms of Service</Link> and <Link to="/privacy" className="link-2 mx-2">Privacy Policy</Link>
                                                 </label>
                                             </div>
+                                            {errors.agreeToTerms && <div className="text-danger mt-1 fs-12 w-100">{errors.agreeToTerms.message}</div>}
                                         </div>
                                         <div className="d-grid">
                                             <button className="btn btn-secondary btn-lg" type="submit">
