@@ -195,7 +195,7 @@ function TestCategoriesLayout() {
                     </div>
                   </div>
                 </div>
-                <div className="accordion-item">
+                {/* <div className="accordion-item">
                   <h2 className="accordion-header" id="headingcustomicon1Four">
                     <a
                       href="#"
@@ -220,7 +220,7 @@ function TestCategoriesLayout() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingcustomicon1Five">
                     <a
@@ -392,10 +392,7 @@ function TestCategoriesLayout() {
                 </div>
               </div>
             </div>
-            <div className="row">
-              {/* Where the tests shown */}
-              <Outlet />
-            </div>
+            <Outlet />
           </div>
         </div>
       </div>

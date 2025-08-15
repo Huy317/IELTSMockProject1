@@ -13,7 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminLayout from "./components/layout/AdminLayout";
 import StudentLayout from "./components/layout/StudentLayout";
-import TestListLayout from "./components/layout/TestListLayout";
+import CategoryLayout from "./components/layout/CategoriesLayout";
 import TestList from "./pages/TestList";
 
 const router = createBrowserRouter([
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "test",
-                element: <TestListLayout />,
+                element: <CategoryLayout />,
                 children:[
                     {
                         path: "list",
