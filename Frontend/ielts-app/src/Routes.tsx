@@ -2,9 +2,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import TestPage from "./pages/TestPage";
 import AdminPage from "./pages/Adminpage";
-import Layout from "./components/Layout";
+import Layout from "./components/layout/Layout";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import AdminDashboardLayout from "./components/layout/AdminDashboardLayout";
 
 const router = createBrowserRouter([
     {
@@ -19,13 +20,26 @@ const router = createBrowserRouter([
             {
                 path: "course-grid",
                 element: <TestPage/>
+            },
+            {
+                path: "admin",
+                element: <AdminDashboardLayout />,
+                children:[
+                    {
+                        path: "dashboard",
+                        element: <div>Admin Dashboard</div>
+                    },
+                    {
+                        path:"profile",
+                        element: <div>Admin Profile</div>
+                    },
+                    {
+                        path:"courses",
+                        element: <div>Admin Courses</div>
+                    }
+                ]
             }
         ]
-    },
-    {
-        path: "admin",
-        element: <AdminPage />
-        
     },
     {
         path: "login",
