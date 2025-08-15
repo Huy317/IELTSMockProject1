@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import TestPage from "./pages/TestPage";
+import TestPage from "./pages/TestList";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProfile from "./pages/AdminProfile";
 import AdminCourse from "./pages/AdminCourse";
@@ -13,6 +13,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminLayout from "./components/layout/AdminLayout";
 import StudentLayout from "./components/layout/StudentLayout";
+import CategoryLayout from "./components/layout/CategoriesLayout";
+import TestList from "./pages/TestList";
 
 const router = createBrowserRouter([
     {
@@ -25,8 +27,14 @@ const router = createBrowserRouter([
                 element: <HomePage />
             },
             {
-                path: "course-grid",
-                element: <TestPage/>
+                path: "test",
+                element: <CategoryLayout />,
+                children:[
+                    {
+                        path: "list",
+                        element: <TestList />
+                    }
+                ]
             },
             {
                 path: "admin",
@@ -71,7 +79,7 @@ const router = createBrowserRouter([
                         element: <Settings />
                     }
                 ]
-            }
+            },
         ]
     },
     {
