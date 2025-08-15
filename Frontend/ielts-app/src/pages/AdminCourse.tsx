@@ -1,3 +1,4 @@
+import CourseTable from "../components/admin/CourseTable";
 function AdminCourse() {
   return (
     <div>
@@ -6,7 +7,7 @@ function AdminCourse() {
         <div className="col-lg-4 col-md-6">
           <div className="card bg-success">
             <div className="card-body">
-              <h6 className="fw-medium mb-1 text-white">Active Courses</h6>
+              <h6 className="fw-medium mb-1 text-white">Active Tests</h6>
               <h4 className="fw-bold text-white">45</h4>
             </div>
           </div>
@@ -14,7 +15,7 @@ function AdminCourse() {
         <div className="col-lg-4 col-md-6">
           <div className="card bg-secondary">
             <div className="card-body">
-              <h6 className="fw-medium mb-1 text-white">Pending Courses</h6>
+              <h6 className="fw-medium mb-1 text-white">Pending Tests</h6>
               <h4 className="fw-bold text-white">21</h4>
             </div>
           </div>
@@ -22,24 +23,8 @@ function AdminCourse() {
         <div className="col-lg-4 col-md-6">
           <div className="card bg-info">
             <div className="card-body">
-              <h6 className="fw-medium mb-1 text-white">Draft Courses</h6>
+              <h6 className="fw-medium mb-1 text-white">Incoming Tests</h6>
               <h4 className="fw-bold text-white">15</h4>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-4 col-md-6">
-          <div className="card bg-skyblue">
-            <div className="card-body">
-              <h6 className="fw-medium mb-1 text-white">Free Courses</h6>
-              <h4 className="fw-bold text-white">16</h4>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-4 col-md-6">
-          <div className="card bg-purple">
-            <div className="card-body">
-              <h6 className="fw-medium mb-1 text-white">Paid Courses</h6>
-              <h4 className="fw-bold text-white">21</h4>
             </div>
           </div>
         </div>
@@ -63,9 +48,9 @@ function AdminCourse() {
                 Status
               </a>
               <ul className="dropdown-menu dropdown-menu-end p-3">
-                <li><a href="#" className="dropdown-item rounded-1">Published</a></li>
-                <li><a href="#" className="dropdown-item rounded-1">Pending</a></li>
-                <li><a href="#" className="dropdown-item rounded-1">Draft</a></li>
+                <li><a href="#" className="dropdown-item rounded-1">Active</a></li>
+                <li><a href="#" className="dropdown-item rounded-1">Deactive</a></li>
+                <li><a href="#" className="dropdown-item rounded-1">Incoming</a></li>
               </ul>
             </div>
           </div>
@@ -85,17 +70,17 @@ function AdminCourse() {
         <table className="table">
           <thead className="thead-light">
             <tr>
-              <th>Course Name</th>
-              <th>Students</th>
-              <th>Price</th>
-              <th>Ratings</th>
+              <th>Test Name</th>
+              <th>Attempt</th>
+              <th>Created At</th>
+              <th>Resource</th>
               <th>Status</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {/* Example row */}
-            <tr>
+            {/* <tr>
               <td>
                 <div className="d-flex align-items-center">
                   <a href="#" className="avatar avatar-lg me-2 flex-shrink-0">
@@ -126,8 +111,9 @@ function AdminCourse() {
                   <a href="#" className="d-inline-flex fs-14 action-icon"><i className="isax isax-trash"></i></a>
                 </div>
               </td>
-            </tr>
+            </tr> */}
             {/* Add more rows as needed */}
+            <CourseTable />
           </tbody>
         </table>
       </div>

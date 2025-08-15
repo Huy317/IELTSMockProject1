@@ -1,4 +1,6 @@
 import React from "react";
+import AdminBasicInfoCard from "../components/admin/InforCard";
+import InforCard from "../components/admin/InforCard";
 
 function AdminProfile() {
   return (
@@ -9,23 +11,7 @@ function AdminProfile() {
           <i className="isax isax-edit-2"></i>
         </a>
       </div>
-      <div className="card">
-        <div className="card-body">
-          <h5 className="fs-18 pb-3 border-bottom mb-3">Basic Information</h5>
-          <div className="row">
-            <div className="col-md-4"><div className="mb-3"><h6>First Name</h6><span>Eugene</span></div></div>
-            <div className="col-md-4"><div className="mb-3"><h6>Last Name</h6><span>Andre</span></div></div>
-            <div className="col-md-4"><div className="mb-3"><h6>Registration Date</h6><span>16 Jan 2024, 11:15 AM</span></div></div>
-            <div className="col-md-4"><div className="mb-3"><h6>User Name</h6><span>instructordemo</span></div></div>
-            <div className="col-md-4"><div className="mb-3"><h6>Phone Number</h6><span>89104-71829</span></div></div>
-            <div className="col-md-4"><div className="mb-3"><h6>Email</h6><span><a href="mailto:[email protected]">[email protected]</a></span></div></div>
-            <div className="col-md-4"><div className="mb-3"><h6>Gender</h6><span>Male</span></div></div>
-            <div className="col-md-4"><div className="mb-3"><h6>DOB</h6><span>16 Jan 2020</span></div></div>
-            <div className="col-md-4"><div className="mb-3"><h6>Age</h6><span>24</span></div></div>
-            <div className="col-md-12"><div><h6>Bio</h6><span>I am a web developer with a vast array of knowledge in many different front end and back end languages, responsive frameworks, databases, and best code practices.</span></div></div>
-          </div>
-        </div>
-      </div>
+      <InforCard />
       <div className="card">
         <div className="card-body">
           <h5 className="fs-18 pb-3 border-bottom mb-3">Education</h5>
