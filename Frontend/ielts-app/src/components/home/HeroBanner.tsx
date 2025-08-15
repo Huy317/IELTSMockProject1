@@ -1,5 +1,9 @@
 import Card from '../utils/Card';
 import BannerSearch from './BannerSearch';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
+
+import 'swiper/swiper-bundle.css';
 
 function HeroBanner() {
   return (
@@ -55,19 +59,27 @@ function HeroBanner() {
           </div>
           <div className="col-xl-4 col-lg-5">
             <div className="banner-image">
-              <div className="swiper swiper-slider-banner">
-                <div className="swiper-wrapper">
-                  <div className="swiper-slide">
-                    <Card title='IELTS Simulation Test 1337' attemptCount='313' questionCount={30} type='Listening' timeMinutes={30} />
-                  </div>
-                  <div className="swiper-slide">
-                    <Card title='IELTS Simulation Test 1338' attemptCount='200' questionCount={40} type='Reading' timeMinutes={40} />
-                  </div>
-                  <div className="swiper-slide">
-                    <Card title='IELTS Simulation Test 1339' attemptCount='150' questionCount={50} type='Reading' timeMinutes={50} />
-                  </div>
-                </div>
-              </div>
+              <Swiper
+                spaceBetween={30}
+                centeredSlides={true}
+                autoplay={{
+                  delay: 2500,
+                  disableOnInteraction: false,
+                }}
+                
+                modules={[Autoplay]}
+                className="swiper-slider-banner"
+              >
+                <SwiperSlide>
+                  <Card title='IELTS Simulation Test 1337' attemptCount='313' questionCount={30} type='Listening' timeMinutes={30} />
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Card title='IELTS Simulation Test 1338' attemptCount='200' questionCount={40} type='Reading' timeMinutes={40} />
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Card title='IELTS Simulation Test 1339' attemptCount='150' questionCount={50} type='Reading' timeMinutes={50} />
+                </SwiperSlide>
+              </Swiper>
             </div>
           </div>
         </div>
