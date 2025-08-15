@@ -5,6 +5,7 @@ function AdminPage() {
     <div>
       <h1>Admin Page</h1>
       <p>admin page test</p>
+      <p>Replace this with actual page component</p>
       <Link to="/">Go to Home Page</Link>
     </div>
   );

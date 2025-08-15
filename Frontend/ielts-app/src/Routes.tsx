@@ -27,15 +27,15 @@ const router = createBrowserRouter([
                 children:[
                     {
                         path: "dashboard",
-                        element: <div>Admin Dashboard</div>
+                        element: <AdminPage />
                     },
                     {
                         path:"profile",
-                        element: <div>Admin Profile</div>
+                        element: <div>Admin Profile. Change this to the actual page component</div>
                     },
                     {
                         path:"courses",
-                        element: <div>Admin Courses</div>
+                        element: <div>Admin Courses. Change this to the actual page component</div>
                     }
                 ]
             }

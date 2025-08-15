@@ -16,6 +16,7 @@ function AdminDashboardLayout() {
                                     <img src="/assets/img/user/user-01.jpg" alt="img" />
                                     <span className="verify-tick"><i className="isax isax-verify5"></i></span>
                                 </span>
+                                {/* TODO: Change this to maybe a profile component that load user data */}
                                 <div>
                                     <h5 className="mb-1 text-white d-inline-flex align-items-center">
                                         Eugene Andre
