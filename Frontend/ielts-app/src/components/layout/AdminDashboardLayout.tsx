@@ -1,8 +1,7 @@
-import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import '../../assets/css/custom.css';
 
-const AdminDashboardLayout: React.FC = () => {
+function AdminDashboardLayout() {
     return (
         <div className="content">
             <div className="container">
