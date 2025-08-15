@@ -32,7 +32,6 @@ function LoginPage(){
         setAlertMessage('');
 
         // TODO: API CALL HERE
-        // Simulate API call
         try {
             console.log('Login attempt with:', {
                 email: data.email,
