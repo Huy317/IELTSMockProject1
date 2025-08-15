@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminLayout from "./components/layout/AdminLayout";
 import StudentLayout from "./components/layout/StudentLayout";
+import AdminUserList from "./pages/AdminUserList";
 
 const router = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
                     {
                         path:"courses",
                         element: <AdminCourse />
+                    },
+                    {
+                        path:"users",
+                        element: <AdminUserList />
                     },
                     {
                         path:"settings",

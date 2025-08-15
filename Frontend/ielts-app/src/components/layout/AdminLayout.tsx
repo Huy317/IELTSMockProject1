@@ -95,12 +95,12 @@ function AdminDashboardLayout() {
                                     </li>
                                     <li>
                                         <NavLink
-                                            to="/admin/students"
+                                            to="/admin/users"
                                             className={({ isActive }) =>
                                                 `d-inline-flex align-items-center ${isActive ? 'active' : ''}`
                                             }
                                         >
-                                            <i className="isax isax-profile-2user5 me-2"></i>Students
+                                            <i className="isax isax-profile-2user5 me-2"></i>Users
                                         </NavLink>
                                     </li>
                                     <li>
