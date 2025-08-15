@@ -1,4 +1,5 @@
 import UserTable from "../components/admin/UserTable";
+import Pagination from "../components/utils/Pagination";
 
 function AdminUserList() {
     return (
@@ -26,7 +27,8 @@ function AdminUserList() {
                 
             
             <UserTable />
-
+            
+            <Pagination/>
         </>
 
 
