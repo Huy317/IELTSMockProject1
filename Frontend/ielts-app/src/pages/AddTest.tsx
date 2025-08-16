@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 
 function AddTest() {
   const [step, setStep] = useState(1);
-  const uploadImgInputRef = useRef<HTMLInputElement | null>(null);
+  // const uploadImgInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="main-wrapper">
@@ -12,76 +12,8 @@ function AddTest() {
           <div className="row">
             <div className="col-lg-10 mx-auto">
               <div className="add-course-item">
-                <div className="wizard">
-                  <ul className="form-wizard-steps" id="progressbar2">
-                    <li className={step >= 1 ? "progress-active" : ""}>
-                      <div className="profile-step">
-                        <span className="dot-active mb-2">
-                          <span className="number">01</span>
-                          <span className="tickmark">
-                            <i className="fa-solid fa-check"></i>
-                          </span>
-                        </span>
-                        <div className="step-section">
-                          <p>Course Information</p>
-                        </div>
-                      </div>
-                    </li>
-                    <li className={step >= 2 ? "progress-active" : ""}>
-                      <div className="profile-step">
-                        <span className="dot-active mb-2">
-                          <span className="number">02</span>
-                          <span className="tickmark">
-                            <i className="fa-solid fa-check"></i>
-                          </span>
-                        </span>
-                        <div className="step-section">
-                          <p>Course Media</p>
-                        </div>
-                      </div>
-                    </li>
-                    <li className={step >= 3 ? "progress-active" : ""}>
-                      <div className="profile-step">
-                        <span className="dot-active mb-2">
-                          <span className="number">03</span>
-                          <span className="tickmark">
-                            <i className="fa-solid fa-check"></i>
-                          </span>
-                        </span>
-                        <div className="step-section">
-                          <p>Curriculam</p>
-                        </div>
-                      </div>
-                    </li>
-                    <li className={step >= 4 ? "progress-active" : ""}>
-                      <div className="profile-step">
-                        <span className="dot-active mb-2">
-                          <span className="number">04</span>
-                          <span className="tickmark">
-                            <i className="fa-solid fa-check"></i>
-                          </span>
-                        </span>
-                        <div className="step-section">
-                          <p>Additional information</p>
-                        </div>
-                      </div>
-                    </li>
-                    <li className={step >= 5 ? "progress-active" : ""}>
-                      <div className="profile-step">
-                        <span className="dot-active mb-2">
-                          <span className="number">05</span>
-                          <span className="tickmark">
-                            <i className="fa-solid fa-check"></i>
-                          </span>
-                        </span>
-                        <div className="step-section">
-                          <p>Pricing</p>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
                 <div className="initialization-form-set">
+                  {/* Basic Information */}
                   <fieldset
                     className="form-inner wizard-form-card"
                     id="first"
@@ -341,17 +273,18 @@ function AddTest() {
                     </div>
                     <div className="add-form-btn widget-next-btn submit-btn d-flex justify-content-end mb-0">
                       <div className="btn-left">
-                        <button
-                          type="button"
-                          onClick={() => setStep(2)}
-                          className="btn main-btn next_btns"
+                        <a
+                          href="#"
+                          className="btn btn-secondary main-btn next_btns"
+                          data-bs-toggle="modal"
+                          data-bs-target="#success"
                         >
-                          Next <i className="isax isax-arrow-right-3 ms-1"></i>
-                        </button>
+                          Submit Course
+                        </a>
                       </div>
                     </div>
                   </fieldset>
-                  <fieldset
+                  {/* <fieldset
                     className="form-inner wizard-form-card"
                     style={{ display: step === 2 ? "block" : "none" }}
                   >
@@ -494,17 +427,18 @@ function AddTest() {
                         </button>
                       </div>
                       <div className="btn-left">
-                        <button
-                          type="button"
-                          onClick={() => setStep(3)}
-                          className="btn btn-secondary main-btn next_btns d-flex align-items-center"
+                        <a
+                          href="#"
+                          className="btn btn-secondary main-btn next_btns"
+                          data-bs-toggle="modal"
+                          data-bs-target="#success"
                         >
-                          Next <i className="isax isax-arrow-right-3 ms-1"></i>
-                        </button>
+                          Submit Course
+                        </a>
                       </div>
                     </div>
-                  </fieldset>
-                  <fieldset
+                  </fieldset> */}
+                  {/* <fieldset
                     className="form-inner wizard-form-card"
                     style={{ display: step === 3 ? "block" : "none" }}
                   >
@@ -1124,7 +1058,7 @@ function AddTest() {
                         </a>
                       </div>
                     </div>
-                  </fieldset>
+                  </fieldset> */}
                 </div>
               </div>
             </div>
@@ -1133,7 +1067,7 @@ function AddTest() {
         {/* /Course watch */}
 
         {/* Add topic */}
-        <div className="modal fade" id="add-topic">
+        {/* <div className="modal fade" id="add-topic">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1171,11 +1105,11 @@ function AddTest() {
               </form>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* /Add topic */}
 
         {/* Add lesson */}
-        <div className="modal fade" id="add-lesson">
+        {/* <div className="modal fade" id="add-lesson">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1254,11 +1188,11 @@ function AddTest() {
               </form>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* /Add lesson */}
 
         {/* Add Faq */}
-        <div className="modal fade" id="add-faq">
+        {/* <div className="modal fade" id="add-faq">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -1333,8 +1267,9 @@ function AddTest() {
               </form>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* /Add Faq */}
+
         {/* success */}
         <div className="modal fade modal-default" id="success">
           <div className="modal-dialog modal-dialog-centered">
