@@ -4,16 +4,6 @@ function AdminSetting() {
       <div className="mb-3">
         <h5>Settings</h5>
       </div>
-      <ul className="settings-nav d-flex align-items-center flex-wrap border bg-light-900 rounded">
-        <li><a href="#" className="active">Profile</a></li>
-        <li><a href="#">Security</a></li>
-        <li><a href="#">Plans</a></li>
-        <li><a href="#">Social Profiles</a></li>
-        <li><a href="#">Linked Accounts</a></li>
-        <li><a href="#">Notifications</a></li>
-        <li><a href="#">Integrations</a></li>
-        <li><a href="#">Withdraw</a></li>
-      </ul>
       <form>
         <div className="card mt-3">
           <div className="card-body">
