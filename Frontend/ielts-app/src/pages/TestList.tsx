@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 function TestList() {
@@ -519,7 +518,6 @@ function TestList() {
         </div>
       </div>
 
-      {/* <div className="row"> */}
         <div className="col-md-2">
           <p className="pagination-text">Page 1 of 2</p>
         </div>
@@ -552,7 +550,6 @@ function TestList() {
             </li>
           </ul>
         </div>
-      {/* </div> */}
     </div>
   );
 }
