@@ -32,7 +32,7 @@ function AdminCourse() {
 
       {/* Page Title and Icons */}
       <div className="page-title d-flex align-items-center justify-content-between mb-3">
-        <h5 className="fw-bold">Courses</h5>
+        <h5 className="fw-bold">Tests</h5>
         <div className="d-flex align-items-center list-icons">
           <a href="#" className="active me-2"><i className="isax isax-task"></i></a>
           <a href="#"><i className="isax isax-element-3"></i></a>
