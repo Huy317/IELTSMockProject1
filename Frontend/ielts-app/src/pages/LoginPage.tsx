@@ -151,9 +151,9 @@ function LoginPage(){
                                                 </label>
                                             </div>
                                             <div className="">
-                                                <a href="forgot-password.html" className="link-2">
+                                                <Link to="/forgot-password" className="link-2">
                                                     Forgot Password ?
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                         <div className="d-grid">

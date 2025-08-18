@@ -1,23 +1,13 @@
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface ForgotPasswordFormData {
     email: string;
 }
 
-const navigate = useNavigate();
 
-// Placeholder functions for API calls
-const requestSuccess = (message: string) => {
-    console.log('Success:', message);
-    navigate('/reset-password');
-    // TODO: switch to reset password page
-};
 
-function requestFailed(error: string) {
-    console.error('Error:', error);
-    // TODO: Replace with actual error handling (toast notification, etc.)
-};
+
 
 function ForgotPassword() {
     const {
@@ -26,9 +16,21 @@ function ForgotPassword() {
         formState: { errors, isSubmitting }
     } = useForm<ForgotPasswordFormData>();
 
+    const navigate = useNavigate();
+    // Placeholder functions for API calls
+    const requestSuccess = (message: string) => {
+        console.log('Success:', message);
+        navigate('/reset-password');
+        // TODO: switch to reset password page
+    };
+
+    function requestFailed(error: string) {
+        console.error('Error:', error);
+        // TODO: Replace with actual error handling (toast notification, etc.)
+    };
     function onSubmit(data: ForgotPasswordFormData) {
         try {
-            
+
             console.log('Submitting forgot password request for:', data.email);
 
             // TODO: Replace with actual API call
@@ -38,7 +40,7 @@ function ForgotPassword() {
             requestFailed('Failed to send password reset email. Please try again.');
         }
     };
-    
+
     return (
         <div className="main-wrapper">
             <div className="login-content">
@@ -71,7 +73,8 @@ function ForgotPassword() {
                                 <div className="w-100">
                                     <div className="d-flex align-items-center justify-content-between login-header">
                                         <img src="../assets/img/logo.svg" className="img-fluid" alt="Logo" />
-                                        <a href="index.html" className="link-1">Back to Home</a>
+                                        {/* <a href="index.html" className="link-1">Back to Home</a> */}
+                                        <Link to="/" className="link-1">Back to Home</Link>
                                     </div>
                                     <div className="topic">
                                         <h1 className="fs-32 fw-bold mb-3">Forgot Password</h1>
@@ -81,8 +84,8 @@ function ForgotPassword() {
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">Email<span className="text-danger ms-1">*</span></label>
                                             <div className="position-relative">
-                                                <input 
-                                                    type="email" 
+                                                <input
+                                                    type="email"
                                                     className={`form-control form-control-lg ${errors.email ? 'is-invalid' : ''}`}
                                                     {...register('email', {
                                                         required: 'Email is required',
@@ -101,8 +104,8 @@ function ForgotPassword() {
                                             )}
                                         </div>
                                         <div className="d-grid">
-                                            <button 
-                                                className="btn btn-secondary btn-lg" 
+                                            <button
+                                                className="btn btn-secondary btn-lg"
                                                 type="submit"
                                                 disabled={isSubmitting}
                                             >
@@ -113,7 +116,7 @@ function ForgotPassword() {
                                     </form>
 
                                     <p className="fs-14 fw-normal d-flex align-items-center justify-content-center">
-                                        Remember Password?<a href="login.html" className="link-2 ms-1"> Sign In</a>
+                                        Remember Password?<Link to="/login" className="link-2 ms-1"> Sign In</Link>
                                     </p>
 
                                     {/* /Login */}
