@@ -17,6 +17,7 @@ namespace IELTS_PRACTICE.Services
             return _context.Questions
                 .Where(x => x.ParentId != 0) //parentId == 0 is content
                 .Select(x => new QuestionDTO {
+                    Id = x.Id,
                     QuestionType = x.QuestionType,
                     Content = x.Content,
                     CorrectAnswer = x.CorrectAnswer,
@@ -31,6 +32,7 @@ namespace IELTS_PRACTICE.Services
                 .Where(x => x.ParentId != 0 && x.Id == id) //parentId == 0 is content
                 .Select(x => new QuestionDTO
                 {
+                    Id = x.Id,
                     QuestionType = x.QuestionType,
                     Content = x.Content,
                     CorrectAnswer = x.CorrectAnswer,

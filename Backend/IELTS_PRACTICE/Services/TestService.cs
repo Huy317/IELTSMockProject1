@@ -15,11 +15,13 @@ namespace IELTS_PRACTICE.Services
 
         public async Task<List<TestDTO>> GetAllTest() { 
             var tests = _context.Tests
-                .Select(x => new TestDTO { 
+                .Select(x => new TestDTO {
+                    Id = x.Id,
                     TestName = x.TestName,
                     CreatedBy = x.CreatedBy,
                     CreatedAt = x.CreatedAt,
                     Resource = x.Resource,
+                    IsActive = x.IsActive,
                 }).ToList();
             return tests;
         }
@@ -30,10 +32,12 @@ namespace IELTS_PRACTICE.Services
                 .Where(x => x.Id == id)
                 .Select(x => new TestDTO
                 {
+                    Id = x.Id,
                     TestName = x.TestName,
                     CreatedBy = x.CreatedBy,
                     CreatedAt = x.CreatedAt,
                     Resource = x.Resource,
+                    IsActive = x.IsActive,
                 })
                 .FirstOrDefaultAsync();
         }
@@ -56,6 +60,7 @@ namespace IELTS_PRACTICE.Services
                 CreatedBy = newTest.CreatedBy,
                 CreatedAt = newTest.CreatedAt,
                 Resource = newTest.Resource,
+                IsActive = newTest.IsActive,
             };
         }
 
