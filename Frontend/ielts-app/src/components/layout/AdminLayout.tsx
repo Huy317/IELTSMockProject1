@@ -1,7 +1,26 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { useState } from 'react';
 import '../../assets/css/custom.css';
+import CreateTestModal from '../utils/CreateTestModal';
 
 function AdminDashboardLayout() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleCreateTest = (testData: { testName: string; testType: 'Reading' | 'Listening' }) => {
+        console.log('Creating test:', testData);
+        // Here you would typically call an API to create the test
+        // For now, we'll just log it and close the modal
+        setIsModalOpen(false);
+        // You can add additional logic here like showing a success message
+    };
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
     return (
         <div className="content">
             <div className="container">
@@ -30,7 +49,12 @@ function AdminDashboardLayout() {
                         </div>
                         <div className="col-md-6">
                             <div className="d-flex align-items-center flex-wrap gap-3 justify-content-md-end">
-                                <NavLink to="/admin/add-course" className="btn btn-white rounded-pill">Add New Course</NavLink>
+                                <button 
+                                    onClick={handleOpenModal}
+                                    className="btn btn-white rounded-pill"
+                                >
+                                    Add New Test
+                                </button>
                                 <NavLink to="/student-dashboard" className="btn btn-secondary rounded-pill">Student Dashboard</NavLink>
                             </div>
                         </div>
@@ -216,6 +240,13 @@ function AdminDashboardLayout() {
                     </div>
                 </div>
             </div>
+            
+            {/* Create Test Modal */}
+            <CreateTestModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleCreateTest}
+            />
         </div>
     );
 };
