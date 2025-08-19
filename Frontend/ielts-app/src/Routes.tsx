@@ -16,94 +16,96 @@ import AdminUserList from "./pages/AdminUserList";
 import CategoryLayout from "./components/layout/CategoriesLayout";
 import TestList from "./pages/TestList";
 import ForgotPassword from "./pages/ForgotPassword";
-
+import AddTest from "./pages/AddTest";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Layout />,
-        errorElement: <div>Page not found</div>,
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <div>Page not found</div>,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: "test",
+        element: <CategoryLayout />,
         children: [
-            {   
-                index: true,
-                element: <HomePage />
-            },
-            {
-                path: "test",
-                element: <CategoryLayout />,
-                children:[
-                    {
-                        path: "list",
-                        element: <TestList />
-                    }
-                ]
-            },
-            {
-                path: "admin",
-                element: <AdminLayout />,
-                children:[
-                    {
-                        path: "dashboard",
-                        element: <AdminDashboard />
-                    },
-                    {
-                        path:"profile",
-                        element: <AdminProfile />
-                    },
-                    {
-                        path:"courses",
-                        element: <AdminCourse />
-                    },
-                    {
-                        path:"users",
-                        element: <AdminUserList />
-                    },
-                    {
-                        path:"settings",
-                        element: <Settings />
-                    }
-                ]
-            },
-            {
-                path: "student",
-                element: <StudentLayout />,
-                children:[
-                    {
-                        path: "dashboard",
-                        element: <StudentDashboard />
-                    },
-                    {
-                        path:"profile",
-                        element: <StudentProfile />
-                    },
-                    {
-                        path:"courses",
-                        element: <StudentCourses />
-                    },
-                    {
-                        path:"settings",
-                        element: <Settings />
-                    }
-                ]
-            },
-        ]
-    },
-    {
-        path: "login",
-        element: <LoginPage />
-    },
-    {
-        path: "register",
-        element: <RegisterPage />
-    },
-    {
-        path: "forgot-password",
-        element: <ForgotPassword />
-    }
-    
-
+          {
+            path: "list",
+            element: <TestList />,
+          },
+        ],
+      },
+      {
+        path: "createtest",
+        element: <AddTest />,
+      },
+      {
+        path: "admin",
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "dashboard",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "profile",
+            element: <AdminProfile />,
+          },
+          {
+            path: "courses",
+            element: <AdminCourse />,
+          },
+          {
+            path: "users",
+            element: <AdminUserList />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+        ],
+      },
+      {
+        path: "student",
+        element: <StudentLayout />,
+        children: [
+          {
+            path: "dashboard",
+            element: <StudentDashboard />,
+          },
+          {
+            path: "profile",
+            element: <StudentProfile />,
+          },
+          {
+            path: "courses",
+            element: <StudentCourses />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "login",
+    element: <LoginPage />,
+  },
+  {
+    path: "register",
+    element: <RegisterPage />,
+  },
+  {
+    path: "forgot-password",
+    element: <ForgotPassword />
+   }
 ]);
 
 export default function Routes() {
-    return <RouterProvider router={router} />;
+  return <RouterProvider router={router} />;
 }
