@@ -18,6 +18,7 @@ namespace IELTS_PRACTICE.Services
             return _context.TestSubmissionDetails
                 .Select(x => new TestSubmissionDetailDTO
                 {
+                    Id = x.Id,
                     SubmissionId = x.SubmissionId,
                     Feedback = x.Feedback,
                     Answer = x.Answer,
@@ -31,6 +32,7 @@ namespace IELTS_PRACTICE.Services
                 .Where(x => x.Id == id)
                 .Select(x => new TestSubmissionDetailDTO
                 {
+                    Id = x.Id,
                     SubmissionId = x.SubmissionId,
                     Feedback = x.Feedback,
                     Answer = x.Answer,

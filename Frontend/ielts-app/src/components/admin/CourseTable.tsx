@@ -1,54 +1,47 @@
-import React from "react";
-
-export interface AdminCourseTableRowProps {
-  img: string;
-  testName: string;
-  createdAt: string;
-  resource: string;
-  status: string;
-  attempted: string;
-}
-
-const courseRows: AdminCourseTableRowProps[] = [
-  {
-    img: "/assets/img/course/course-01.jpg",
-    testName: "IELTS LISTENING TEST 3",
-    attempted: "36",
-    createdAt: "2024-01-16",
-    resource: "CAMBRIDGE 12",
-    status: "ACTIVE"
-  },
-  {
-    img: "/assets/img/course/course-01.jpg",
-    testName: "IELTS LISTENING TEST 3",
-    attempted: "36",
-    createdAt: "2024-01-16",
-    resource: "CAMBRIDGE 13",
-    status: "DEACTIVE"
-  }
-];
+//import React from "react";
+import React, { useEffect, useState } from "react";
+import { getTests } from "../../services/testService";
+import type { Test } from "../../types/Test";
 
 function CourseTable() {
-  return (
+  const [courseRows, setCourseRows] = useState<Test[]>([]);
+
+  useEffect(() => {
+      getTests()
+        .then((data: Test[]) => {
+          setCourseRows(data);
+        })
+        .catch((err: unknown) => {
+          if (err instanceof Error) {
+            console.error("Failed to fetch tests:", err.message);
+          } else {
+            console.error("Failed to fetch tests:", err);
+          }
+        });
+    }, []);
+
+    return (
     <>
       {courseRows.map((row, idx) => (
         <tr key={idx}>
           <td>
             <div className="d-flex align-items-center">
               <a href="#" className="avatar avatar-lg me-2 flex-shrink-0">
-                <img className="img-fluid object-fit-cover" src={row.img} alt="" />
+                <img className="img-fluid object-fit-cover" src="/assets/img/icon/graduation.svg" alt="" />
               </a>
               <div>
                 <h6 className="fw-medium mb-2"><a href="#">{row.testName}</a></h6>
               </div>
             </div>
           </td>
-          <td>{row.attempted}</td>
+          {/* <td>{row.attempted}</td> */}
+          <td>{row.createdBy}</td>
           <td>{row.createdAt}</td>
           <td>{row.resource}</td>
           <td>
             <span className="badge badge-sm bg-success d-inline-flex align-items-center me-1">
-              <i className="fa-solid fa-circle fs-5 me-1"></i>{row.status}
+              {/* <i className="fa-solid fa-circle fs-5 me-1"></i>{row.status} */}
+              {row.isActive ? "Active" : "Inactive"}
             </span>
           </td>
           <td>

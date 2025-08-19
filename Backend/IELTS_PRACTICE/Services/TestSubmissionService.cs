@@ -15,6 +15,7 @@ namespace IELTS_PRACTICE.Services
         public async Task<List<TestSubmissionDTO>> GetAllTestSubmission() { 
             return _context.TestSubmissions
                 .Select(x => new TestSubmissionDTO { 
+                    Id = x.Id,
                     UserId = x.UserId,
                     TestId = x.TestId,
                     SubmittedAt = DateTime.UtcNow,
@@ -29,6 +30,7 @@ namespace IELTS_PRACTICE.Services
                 .Where(x => x.Id == id)
                 .Select(x => new TestSubmissionDTO
                 {
+                    Id = x.Id,
                     UserId = x.UserId,
                     TestId = x.TestId,
                     SubmittedAt = DateTime.UtcNow,
