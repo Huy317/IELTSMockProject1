@@ -139,28 +139,6 @@ const RegisterPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            {/* <div>
-                                <div className="login-carousel-section mb-3">
-                                    <div className="login-banner">
-                                        <img src="../assets/img/auth/auth-1.svg" className="img-fluid" alt="IELTS Platform Logo" />
-                                    </div>
-                                    <div className="mentor-course text-center">
-                                        <h3 className="mb-2">Master Your <br />IELTS<span className="text-secondary"> Journey</span>.</h3>
-                                        <p>Access full-length practice tests, detailed performance analytics, and personalized feedback to boost your confidence and achieve your desired IELTS score.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="login-carousel-section mb-3">
-                                    <div className="login-banner">
-                                        <img src="../assets/img/auth/auth-1.svg" className="img-fluid" alt="IELTS Platform Logo" />
-                                    </div>
-                                    <div className="mentor-course text-center">
-                                        <h3 className="mb-2">Join Thousands of <br />Successful<span className="text-secondary"> Test-Takers</span>.</h3>
-                                        <p>Practice with authentic IELTS materials, track your progress across all four skills, and get ready for test day with our comprehensive preparation tools.</p>
-                                    </div>
-                                </div>
-                            </div> */}
                         </div>
                     </div>
                     {/* /Login Banner */}
