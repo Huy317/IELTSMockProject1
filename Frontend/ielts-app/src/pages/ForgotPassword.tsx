@@ -17,11 +17,10 @@ function ForgotPassword() {
     } = useForm<ForgotPasswordFormData>();
 
     const navigate = useNavigate();
-    // Placeholder functions for API calls
+    
     const requestSuccess = (message: string) => {
         console.log('Success:', message);
         navigate('/reset-password');
-        // TODO: switch to reset password page
     };
 
     function requestFailed(error: string) {

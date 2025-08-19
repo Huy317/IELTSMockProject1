@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import '../../assets/css/custom.css';
 function Header() {
   return (
@@ -14,19 +14,19 @@ function Header() {
               </span>
             </a>
             <div className="navbar-logo">
-              <a className="logo-white header-logo" href="/">
+              <Link className="logo-white header-logo" to="/">
                 <img src="/assets/img/logo.svg" className="logo" alt="Logo" />
-              </a>
-              <a className="logo-dark header-logo" href="/">
+              </Link>
+              <Link className="logo-dark header-logo" to="/">
                 <img src="/assets/img/logo-white.svg" className="logo" alt="Logo" />
-              </a>
+              </Link>
             </div>
           </div>
           <div className="main-menu-wrapper">
             <div className="menu-header">
-              <a href="/" className="menu-logo">
+              <Link to="/" className="menu-logo">
                 <img src="/assets/img/logo.svg" className="img-fluid" alt="Logo" />
-              </a>
+              </Link>
               <a id="menu_close" className="menu-close" href="#">
                 <i className="fas fa-times"></i>
               </a>
@@ -45,11 +45,11 @@ function Header() {
                 <ul className="submenu">
                   <li>
                     {/* <a href="/course-grid">Course Grid</a> */}
-                    <NavLink to="/course-grid" className={({ isActive }) => (isActive ? 'active' : '')}>
+                    <NavLink to="/test/list" className={({ isActive }) => (isActive ? 'active' : '')}>
                       Test List
                     </NavLink>
                   </li>
-                  <li><a href="/course-resume">Course Resume</a></li>
+                  <li><Link to="/course-resume">Course Resume</Link></li>
                 </ul>
               </li>
               <li className="has-submenu">
@@ -60,20 +60,20 @@ function Header() {
                   <li className="has-submenu">
                     <a href="#">Instructor Dashboard</a>
                     <ul className="submenu">
-                      <li><a href="/instructor-dashboard">Dashboard</a></li>
-                      <li><a href="/instructor-profile">My Profile</a></li>
-                      <li><a href="/instructor-course">Course</a></li>
-                      <li><a href="/students">Student Grid</a></li>
-                      <li><a href="/instructor-settings">Settings</a></li>
+                      <li><Link to="/admin/dashboard">Dashboard</Link></li>
+                      <li><Link to="/admin/profile">My Profile</Link></li>
+                      <li><Link to="/admin/courses">Course</Link></li>
+                      <li><Link to="/admin/users">User List</Link></li>
+                      <li><Link to="/admin/settings">Settings</Link></li>
                     </ul>
                   </li>
                   <li className="has-submenu">
                     <a href="#">Student Dashboard</a>
                     <ul className="submenu">
-                      <li><a href="/student-dashboard">Dashboard</a></li>
-                      <li><a href="/student-profile">My Profile</a></li>
-                      <li><a href="/student-courses">Enrolled Courses</a></li>
-                      <li><a href="/student-settings">Settings</a></li>
+                      <li><Link to="/student/dashboard">Dashboard</Link></li>
+                      <li><Link to="/student/profile">My Profile</Link></li>
+                      <li><Link to="/student/courses">Courses</Link></li>
+                      <li><Link to="/student/settings">Settings</Link></li>
                     </ul>
                   </li>
                 </ul>
@@ -83,17 +83,17 @@ function Header() {
                   Pages <i className="fas fa-chevron-down"></i>
                 </a>
                 <ul className="submenu">
-                  <li className="active"><a href="/about-us">About Us</a></li>
-                  <li><a href="/contact-us">Contact us</a></li>
+                  <li className="active"><Link to="/about-us">About Us</Link></li>
+                  <li><Link to="/contact-us">Contact us</Link></li>
                   <li className="has-submenu">
                     <a href="#">Authentication</a>
                     <ul className="submenu">
-                      <li><a href="/login">Login</a></li>
-                      <li><a href="/register">Register</a></li>
-                      <li><a href="/forgot-password">Forgot Password</a></li>
+                      <li><Link to="/login">Login</Link></li>
+                      <li><Link to="/register">Register</Link></li>
+                      <li><Link to="/forgot-password">Forgot Password</Link></li>
                     </ul>
                   </li>
-                  <li><a href="/faq">FAQ</a></li>
+                  <li><Link to="/faq">FAQ</Link></li>
                 </ul>
               </li>
             </ul>
@@ -136,12 +136,12 @@ function Header() {
               </div>
             </div>
             <div className="menu-login">
-              <a href="/login" className="btn btn-primary w-100 mb-2">
+              <Link to="/login" className="btn btn-primary w-100 mb-2">
                 <i className="isax isax-user me-2"></i>Sign In
-              </a>
-              <a href="/register" className="btn btn-secondary w-100">
+              </Link>
+              <Link to="/register" className="btn btn-secondary w-100">
                 <i className="isax isax-user-edit me-2"></i>Register
-              </a>
+              </Link>
             </div>
           </div>
           <div className="header-btn d-flex align-items-center">
@@ -154,12 +154,12 @@ function Header() {
               </a>
             </div>
 
-            <a href="/login" className="btn btn-light d-inline-flex align-items-center me-2">
+            <Link to="/login" className="btn btn-light d-inline-flex align-items-center me-2">
               <i className="isax isax-lock-circle me-2"></i>Sign In
-            </a>
-            <a href="/register" className="btn btn-secondary me-0">
+            </Link>
+            <Link to="/register" className="btn btn-secondary me-0">
               <i className="isax isax-user-edit me-2"></i>Register
-            </a>
+            </Link>
           </div>
         </div>
       </div>

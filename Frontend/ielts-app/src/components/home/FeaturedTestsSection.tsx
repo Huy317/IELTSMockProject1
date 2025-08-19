@@ -20,7 +20,7 @@ function FeaturedTestsSection() {
                             title="IELTS Academic Reading Practice Test 1"
                             attemptCount={1234}
                             questionCount={40}
-                            reading={true}
+                            type='Reading'
                             timeMinutes={60}
                         />
                     </div>
@@ -30,7 +30,7 @@ function FeaturedTestsSection() {
                             title="IELTS General Listening Mock Test"
                             attemptCount={856}
                             questionCount={40}
-                            listening={true}
+                            type='Listening'
                             timeMinutes={30}
                         />
 
@@ -40,8 +40,7 @@ function FeaturedTestsSection() {
                             title="IELTS Academic Reading & Listening"
                             attemptCount={692}
                             questionCount={80}
-                            listening={true}
-                            reading={true}
+                            type='Listening/Reading'
                             timeMinutes={90}
                         />
                     </div>
@@ -50,7 +49,7 @@ function FeaturedTestsSection() {
                             title="IELTS General Reading Comprehension"
                             attemptCount={543}
                             questionCount={40}
-                            reading={true}
+                            type='Reading'
                             timeMinutes={60}
                         />
                     </div>
@@ -59,13 +58,13 @@ function FeaturedTestsSection() {
                             title="IELTS Listening Skills Builder"
                             attemptCount={789}
                             questionCount={40}
-                            listening={true}
+                            type='Listening'
                             timeMinutes={30}
                         />
                     </div>
                 </div>
                 <div className="d-flex align-items-center justify-content-center">
-                    <Link to="/tests" className="btn btn-primary btn-md">
+                    <Link to="/test/list" className="btn btn-primary btn-md">
                         View All Tests
                     </Link>
                 </div>
