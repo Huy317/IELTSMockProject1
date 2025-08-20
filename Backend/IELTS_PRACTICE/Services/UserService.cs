@@ -3,12 +3,14 @@ using IELTS_PRACTICE.Models;
 using Microsoft.EntityFrameworkCore;
 using IELTS_PRACTICE.DTOs.Responses;
 using IELTS_PRACTICE.DTOs.Resquests;
+using Microsoft.AspNetCore.Identity;
 
 namespace IELTS_PRACTICE.Services
 {
     public class UserService
     {
         private readonly AppDbContext _context;
+        private readonly PasswordHasher<User> _passwordHasher = new();
 
         public UserService(AppDbContext context)
         {
@@ -52,7 +54,7 @@ namespace IELTS_PRACTICE.Services
             {
                 FullName = userDto.FullName,
                 Email = userDto.Email,
-                Password = userDto.Password, // Ensure password is hashed in a real application
+                Password = _passwordHasher.HashPassword(null!, userDto.Password), // Ensure password is hashed in a real application
                 PhoneNumber = userDto.PhoneNumber,
                 Role = userDto.Role,
                 CreatedAt = DateTime.UtcNow
@@ -82,7 +84,7 @@ namespace IELTS_PRACTICE.Services
 
             user.FullName = userDto.FullName;
             user.Email = userDto.Email;
-            user.Password = userDto.Password; // Ensure password is hashed in a real application
+            user.Password = _passwordHasher.HashPassword(null!, userDto.Password); // Ensure password is hashed in a real application
             user.PhoneNumber = userDto.PhoneNumber;
 
             _context.Users.Update(user);
