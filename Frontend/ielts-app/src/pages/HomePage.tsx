@@ -11,7 +11,7 @@ import useScriptInitialization from "../hooks/useScriptInitialization";
 
 function HomePage() {
   // Initialize traditional scripts for animations and interactions
-  useScriptInitialization();
+  // useScriptInitialization();
 
   return (
     <>
