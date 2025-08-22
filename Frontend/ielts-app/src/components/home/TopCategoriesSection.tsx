@@ -1,6 +1,44 @@
 import { Link } from 'react-router-dom';
-
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from 'react-slick';
 function TopCategoriesSection() {
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 6,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 5,
+        }
+      },
+      {
+        breakpoint: 992,
+        settings: {
+          slidesToShow: 4,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 3,
+        }
+      },
+      {
+        breakpoint: 576,
+        settings: {
+          slidesToShow: 2,
+        }
+      }
+    ]
+  };
   return (
     <section className="top-courses-sec">
       <img className="top-courses-bg" src="/assets/img/bg/bg-20.png" alt="img" />
@@ -14,8 +52,8 @@ function TopCategoriesSection() {
             Practice all four skills of IELTS with our comprehensive mock tests designed to simulate real exam conditions
           </p>
         </div>
-        <div className="top-courses-slider lazy">
-            {/* TODO: Change the icons reflect skills 
+        <Slider {...settings} className="top-courses-slider">
+          {/* TODO: Change the icons reflect skills 
                 and change Link paths to new routes
             */}
           <div>
@@ -82,12 +120,12 @@ function TopCategoriesSection() {
               </h6>
             </div>
           </div> */}
-        </div>
+        </Slider>
         <Link to="/tests" className="btn btn-primary btn-md">
           View All Tests
         </Link>
       </div>
-    </section>
+    </section >
   );
 }
 

@@ -63,7 +63,7 @@ function StudentLayout() {
                                             <i className="fa-solid fa-user me-2"></i>My Profile
                                         </NavLink>
                                     </li>
-                                    <li>
+                                    {/* <li>
                                         <NavLink
                                             to="/student/courses"
                                             className={({ isActive }) =>
@@ -72,8 +72,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-teacher5 me-2"></i>Enrolled Courses
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/announcements"
                                             className={({ isActive }) =>
@@ -82,8 +82,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-volume-high5 me-2"></i>Announcements
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/assignments"
                                             className={({ isActive }) =>
@@ -92,8 +92,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-clipboard-text5 me-2"></i>Assignments
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/students"
                                             className={({ isActive }) =>
@@ -102,8 +102,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-profile-2user5 me-2"></i>Students
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/quiz"
                                             className={({ isActive }) =>
@@ -112,8 +112,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-award5 me-2"></i>Quiz
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/quiz-results"
                                             className={({ isActive }) =>
@@ -122,8 +122,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-medal-star5 me-2"></i>Quiz Results
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/certificates"
                                             className={({ isActive }) =>
@@ -132,8 +132,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-note-215 me-2"></i>Certificates
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/earnings"
                                             className={({ isActive }) =>
@@ -142,8 +142,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-wallet-add5 me-2"></i>Earnings
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/payout"
                                             className={({ isActive }) =>
@@ -152,8 +152,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-coin-15 me-2"></i>Payout
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/statements"
                                             className={({ isActive }) =>
@@ -162,8 +162,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-shopping-cart5 me-2"></i>Statements
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/messages"
                                             className={({ isActive }) =>
@@ -172,8 +172,8 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-messages-35 me-2"></i>Messages
                                         </NavLink>
-                                    </li>
-                                    <li>
+                                    </li> */}
+                                    {/* <li>
                                         <NavLink
                                             to="/student/tickets"
                                             className={({ isActive }) =>
@@ -182,7 +182,7 @@ function StudentLayout() {
                                         >
                                             <i className="isax isax-ticket5 me-2"></i>Support Tickets
                                         </NavLink>
-                                    </li>
+                                    </li> */}
                                 </ul>
                                 <hr />
                                 <h6 className="mb-3">Account Settings</h6>
