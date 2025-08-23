@@ -104,8 +104,16 @@ const router = createBrowserRouter([
   },
   {
     path: "forgot-password",
-    element: <ForgotPassword />
-   }
+    element: <ForgotPassword />,
+  },
+  {
+    path: "reading",
+    element: <ReadingTestPage />,
+  },
+  {
+    path: "listening",
+    element: <ListeningTestPage />,
+  },
 ]);
 
 export default function Routes() {
