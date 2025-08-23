@@ -27,14 +27,6 @@ const router = createBrowserRouter([
     errorElement: <div>Page not found</div>,
     children: [
       {
-        path: "reading",
-        element: <ReadingTestPage />,
-      },
-      {
-        path: "listening",
-        element: <ListeningTestPage />,
-      },
-      {
         index: true,
         element: <HomePage />,
       },
@@ -112,7 +104,15 @@ const router = createBrowserRouter([
   },
   {
     path: "forgot-password",
-    element: <ForgotPassword />
+    element: <ForgotPassword />,
+  },
+  {
+    path: "reading",
+    element: <ReadingTestPage />,
+  },
+  {
+    path: "listening",
+    element: <ListeningTestPage />,
   },
 ]);
 
