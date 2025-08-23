@@ -1,14 +1,12 @@
-import React from "react";
-
 interface FillInBlanksProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-const FillInBlanks: React.FC<FillInBlanksProps> = ({
+function FillInBlanks({
   question,
   updateQuestion,
-}) => {
+}: FillInBlanksProps) {
   return (
     <div className="mb-3">
       <div className="row mb-3">

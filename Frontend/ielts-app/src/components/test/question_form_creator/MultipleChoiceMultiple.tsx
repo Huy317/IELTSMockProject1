@@ -1,16 +1,14 @@
-import React from 'react';
-
 interface MultipleChoiceMultipleProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
   updateQuestionOption: (questionId: any, optionIndex: any, value: any) => void;
 }
 
-const MultipleChoiceMultiple: React.FC<MultipleChoiceMultipleProps> = ({
+function MultipleChoiceMultiple({
   question,
   updateQuestion,
   updateQuestionOption,
-}) => {
+}: MultipleChoiceMultipleProps) {
   return (
     <div className="row g-2 mb-3">
       {question.options.map((option: any, optionIndex: any) => (

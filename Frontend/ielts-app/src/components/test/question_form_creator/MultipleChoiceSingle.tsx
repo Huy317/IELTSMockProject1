@@ -1,16 +1,14 @@
-import React from 'react';
-
 interface MultipleChoiceSingleProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
   updateQuestionOption: (questionId: any, optionIndex: any, value: any) => void;
 }
 
-const MultipleChoiceSingle: React.FC<MultipleChoiceSingleProps> = ({
+function MultipleChoiceSingle({
   question,
   updateQuestion,
   updateQuestionOption,
-}) => {
+}: MultipleChoiceSingleProps) {
   return (
     <div className="row g-2 mb-3">
       {question.options.map((option: any, optionIndex: any) => (

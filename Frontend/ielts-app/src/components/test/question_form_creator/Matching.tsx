@@ -1,11 +1,9 @@
-import React from "react";
-
 interface MatchingProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-const Matching: React.FC<MatchingProps> = ({ question, updateQuestion }) => {
+function Matching({ question, updateQuestion }: MatchingProps) {
   return (
     <div className="mb-3">
       <div className="row">
