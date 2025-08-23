@@ -99,6 +99,27 @@
   box-sizing: border-box;
 }
 
+/* Add down arrow to all select elements */
+.listening-form-group select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.5 7.5L10 12l4.5-4.5" stroke="%23666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 16px;
+  padding-right: 48px;
+  cursor: pointer;
+}
+
+/* Ensure text inputs have an explicit height so select matches exactly */
+.listening-form-group input[type="text"],
+.listening-form-group input[type="number"] {
+  height: 56px;
+  line-height: 20px;
+  box-sizing: border-box;
+}
+
 .listening-form-group input:focus,
 .listening-form-group textarea:focus,
 .listening-form-group select:focus {
@@ -114,8 +135,159 @@
   line-height: 1.6;
 }
 
+.listening-explanation-full-width {
+  width: 100% !important;
+}
+
+/* Multiple Choice Checkbox Styles */
+.listening-checkbox-input {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+/* Fill in the Blanks Styles */
+.listening-fill-blanks-section {
+  margin-top: 15px;
+}
+
+.listening-blanks-count-input {
+  width: 80px;
+  padding: 8px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.listening-blanks-answers-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.listening-instruction-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #495057;
+  margin-top: 10px;
+}
+
+.listening-instruction-note i {
+  color: #667eea;
+  font-size: 16px;
+}
+
+/* Matching Styles */
+.listening-matching-section {
+  margin-top: 15px;
+}
+
+.listening-matching-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.listening-matching-column h4 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 8px;
+}
+
+.listening-matching-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.listening-matching-number,
+.listening-matching-letter {
+  min-width: 25px;
+  font-weight: 600;
+  color: #667eea;
+  font-size: 14px;
+}
+
+.listening-matching-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.listening-matching-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.listening-matching-answers-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: monospace;
+}
+
 .listening-textarea-large {
   min-height: 220px;
+}
+
+/* Ensure select box has same visual height as text input */
+.listening-select-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e1e8ed;
+  border-radius: 15px;
+  font-size: 16px;
+  background: white;
+  color: #333;
+  font-family: inherit;
+  box-sizing: border-box;
+  /* make the height explicit so it matches the text input exactly */
+  height: 56px;
+  line-height: 20px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* custom down-arrow SVG */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.5 7.5L10 12l4.5-4.5" stroke="%23666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 16px;
+  /* ensure arrow has space and doesn't overlap the text */
+  padding-right: 48px;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.listening-select-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+  transform: translateY(-2px);
 }
 
 .listening-btn {
@@ -128,7 +300,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 1px;
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
@@ -238,11 +410,6 @@
   transition: all 0.3s ease;
 }
 
-.listening-btn-delete:hover {
-  background: #c82333;
-  transform: translateY(-1px);
-}
-
 .listening-question-textarea {
   width: 100%;
   min-height: 120px;
@@ -315,9 +482,7 @@
 }
 
 .listening-question-footer {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 24px;
+  display: block;
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #e9ecef;
