@@ -16,7 +16,7 @@ import AdminUserList from "./pages/AdminUserList";
 import CategoryLayout from "./components/layout/CategoriesLayout";
 import TestList from "./pages/TestList";
 import ForgotPassword from "./pages/ForgotPassword";
-import AddTest from "./pages/AddTest";
+import AddListeningTest from "./pages/AddListeningTest";
 import ReadingTestPage from "./pages/ReadingTestPage";
 import ListeningTestPage from "./pages/ListeningTestPage";
 
@@ -41,8 +41,8 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "createtest",
-        element: <AddTest />,
+        path: "createlisteningtest",
+        element: <AddListeningTest />,
       },
       {
         path: "admin",
