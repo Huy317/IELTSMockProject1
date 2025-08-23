@@ -39,6 +39,6 @@ function MultipleChoiceSingle({
       ))}
     </div>
   );
-};
+}
 
 export default MultipleChoiceSingle;

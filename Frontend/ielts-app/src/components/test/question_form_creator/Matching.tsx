@@ -93,6 +93,6 @@ function Matching({ question, updateQuestion }: MatchingProps) {
       </div>
     </div>
   );
-};
+}
 
 export default Matching;
