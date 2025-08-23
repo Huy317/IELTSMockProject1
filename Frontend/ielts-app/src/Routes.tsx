@@ -17,6 +17,8 @@ import CategoryLayout from "./components/layout/CategoriesLayout";
 import TestList from "./pages/TestList";
 import ForgotPassword from "./pages/ForgotPassword";
 import AddTest from "./pages/AddTest";
+import ReadingTestPage from "./pages/ReadingTestPage";
+import ListeningTestPage from "./pages/ListeningTestPage";
 
 const router = createBrowserRouter([
   {
@@ -102,8 +104,16 @@ const router = createBrowserRouter([
   },
   {
     path: "forgot-password",
-    element: <ForgotPassword />
-   }
+    element: <ForgotPassword />,
+  },
+  {
+    path: "reading",
+    element: <ReadingTestPage />,
+  },
+  {
+    path: "listening",
+    element: <ListeningTestPage />,
+  },
 ]);
 
 export default function Routes() {
