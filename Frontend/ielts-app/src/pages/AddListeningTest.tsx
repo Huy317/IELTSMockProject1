@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import "./AddListeningTest.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -17,9 +17,7 @@ function AddListeningTest() {
   const audioFileRef = useRef<any>(null);
   const [questions, setQuestions] = useState<any[]>([]);
   const [nextQuestionId, setNextQuestionId] = useState(1);
-  const [lastCreatedQuestionNumber, setLastCreatedQuestionNumber] = useState<
-    number | null
-  >(null);
+  const [, setLastCreatedQuestionNumber] = useState<number | null>(null);
   const [formData, setFormData] = useState<any>({
     title: "",
     duration: 30,
@@ -67,21 +65,22 @@ function AddListeningTest() {
       questionType,
       questionText: "",
       options:
-        questionType === "multiple-choice" || questionType === "multiple-choice-multiple" 
-          ? ["", "", "", ""] 
+        questionType === "multiple-choice" ||
+        questionType === "multiple-choice-multiple"
+          ? ["", "", "", ""]
           : questionType === "matching"
           ? {
               items: ["", "", "", ""],
-              matches: ["", "", "", ""]
+              matches: ["", "", "", ""],
             }
           : undefined,
-      correctAnswer: 
-        questionType === "multiple-choice-multiple" 
-          ? [] 
+      correctAnswer:
+        questionType === "multiple-choice-multiple"
+          ? []
           : questionType === "fill-blanks"
           ? [""]
           : questionType === "matching"
-          ? [{item: 0, match: 0}]
+          ? [{ item: 0, match: 0 }]
           : undefined,
       blanksCount: questionType === "fill-blanks" ? 1 : undefined,
       explanation: "",
@@ -177,7 +176,9 @@ function AddListeningTest() {
                       className="form-select"
                     >
                       <option value="public">Public (Anyone can access)</option>
-                      <option value="private">Private (Invited users only)</option>
+                      <option value="private">
+                        Private (Invited users only)
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -191,7 +192,9 @@ function AddListeningTest() {
                     style={{ cursor: "pointer" }}
                     onClick={() => audioFileRef.current?.click()}
                   >
-                    <p className="mb-2">🎵 Click to upload audio file or drag & drop</p>
+                    <p className="mb-2">
+                      🎵 Click to upload audio file or drag & drop
+                    </p>
                     <p className="small text-muted mb-0">
                       Supported formats: MP3, WAV, M4A (Max 100MB)
                     </p>
@@ -224,7 +227,8 @@ function AddListeningTest() {
 
                 <div className="mb-4">
                   <h3 className="mb-3">
-                    <i className="bi bi-pencil-square me-2"></i> Questions Builder
+                    <i className="bi bi-pencil-square me-2"></i> Questions
+                    Builder
                   </h3>
 
                   <div id="listeningQuestions">
@@ -238,12 +242,19 @@ function AddListeningTest() {
                         >
                           <div className="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
                             <div className="d-flex align-items-center">
-                              <span className="badge bg-primary me-3 fs-3 fw-bold rounded-circle d-flex align-items-center justify-content-center" style={{width: '40px', height: '40px'}}>
+                              <span
+                                className="badge bg-primary me-3 fs-3 fw-bold rounded-circle d-flex align-items-center justify-content-center"
+                                style={{ width: "40px", height: "40px" }}
+                              >
                                 {question.questionNumber}
                               </span>
                               <div>
-                                <h5 className="mb-0">Question {question.questionNumber}</h5>
-                                <small className="text-muted">Section {question.section}</small>
+                                <h5 className="mb-0">
+                                  Question {question.questionNumber}
+                                </h5>
+                                <small className="text-muted">
+                                  Section {question.section}
+                                </small>
                               </div>
                             </div>
                             <button
@@ -278,7 +289,10 @@ function AddListeningTest() {
                                 <div className="row g-2 mb-3">
                                   {question.options.map(
                                     (option: any, optionIndex: any) => (
-                                      <div key={optionIndex} className="col-md-6">
+                                      <div
+                                        key={optionIndex}
+                                        className="col-md-6"
+                                      >
                                         <div className="input-group">
                                           <div className="input-group-text">
                                             <input
@@ -286,8 +300,8 @@ function AddListeningTest() {
                                               name={`correct-${question.id}`}
                                               value={option}
                                               checked={
-                                                question.correctAnswer === option &&
-                                                option !== ""
+                                                question.correctAnswer ===
+                                                  option && option !== ""
                                               }
                                               onChange={() =>
                                                 updateQuestion(
@@ -321,12 +335,16 @@ function AddListeningTest() {
                               )}
 
                             {/* Multiple Choice (Multiple Answers) */}
-                            {question.questionType === "multiple-choice-multiple" &&
+                            {question.questionType ===
+                              "multiple-choice-multiple" &&
                               question.options && (
                                 <div className="row g-2 mb-3">
                                   {question.options.map(
                                     (option: any, optionIndex: any) => (
-                                      <div key={optionIndex} className="col-md-6">
+                                      <div
+                                        key={optionIndex}
+                                        className="col-md-6"
+                                      >
                                         <div className="input-group">
                                           <div className="input-group-text">
                                             <input
@@ -334,14 +352,21 @@ function AddListeningTest() {
                                               name={`correct-${question.id}-${optionIndex}`}
                                               value={option}
                                               checked={
-                                                Array.isArray(question.correctAnswer) &&
-                                                question.correctAnswer.includes(option) &&
+                                                Array.isArray(
+                                                  question.correctAnswer
+                                                ) &&
+                                                question.correctAnswer.includes(
+                                                  option
+                                                ) &&
                                                 option !== ""
                                               }
                                               onChange={(e) => {
-                                                const currentAnswers = Array.isArray(question.correctAnswer) 
-                                                  ? question.correctAnswer 
-                                                  : [];
+                                                const currentAnswers =
+                                                  Array.isArray(
+                                                    question.correctAnswer
+                                                  )
+                                                    ? question.correctAnswer
+                                                    : [];
                                                 if (e.target.checked) {
                                                   updateQuestion(
                                                     question.id,
@@ -352,7 +377,10 @@ function AddListeningTest() {
                                                   updateQuestion(
                                                     question.id,
                                                     "correctAnswer",
-                                                    currentAnswers.filter((ans: string) => ans !== option)
+                                                    currentAnswers.filter(
+                                                      (ans: string) =>
+                                                        ans !== option
+                                                    )
                                                   );
                                                 }
                                               }}
@@ -382,121 +410,199 @@ function AddListeningTest() {
 
                             {/* Fill in the Blanks */}
                             {question.questionType === "fill-blanks" && (
-                                <div className="mb-3">
-                                  <div className="row mb-3">
-                                    <div className="col-md-3">
-                                      <label className="form-label">Number of Blanks</label>
-                                      <input
-                                        type="number"
-                                        min="1"
-                                        max="10"
-                                        value={question.blanksCount || 1}
-                                        onChange={(e) =>
-                                          updateQuestion(question.id, "blanksCount", parseInt(e.target.value))
-                                        }
-                                        className="form-control"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="mb-3">
-                                    <label className="form-label">Correct Answers (one per line)</label>
-                                    <textarea
-                                      value={Array.isArray(question.correctAnswer) ? question.correctAnswer.join('\n') : ''}
-                                      onChange={(e) => {
-                                        const answers = e.target.value.split('\n').filter(line => line.trim() !== '');
-                                        updateQuestion(question.id, "correctAnswer", answers);
-                                      }}
-                                      placeholder="Enter correct answers, one per line&#10;Example:&#10;university&#10;professor&#10;library"
+                              <div className="mb-3">
+                                <div className="row mb-3">
+                                  <div className="col-md-3">
+                                    <label className="form-label">
+                                      Number of Blanks
+                                    </label>
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      max="10"
+                                      value={question.blanksCount || 1}
+                                      onChange={(e) =>
+                                        updateQuestion(
+                                          question.id,
+                                          "blanksCount",
+                                          parseInt(e.target.value)
+                                        )
+                                      }
                                       className="form-control"
-                                      rows={question.blanksCount || 1}
                                     />
                                   </div>
-                                  <div className="alert alert-info d-flex align-items-center">
-                                    <i className="bi bi-info-circle me-2"></i>
-                                    <span>Use underscores (_____) in your question text to indicate where blanks should appear.</span>
-                                  </div>
                                 </div>
-                              )}
+                                <div className="mb-3">
+                                  <label className="form-label">
+                                    Correct Answers (one per line)
+                                  </label>
+                                  <textarea
+                                    value={
+                                      Array.isArray(question.correctAnswer)
+                                        ? question.correctAnswer.join("\n")
+                                        : ""
+                                    }
+                                    onChange={(e) => {
+                                      const answers = e.target.value
+                                        .split("\n")
+                                        .filter((line) => line.trim() !== "");
+                                      updateQuestion(
+                                        question.id,
+                                        "correctAnswer",
+                                        answers
+                                      );
+                                    }}
+                                    placeholder="Enter correct answers, one per line&#10;Example:&#10;university&#10;professor&#10;library"
+                                    className="form-control"
+                                    rows={question.blanksCount || 1}
+                                  />
+                                </div>
+                                <div className="alert alert-info d-flex align-items-center">
+                                  <i className="bi bi-info-circle me-2"></i>
+                                  <span>
+                                    Use underscores (_____) in your question
+                                    text to indicate where blanks should appear.
+                                  </span>
+                                </div>
+                              </div>
+                            )}
 
                             {/* Matching */}
                             {question.questionType === "matching" && (
-                                <div className="mb-3">
-                                  <div className="row">
-                                    <div className="col-md-6">
-                                      <h5 className="mb-3">Items to Match</h5>
-                                      {question.options?.items?.map((item: string, index: number) => (
-                                        <div key={`item-${index}`} className="input-group mb-2">
-                                          <span className="input-group-text fw-bold text-primary">{index + 1}.</span>
+                              <div className="mb-3">
+                                <div className="row">
+                                  <div className="col-md-6">
+                                    <h5 className="mb-3">Items to Match</h5>
+                                    {question.options?.items?.map(
+                                      (item: string, index: number) => (
+                                        <div
+                                          key={`item-${index}`}
+                                          className="input-group mb-2"
+                                        >
+                                          <span className="input-group-text fw-bold text-primary">
+                                            {index + 1}.
+                                          </span>
                                           <input
                                             type="text"
                                             value={item}
                                             onChange={(e) => {
-                                              const newItems = [...(question.options?.items || [])];
+                                              const newItems = [
+                                                ...(question.options?.items ||
+                                                  []),
+                                              ];
                                               newItems[index] = e.target.value;
-                                              updateQuestion(question.id, "options", {
-                                                ...question.options,
-                                                items: newItems
-                                              });
+                                              updateQuestion(
+                                                question.id,
+                                                "options",
+                                                {
+                                                  ...question.options,
+                                                  items: newItems,
+                                                }
+                                              );
                                             }}
                                             placeholder={`Item ${index + 1}`}
                                             className="form-control"
                                           />
                                         </div>
-                                      ))}
-                                    </div>
-                                    <div className="col-md-6">
-                                      <h5 className="mb-3">Answer Options</h5>
-                                      {question.options?.matches?.map((match: string, index: number) => (
-                                        <div key={`match-${index}`} className="input-group mb-2">
-                                          <span className="input-group-text fw-bold text-success">{String.fromCharCode(65 + index)}.</span>
+                                      )
+                                    )}
+                                  </div>
+                                  <div className="col-md-6">
+                                    <h5 className="mb-3">Answer Options</h5>
+                                    {question.options?.matches?.map(
+                                      (match: string, index: number) => (
+                                        <div
+                                          key={`match-${index}`}
+                                          className="input-group mb-2"
+                                        >
+                                          <span className="input-group-text fw-bold text-success">
+                                            {String.fromCharCode(65 + index)}.
+                                          </span>
                                           <input
                                             type="text"
                                             value={match}
                                             onChange={(e) => {
-                                              const newMatches = [...(question.options?.matches || [])];
-                                              newMatches[index] = e.target.value;
-                                              updateQuestion(question.id, "options", {
-                                                ...question.options,
-                                                matches: newMatches
-                                              });
+                                              const newMatches = [
+                                                ...(question.options?.matches ||
+                                                  []),
+                                              ];
+                                              newMatches[index] =
+                                                e.target.value;
+                                              updateQuestion(
+                                                question.id,
+                                                "options",
+                                                {
+                                                  ...question.options,
+                                                  matches: newMatches,
+                                                }
+                                              );
                                             }}
-                                            placeholder={`Option ${String.fromCharCode(65 + index)}`}
+                                            placeholder={`Option ${String.fromCharCode(
+                                              65 + index
+                                            )}`}
                                             className="form-control"
                                           />
                                         </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <div className="mt-3">
-                                    <label className="form-label">Correct Matches (Format: 1-A, 2-B, 3-C, 4-D)</label>
-                                    <input
-                                      type="text"
-                                      value={
-                                        Array.isArray(question.correctAnswer) 
-                                          ? question.correctAnswer.map((match: any) => 
-                                              `${match.item + 1}-${String.fromCharCode(65 + match.match)}`
-                                            ).join(', ')
-                                          : ''
-                                      }
-                                      onChange={(e) => {
-                                        const matches = e.target.value.split(',').map(pair => {
-                                          const [item, match] = pair.trim().split('-');
-                                          return {
-                                            item: parseInt(item) - 1,
-                                            match: match ? match.charCodeAt(0) - 65 : 0
-                                          };
-                                        }).filter(match => !isNaN(match.item) && !isNaN(match.match));
-                                        updateQuestion(question.id, "correctAnswer", matches);
-                                      }}
-                                      placeholder="1-A, 2-B, 3-C, 4-D"
-                                      className="form-control font-monospace"
-                                    />
+                                      )
+                                    )}
                                   </div>
                                 </div>
-                              )}
+                                <div className="mt-3">
+                                  <label className="form-label">
+                                    Correct Matches (Format: 1-A, 2-B, 3-C, 4-D)
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={
+                                      Array.isArray(question.correctAnswer)
+                                        ? question.correctAnswer
+                                            .map(
+                                              (match: any) =>
+                                                `${
+                                                  match.item + 1
+                                                }-${String.fromCharCode(
+                                                  65 + match.match
+                                                )}`
+                                            )
+                                            .join(", ")
+                                        : ""
+                                    }
+                                    onChange={(e) => {
+                                      const matches = e.target.value
+                                        .split(",")
+                                        .map((pair) => {
+                                          const [item, match] = pair
+                                            .trim()
+                                            .split("-");
+                                          return {
+                                            item: parseInt(item) - 1,
+                                            match: match
+                                              ? match.charCodeAt(0) - 65
+                                              : 0,
+                                          };
+                                        })
+                                        .filter(
+                                          (match) =>
+                                            !isNaN(match.item) &&
+                                            !isNaN(match.match)
+                                        );
+                                      updateQuestion(
+                                        question.id,
+                                        "correctAnswer",
+                                        matches
+                                      );
+                                    }}
+                                    placeholder="1-A, 2-B, 3-C, 4-D"
+                                    className="form-control font-monospace"
+                                  />
+                                </div>
+                              </div>
+                            )}
 
                             <div className="border-top pt-3">
-                              <label className="form-label">Explanation (Optional)</label>
+                              <label className="form-label">
+                                Explanation (Optional)
+                              </label>
                               <textarea
                                 className="form-control"
                                 rows={3}
@@ -522,15 +628,24 @@ function AddListeningTest() {
                       <select id="listeningSection" className="form-select">
                         <option value="1">Section 1 (Social Context)</option>
                         <option value="2">Section 2 (Monologue)</option>
-                        <option value="3">Section 3 (Academic Discussion)</option>
+                        <option value="3">
+                          Section 3 (Academic Discussion)
+                        </option>
                         <option value="4">Section 4 (Academic Lecture)</option>
                       </select>
                     </div>
                     <div className="col-md-6">
                       <label className="form-label">Question Type</label>
-                      <select id="listeningQuestionType" className="form-select">
-                        <option value="multiple-choice">Multiple Choice (Single Answer)</option>
-                        <option value="multiple-choice-multiple">Multiple Choice (Multiple Answers)</option>
+                      <select
+                        id="listeningQuestionType"
+                        className="form-select"
+                      >
+                        <option value="multiple-choice">
+                          Multiple Choice (Single Answer)
+                        </option>
+                        <option value="multiple-choice-multiple">
+                          Multiple Choice (Multiple Answers)
+                        </option>
                         <option value="fill-blanks">Fill in the Blanks</option>
                         <option value="matching">Matching</option>
                       </select>
@@ -543,7 +658,8 @@ function AddListeningTest() {
                       className="btn btn-primary btn-lg"
                       onClick={addListeningQuestion}
                     >
-                      <i className="bi bi-plus-circle-fill me-2"></i> Add Question
+                      <i className="bi bi-plus-circle-fill me-2"></i> Add
+                      Question
                     </button>
                   </div>
                 </div>
@@ -561,11 +677,9 @@ function AddListeningTest() {
                 </div>
 
                 <div className="text-center">
-                  <button
-                    type="submit"
-                    className="btn btn-success btn-lg px-5"
-                  >
-                    <i className="bi bi-floppy-fill me-2"></i> Save Listening Test
+                  <button type="submit" className="btn btn-success btn-lg px-5">
+                    <i className="bi bi-floppy-fill me-2"></i> Save Listening
+                    Test
                   </button>
                 </div>
               </form>
