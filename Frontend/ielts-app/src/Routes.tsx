@@ -17,6 +17,8 @@ import CategoryLayout from "./components/layout/CategoriesLayout";
 import TestList from "./pages/TestList";
 import ForgotPassword from "./pages/ForgotPassword";
 import AddTest from "./pages/AddTest";
+import ReadingTestPage from "./pages/ReadingTestPage";
+import ListeningTestPage from "./pages/ListeningTestPage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +26,14 @@ const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <div>Page not found</div>,
     children: [
+      {
+        path: "reading",
+        element: <ReadingTestPage />,
+      },
+      {
+        path: "listening",
+        element: <ListeningTestPage />,
+      },
       {
         index: true,
         element: <HomePage />,
@@ -103,7 +113,7 @@ const router = createBrowserRouter([
   {
     path: "forgot-password",
     element: <ForgotPassword />
-   }
+  },
 ]);
 
 export default function Routes() {
