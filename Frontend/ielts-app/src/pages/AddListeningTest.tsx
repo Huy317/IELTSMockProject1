@@ -1,6 +1,12 @@
 import { useState, useRef } from "react";
 import "./AddListeningTest.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import {
+  MultipleChoiceSingle,
+  MultipleChoiceMultiple,
+  FillInBlanks,
+  Matching,
+} from "../components/test/question_form_creator";
 
 // interface Question {
 //   id: number;
@@ -286,317 +292,38 @@ function AddListeningTest() {
                             {/* Multiple Choice (Single Answer) */}
                             {question.questionType === "multiple-choice" &&
                               question.options && (
-                                <div className="row g-2 mb-3">
-                                  {question.options.map(
-                                    (option: any, optionIndex: any) => (
-                                      <div
-                                        key={optionIndex}
-                                        className="col-md-6"
-                                      >
-                                        <div className="input-group">
-                                          <div className="input-group-text">
-                                            <input
-                                              type="radio"
-                                              name={`correct-${question.id}`}
-                                              value={option}
-                                              checked={
-                                                question.correctAnswer ===
-                                                  option && option !== ""
-                                              }
-                                              onChange={() =>
-                                                updateQuestion(
-                                                  question.id,
-                                                  "correctAnswer",
-                                                  option
-                                                )
-                                              }
-                                            />
-                                          </div>
-                                          <input
-                                            type="text"
-                                            value={option}
-                                            onChange={(e) =>
-                                              updateQuestionOption(
-                                                question.id,
-                                                optionIndex,
-                                                e.target.value
-                                              )
-                                            }
-                                            placeholder={`Option ${String.fromCharCode(
-                                              65 + optionIndex
-                                            )}`}
-                                            className="form-control"
-                                          />
-                                        </div>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
+                                <MultipleChoiceSingle
+                                  question={question}
+                                  updateQuestion={updateQuestion}
+                                  updateQuestionOption={updateQuestionOption}
+                                />
                               )}
 
                             {/* Multiple Choice (Multiple Answers) */}
                             {question.questionType ===
                               "multiple-choice-multiple" &&
                               question.options && (
-                                <div className="row g-2 mb-3">
-                                  {question.options.map(
-                                    (option: any, optionIndex: any) => (
-                                      <div
-                                        key={optionIndex}
-                                        className="col-md-6"
-                                      >
-                                        <div className="input-group">
-                                          <div className="input-group-text">
-                                            <input
-                                              type="checkbox"
-                                              name={`correct-${question.id}-${optionIndex}`}
-                                              value={option}
-                                              checked={
-                                                Array.isArray(
-                                                  question.correctAnswer
-                                                ) &&
-                                                question.correctAnswer.includes(
-                                                  option
-                                                ) &&
-                                                option !== ""
-                                              }
-                                              onChange={(e) => {
-                                                const currentAnswers =
-                                                  Array.isArray(
-                                                    question.correctAnswer
-                                                  )
-                                                    ? question.correctAnswer
-                                                    : [];
-                                                if (e.target.checked) {
-                                                  updateQuestion(
-                                                    question.id,
-                                                    "correctAnswer",
-                                                    [...currentAnswers, option]
-                                                  );
-                                                } else {
-                                                  updateQuestion(
-                                                    question.id,
-                                                    "correctAnswer",
-                                                    currentAnswers.filter(
-                                                      (ans: string) =>
-                                                        ans !== option
-                                                    )
-                                                  );
-                                                }
-                                              }}
-                                            />
-                                          </div>
-                                          <input
-                                            type="text"
-                                            value={option}
-                                            onChange={(e) =>
-                                              updateQuestionOption(
-                                                question.id,
-                                                optionIndex,
-                                                e.target.value
-                                              )
-                                            }
-                                            placeholder={`Option ${String.fromCharCode(
-                                              65 + optionIndex
-                                            )}`}
-                                            className="form-control"
-                                          />
-                                        </div>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
+                                <MultipleChoiceMultiple
+                                  question={question}
+                                  updateQuestion={updateQuestion}
+                                  updateQuestionOption={updateQuestionOption}
+                                />
                               )}
 
                             {/* Fill in the Blanks */}
                             {question.questionType === "fill-blanks" && (
-                              <div className="mb-3">
-                                <div className="row mb-3">
-                                  <div className="col-md-3">
-                                    <label className="form-label">
-                                      Number of Blanks
-                                    </label>
-                                    <input
-                                      type="number"
-                                      min="1"
-                                      max="10"
-                                      value={question.blanksCount || 1}
-                                      onChange={(e) =>
-                                        updateQuestion(
-                                          question.id,
-                                          "blanksCount",
-                                          parseInt(e.target.value)
-                                        )
-                                      }
-                                      className="form-control"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="mb-3">
-                                  <label className="form-label">
-                                    Correct Answers (one per line)
-                                  </label>
-                                  <textarea
-                                    value={
-                                      Array.isArray(question.correctAnswer)
-                                        ? question.correctAnswer.join("\n")
-                                        : ""
-                                    }
-                                    onChange={(e) => {
-                                      const answers = e.target.value
-                                        .split("\n")
-                                        .filter((line) => line.trim() !== "");
-                                      updateQuestion(
-                                        question.id,
-                                        "correctAnswer",
-                                        answers
-                                      );
-                                    }}
-                                    placeholder="Enter correct answers, one per line&#10;Example:&#10;university&#10;professor&#10;library"
-                                    className="form-control"
-                                    rows={question.blanksCount || 1}
-                                  />
-                                </div>
-                                <div className="alert alert-info d-flex align-items-center">
-                                  <i className="bi bi-info-circle me-2"></i>
-                                  <span>
-                                    Use underscores (_____) in your question
-                                    text to indicate where blanks should appear.
-                                  </span>
-                                </div>
-                              </div>
+                              <FillInBlanks
+                                question={question}
+                                updateQuestion={updateQuestion}
+                              />
                             )}
 
                             {/* Matching */}
                             {question.questionType === "matching" && (
-                              <div className="mb-3">
-                                <div className="row">
-                                  <div className="col-md-6">
-                                    <h5 className="mb-3">Items to Match</h5>
-                                    {question.options?.items?.map(
-                                      (item: string, index: number) => (
-                                        <div
-                                          key={`item-${index}`}
-                                          className="input-group mb-2"
-                                        >
-                                          <span className="input-group-text fw-bold text-primary">
-                                            {index + 1}.
-                                          </span>
-                                          <input
-                                            type="text"
-                                            value={item}
-                                            onChange={(e) => {
-                                              const newItems = [
-                                                ...(question.options?.items ||
-                                                  []),
-                                              ];
-                                              newItems[index] = e.target.value;
-                                              updateQuestion(
-                                                question.id,
-                                                "options",
-                                                {
-                                                  ...question.options,
-                                                  items: newItems,
-                                                }
-                                              );
-                                            }}
-                                            placeholder={`Item ${index + 1}`}
-                                            className="form-control"
-                                          />
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                  <div className="col-md-6">
-                                    <h5 className="mb-3">Answer Options</h5>
-                                    {question.options?.matches?.map(
-                                      (match: string, index: number) => (
-                                        <div
-                                          key={`match-${index}`}
-                                          className="input-group mb-2"
-                                        >
-                                          <span className="input-group-text fw-bold text-success">
-                                            {String.fromCharCode(65 + index)}.
-                                          </span>
-                                          <input
-                                            type="text"
-                                            value={match}
-                                            onChange={(e) => {
-                                              const newMatches = [
-                                                ...(question.options?.matches ||
-                                                  []),
-                                              ];
-                                              newMatches[index] =
-                                                e.target.value;
-                                              updateQuestion(
-                                                question.id,
-                                                "options",
-                                                {
-                                                  ...question.options,
-                                                  matches: newMatches,
-                                                }
-                                              );
-                                            }}
-                                            placeholder={`Option ${String.fromCharCode(
-                                              65 + index
-                                            )}`}
-                                            className="form-control"
-                                          />
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="mt-3">
-                                  <label className="form-label">
-                                    Correct Matches (Format: 1-A, 2-B, 3-C, 4-D)
-                                  </label>
-                                  <input
-                                    type="text"
-                                    value={
-                                      Array.isArray(question.correctAnswer)
-                                        ? question.correctAnswer
-                                            .map(
-                                              (match: any) =>
-                                                `${
-                                                  match.item + 1
-                                                }-${String.fromCharCode(
-                                                  65 + match.match
-                                                )}`
-                                            )
-                                            .join(", ")
-                                        : ""
-                                    }
-                                    onChange={(e) => {
-                                      const matches = e.target.value
-                                        .split(",")
-                                        .map((pair) => {
-                                          const [item, match] = pair
-                                            .trim()
-                                            .split("-");
-                                          return {
-                                            item: parseInt(item) - 1,
-                                            match: match
-                                              ? match.charCodeAt(0) - 65
-                                              : 0,
-                                          };
-                                        })
-                                        .filter(
-                                          (match) =>
-                                            !isNaN(match.item) &&
-                                            !isNaN(match.match)
-                                        );
-                                      updateQuestion(
-                                        question.id,
-                                        "correctAnswer",
-                                        matches
-                                      );
-                                    }}
-                                    placeholder="1-A, 2-B, 3-C, 4-D"
-                                    className="form-control font-monospace"
-                                  />
-                                </div>
-                              </div>
+                              <Matching
+                                question={question}
+                                updateQuestion={updateQuestion}
+                              />
                             )}
 
                             <div className="border-top pt-3">
