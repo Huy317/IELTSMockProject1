@@ -1,14 +1,12 @@
-import React from "react";
-
 interface MatchingHeadingsProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-const MatchingHeadings: React.FC<MatchingHeadingsProps> = ({
+function MatchingHeadings({
   question,
   updateQuestion,
-}) => {
+}: MatchingHeadingsProps) {
   const updateMatchingItem = (index: number, field: "items" | "matches", value: string) => {
     const updatedOptions = { ...question.options };
     updatedOptions[field][index] = value;
@@ -99,6 +97,6 @@ const MatchingHeadings: React.FC<MatchingHeadingsProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default MatchingHeadings;

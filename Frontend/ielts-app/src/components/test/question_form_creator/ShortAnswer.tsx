@@ -1,11 +1,9 @@
-import React from "react";
-
 interface ShortAnswerProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-const ShortAnswer: React.FC<ShortAnswerProps> = ({ question, updateQuestion }) => {
+function ShortAnswer({ question, updateQuestion }: ShortAnswerProps) {
   return (
     <div className="reading-short-answer">
       <label className="form-label">
@@ -61,6 +59,6 @@ Example: cat, feline, kitten"
       </div>
     </div>
   );
-};
+}
 
 export default ShortAnswer;

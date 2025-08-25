@@ -1,14 +1,12 @@
-import React from "react";
-
 interface YesNoNotGivenProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-const YesNoNotGiven: React.FC<YesNoNotGivenProps> = ({
+function YesNoNotGiven({
   question,
   updateQuestion,
-}) => {
+}: YesNoNotGivenProps) {
   const options = ["Yes", "No", "Not Given"];
 
   return (
@@ -37,6 +35,6 @@ const YesNoNotGiven: React.FC<YesNoNotGivenProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default YesNoNotGiven;

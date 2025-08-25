@@ -1,4 +1,3 @@
-import React from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import {
   MultipleChoiceSingle,
@@ -42,7 +41,7 @@ interface PassageComponentProps {
   ) => void;
 }
 
-const PassageComponent: React.FC<PassageComponentProps> = ({
+function PassageComponent({
   passage,
   index,
   updatePassage,
@@ -51,7 +50,7 @@ const PassageComponent: React.FC<PassageComponentProps> = ({
   removeQuestion,
   updateQuestion,
   updateQuestionOption,
-}) => {
+}: PassageComponentProps) {
   const renderQuestionForm = (question: any, passageId: number) => {
     const questionProps = {
       question,
@@ -315,6 +314,6 @@ const PassageComponent: React.FC<PassageComponentProps> = ({
       )}
     </div>
   );
-};
+}
 
 export default PassageComponent;

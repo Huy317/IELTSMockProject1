@@ -1,14 +1,12 @@
-import React from "react";
-
 interface SentenceCompletionProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-const SentenceCompletion: React.FC<SentenceCompletionProps> = ({
+function SentenceCompletion({
   question,
   updateQuestion,
-}) => {
+}: SentenceCompletionProps) {
   const updateBlank = (index: number, value: string) => {
     const updatedAnswers = [...(question.correctAnswer || [""])];
     updatedAnswers[index] = value;
@@ -103,6 +101,6 @@ Example: The study showed that _____ (1) has a significant impact on _____ (2)."
       </div>
     </div>
   );
-};
+}
 
 export default SentenceCompletion;

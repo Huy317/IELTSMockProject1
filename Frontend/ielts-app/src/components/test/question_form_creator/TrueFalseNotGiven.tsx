@@ -1,14 +1,12 @@
-import React from "react";
-
 interface TrueFalseNotGivenProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-const TrueFalseNotGiven: React.FC<TrueFalseNotGivenProps> = ({
+function TrueFalseNotGiven({
   question,
   updateQuestion,
-}) => {
+}: TrueFalseNotGivenProps) {
   const options = ["True", "False", "Not Given"];
 
   return (
@@ -37,6 +35,6 @@ const TrueFalseNotGiven: React.FC<TrueFalseNotGivenProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default TrueFalseNotGiven;

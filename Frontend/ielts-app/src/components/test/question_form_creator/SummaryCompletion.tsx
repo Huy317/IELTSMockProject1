@@ -1,14 +1,12 @@
-import React from "react";
-
 interface SummaryCompletionProps {
   question: any;
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-const SummaryCompletion: React.FC<SummaryCompletionProps> = ({
+function SummaryCompletion({
   question,
   updateQuestion,
-}) => {
+}: SummaryCompletionProps) {
   const updateBlank = (index: number, value: string) => {
     const updatedAnswers = [...(question.correctAnswer || [""])];
     updatedAnswers[index] = value;
@@ -127,6 +125,6 @@ Example: technology, impact, communicate, social, digital"
       </div>
     </div>
   );
-};
+}
 
 export default SummaryCompletion;
