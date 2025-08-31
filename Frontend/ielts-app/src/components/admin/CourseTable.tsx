@@ -1,5 +1,7 @@
 //import React from "react";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { confirmToast } from "../layout/confirmToast";
 import { getTests } from "../../services/testService";
 import { deleteTest } from "../../services/testService";
 import type { Test } from "../../types/Test";
@@ -8,17 +10,6 @@ function CourseTable() {
   const [tests, setTests] = useState<Test[]>([]);
 
   useEffect(() => {
-    // getTests()
-    //   .then((data: Test[]) => {
-    //     setTests(data);
-    //   })
-    //   .catch((err: unknown) => {
-    //     if (err instanceof Error) {
-    //       console.error("Failed to fetch tests:", err.message);
-    //     } else {
-    //       console.error("Failed to fetch tests:", err);
-    //     }
-    //   });
     loadTests();
   }, []);
 
@@ -28,12 +19,25 @@ function CourseTable() {
   }
 
   async function handleDelete(id: number) {
-    try {
-      await deleteTest(id);
-      await loadTests();
-    } catch (err) {
-      console.error("Delete failed", err);
-    }
+    console.log("handleDelete called with id:", id);
+    confirmToast(
+      "Are you sure you want to delete this course?",
+      async () => {
+        console.log("Confirm button clicked, deleting test with id:", id);
+        try {
+          await deleteTest(id);
+          await loadTests();
+          toast.success("Course deleted successfully!");
+        } catch (err) {
+          console.error("Delete failed", err);
+          toast.error("Failed to delete course. Please try again.");
+        }
+      },
+      () => {
+        // Optional cancel callback - just closes the toast
+        console.log("Delete cancelled");
+      }
+    );
   }
 
   return (
