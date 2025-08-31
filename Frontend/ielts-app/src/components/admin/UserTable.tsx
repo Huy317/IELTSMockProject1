@@ -1,69 +1,100 @@
-import UserRow from "./UserRow";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { confirmToast } from "../layout/confirmToast";
+import { deleteUser, getAllUsers } from "../../services/userService";
+import type { User } from "../../types/User";
+import { Link } from "react-router-dom";
 
 function UserTable() {
+  const [users, getUsers] = useState<User[]>([]);
 
-    const testUsers = [
-        {
-            id: "1",
-            fullName: "John Doe",
-            createdAt: "2023-01-01",
-            role: "Student",
-            currentBandScore: 7.5
-        },
-        {
-            id: "2",
-            fullName: "Jane Smith",
-            createdAt: "2023-02-15",
-            role: "Student",
-            currentBandScore: 8.0
-        },
-        {
-            id: "3",
-            fullName: "Alice Johnson",
-            createdAt: "2023-03-10",
-            role: "Student",
-            currentBandScore: 7.0
-        },
-        {
-            id: "4",
-            fullName: "David Brown",
-            createdAt: "2023-04-05",
-            role: "Student",
-            currentBandScore: 6.5
-        },
-        {
-            id: "abcxyz111",
-            fullName: "Emma Wilson",
-            createdAt: "2023-05-20",
-            role: "Admin",
-            currentBandScore: 9.0
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  async function loadUsers() {
+    const data = await getAllUsers();
+    getUsers(data);
+  }
+
+  async function handleDelete(id: number) {
+    confirmToast(
+      "Are you sure you want to delete this user?",
+      async () => {
+        try {
+          await deleteUser(id);
+          await loadUsers();
+          toast.success("User deleted successfully!");
+        } catch (err) {
+          console.error("Delete failed", err);
+          toast.error("Failed to delete user. Please try again.");
         }
-    ];
-
-    return (
-        <div className="table-responsive custom-table">
-            <table className="table">
-                <thead className="thead-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Full Name</th>
-                        <th>Created At</th>
-                        <th>Role</th>
-                        <th>Current Band Score</th>
-                        {/* Action buttons column */}
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {testUsers.map(user => (
-                        <UserRow key={user.id} user={user} />
-                    ))}
-                </tbody>
-            </table>
-        </div>
-
-        // TODO: Add pagination
+      },
+      () => {
+        // Optional cancel callback
+        console.log("Delete cancelled");
+      }
     );
+  }
+
+  return (
+    <div className="table-responsive custom-table">
+      <table className="table">
+        <thead className="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Role</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>
+                <Link
+                  to={`/student-details/${user.id}`}
+                  className="text-primary"
+                >
+                  #{user.id}
+                </Link>
+              </td>
+              <td>
+                <div className="d-flex align-items-center">
+                  <Link to={`/student-details/${user.id}`}>
+                    <p className="fs-14">{user.fullName}</p>
+                  </Link>
+                </div>
+              </td>
+              <td>{user.email}</td>
+              <td>{user.phoneNumber}</td>
+              <td>{user.role}</td>
+              <td>
+                <div className="d-flex align-items-center">
+                  <Link
+                    to={`/student-details/${user.id}`}
+                    className="d-inline-flex fs-14 me-1 action-icon"
+                  >
+                    <i className="isax isax-eye text-info"></i>
+                  </Link>
+                  <Link to="#" className="d-inline-flex fs-14 action-icon">
+                    <i className="isax isax-edit"></i>
+                  </Link>
+                  <Link onClick={() => handleDelete(user.id)} to="#" className="d-inline-flex fs-14 action-icon">
+                    <i className="isax isax-trash text-danger"></i>
+                  </Link>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    // TODO: Add pagination
+  );
 }
 
 export default UserTable;
