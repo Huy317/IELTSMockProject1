@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
+import { createUser } from '../services/userService';
 import './pages.css';
 
 type Inputs = {
     fullName: string;
     email: string;
+    phoneNumber: string;
     password: string;
     confirmPassword: string;
     agreeToTerms: boolean;
@@ -22,6 +24,7 @@ const RegisterPage = () => {
     const [passwordComment, setPasswordComment] = useState('');
 
     const [alertMessage, setAlertMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     let navigate = useNavigate();
 
@@ -84,7 +87,7 @@ const RegisterPage = () => {
         setAlertMessage(e);
     }
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
         // Sanity check: Log the form data
         console.log('Form submitted with data:', data);
         
@@ -108,17 +111,33 @@ const RegisterPage = () => {
 
         // Clear any previous error messages
         setAlertMessage('');
+        setIsLoading(true);
         
-        // Register success
-        // TODO: API Call here
-        console.log('Registration successful with data:', {
-            fullName: data.fullName,
-            email: data.email,
-            password: data.password,
-            agreeToTerms: data.agreeToTerms
-        });
-        
-        registerSuccess();
+        try {
+            // Prepare user data for API (map form data to DTO format)
+            const newUserData = {
+                fullName: data.fullName, // API expects 'fullName' (camelCase)
+                email: data.email,
+                password: data.password,
+                phoneNumber: data.phoneNumber || null, // Use form value or null if empty
+                role: 'student' // Default role or get from form
+            };
+
+            // Call API to create users
+            console.log('Sending data to API:', newUserData);
+            await createUser(newUserData);
+            
+            // Registration successful
+            registerSuccess();
+        } catch (error: any) {
+            // Handle API errors
+            console.error('Registration error:', error);
+            console.error('Error response:', error.response?.data);
+            const errorMessage = error.response?.data?.message || error.message || 'Registration failed. Please try again.';
+            registerFailed(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -192,6 +211,23 @@ const RegisterPage = () => {
                                                 <span><i className="isax isax-sms input-icon text-gray-7 fs-14"></i></span>
                                             </div>
                                             {errors.email && <div className="text-danger mt-1 fs-12">{errors.email.message}</div>}
+                                        </div>
+                                        <div className="mb-3 position-relative">
+                                            <label className="form-label">Phone Number</label>
+                                            <div className="position-relative">
+                                                <input
+                                                    type="tel"
+                                                    className="form-control form-control-lg"
+                                                    {...register("phoneNumber", {
+                                                        pattern: {
+                                                            value: /^[\+]?[0-9\s\-\(\)]{10,}$/,
+                                                            message: "Please enter a valid phone number"
+                                                        }
+                                                    })}
+                                                />
+                                                <span><i className="isax isax-call input-icon text-gray-7 fs-14"></i></span>
+                                            </div>
+                                            {errors.phoneNumber && <div className="text-danger mt-1 fs-12">{errors.phoneNumber.message}</div>}
                                         </div>
                                         <div className="mb-3 position-relative">
                                             <label className="form-label">New Password <span className="text-danger"> *</span></label>
@@ -278,8 +314,17 @@ const RegisterPage = () => {
                                             {errors.agreeToTerms && <div className="text-danger mt-1 fs-12 w-100">{errors.agreeToTerms.message}</div>}
                                         </div>
                                         <div className="d-grid">
-                                            <button className="btn btn-secondary btn-lg" type="submit">
-                                                Start IELTS Journey <i className="isax isax-arrow-right-3 ms-1"></i>
+                                            <button className="btn btn-secondary btn-lg" type="submit" disabled={isLoading}>
+                                                {isLoading ? (
+                                                    <>
+                                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                        Creating Account...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        Start IELTS Journey <i className="isax isax-arrow-right-3 ms-1"></i>
+                                                    </>
+                                                )}
                                             </button>
                                         </div>
                                     </form>
