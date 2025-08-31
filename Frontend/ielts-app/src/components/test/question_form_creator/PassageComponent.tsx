@@ -112,7 +112,7 @@ function PassageComponent({
       {passage.isExpanded && (
         <div className="card-body">
           <div className="row mb-3">
-            <div className="col-md-6">
+            <div className="col-12"> {/* col-md-6  */}
               <label className="form-label">
                 Passage Title <span className="text-danger">*</span>
               </label>
@@ -127,7 +127,7 @@ function PassageComponent({
                 required
               />
             </div>
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <label className="form-label">Topic Category</label>
               <select
                 value={passage.category}
@@ -145,7 +145,7 @@ function PassageComponent({
                 <option value="health">Health & Medicine</option>
                 <option value="arts">Arts & Literature</option>
               </select>
-            </div>
+            </div> */}
           </div>
 
           <div className="mb-4">
