@@ -3,10 +3,7 @@ interface FillInBlanksProps {
   updateQuestion: (id: any, field: any, value: any) => void;
 }
 
-function FillInBlanks({
-  question,
-  updateQuestion,
-}: FillInBlanksProps) {
+function FillInBlanks({ question, updateQuestion }: FillInBlanksProps) {
   return (
     <div className="mb-3">
       <div className="row mb-3">
@@ -56,6 +53,6 @@ function FillInBlanks({
       </div>
     </div>
   );
-};
+}
 
 export default FillInBlanks;

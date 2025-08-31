@@ -57,6 +57,6 @@ function MultipleChoiceMultiple({
       ))}
     </div>
   );
-};
+}
 
 export default MultipleChoiceMultiple;
