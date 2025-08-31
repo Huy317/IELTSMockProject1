@@ -20,20 +20,20 @@ interface Passage {
   isExpanded: boolean;
 }
 
-interface PassageComponentProps {
+interface ReadingPassageComponentProps {
   passage: Passage;
   index: number;
-  updatePassage: (passageId: number, field: string, value: any) => void;
-  togglePassageExpansion: (passageId: number) => void;
+  updateReadingPassage: (passageId: number, field: string, value: any) => void;
+  toggleReadingPassageExpansion: (passageId: number) => void;
   addReadingQuestion: (passageId: number) => void;
-  removeQuestion: (passageId: number, questionId: number) => void;
-  updateQuestion: (
+  removeReadingQuestion: (passageId: number, questionId: number) => void;
+  updateReadingQuestion: (
     passageId: number,
     questionId: any,
     field: any,
     value: any
   ) => void;
-  updateQuestionOption: (
+  updateReadingQuestionOption: (
     passageId: number,
     questionId: any,
     optionIndex: any,
@@ -41,23 +41,23 @@ interface PassageComponentProps {
   ) => void;
 }
 
-function PassageComponent({
+function ReadingPassageComponent({
   passage,
   index,
-  updatePassage,
-  togglePassageExpansion,
+  updateReadingPassage,
+  toggleReadingPassageExpansion,
   addReadingQuestion,
-  removeQuestion,
-  updateQuestion,
-  updateQuestionOption,
-}: PassageComponentProps) {
-  const renderQuestionForm = (question: any, passageId: number) => {
+  removeReadingQuestion,
+  updateReadingQuestion,
+  updateReadingQuestionOption,
+}: ReadingPassageComponentProps) {
+  const renderReadingQuestionForm = (question: any, passageId: number) => {
     const questionProps = {
       question,
       updateQuestion: (id: any, field: any, value: any) =>
-        updateQuestion(passageId, id, field, value),
+        updateReadingQuestion(passageId, id, field, value),
       updateQuestionOption: (id: any, optionIndex: any, value: any) =>
-        updateQuestionOption(passageId, id, optionIndex, value),
+        updateReadingQuestionOption(passageId, id, optionIndex, value),
     };
 
     switch (question.questionType) {
@@ -91,7 +91,7 @@ function PassageComponent({
       <div
         className="card-header bg-info bg-opacity-10 d-flex justify-content-between align-items-center expandable-header"
         style={{ cursor: "pointer" }}
-        onClick={() => togglePassageExpansion(passage.id)}
+        onClick={() => toggleReadingPassageExpansion(passage.id)}
       >
         <h3 className="mb-0">
           <i className="bi bi-file-text me-2"></i>
@@ -120,7 +120,7 @@ function PassageComponent({
                 type="text"
                 value={passage.title}
                 onChange={(e) =>
-                  updatePassage(passage.id, "title", e.target.value)
+                  updateReadingPassage(passage.id, "title", e.target.value)
                 }
                 placeholder="e.g., The History of Coffee"
                 className="form-control"
@@ -155,7 +155,7 @@ function PassageComponent({
             <textarea
               value={passage.content}
               onChange={(e) =>
-                updatePassage(passage.id, "content", e.target.value)
+                updateReadingPassage(passage.id, "content", e.target.value)
               }
               className="form-control"
               rows={8}
@@ -204,7 +204,7 @@ function PassageComponent({
                       <button
                         type="button"
                         className="btn btn-outline-danger btn-sm"
-                        onClick={() => removeQuestion(passage.id, question.id)}
+                        onClick={() => removeReadingQuestion(passage.id, question.id)}
                       >
                         <i className="bi bi-trash3 me-1"></i> DELETE
                       </button>
@@ -215,7 +215,7 @@ function PassageComponent({
                         <textarea
                           value={question.questionText}
                           onChange={(e) =>
-                            updateQuestion(
+                            updateReadingQuestion(
                               passage.id,
                               question.id,
                               "questionText",
@@ -228,7 +228,7 @@ function PassageComponent({
                         />
                       </div>
 
-                      {renderQuestionForm(question, passage.id)}
+                      {renderReadingQuestionForm(question, passage.id)}
 
                       <div className="border-top pt-3">
                         <label className="form-label">
@@ -239,7 +239,7 @@ function PassageComponent({
                           rows={3}
                           value={question.explanation || ""}
                           onChange={(e) =>
-                            updateQuestion(
+                            updateReadingQuestion(
                               passage.id,
                               question.id,
                               "explanation",
@@ -260,7 +260,7 @@ function PassageComponent({
                 <select
                   value={passage.questionType}
                   onChange={(e) =>
-                    updatePassage(passage.id, "questionType", e.target.value)
+                    updateReadingPassage(passage.id, "questionType", e.target.value)
                   }
                   className="form-select"
                 >
@@ -291,7 +291,7 @@ function PassageComponent({
                   type="text"
                   value={passage.range}
                   onChange={(e) =>
-                    updatePassage(passage.id, "range", e.target.value)
+                    updateReadingPassage(passage.id, "range", e.target.value)
                   }
                   placeholder="e.g., Questions 1-13"
                   className="form-control"
@@ -316,4 +316,4 @@ function PassageComponent({
   );
 }
 
-export default PassageComponent;
+export default ReadingPassageComponent;

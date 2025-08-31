@@ -1,7 +1,13 @@
 import { useState } from "react";
 import "./AddReadingTest.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { PassageComponent } from "../components/test/question_form_creator";
+import { ReadingPassageComponent } from "../components/test/question_form_creator";
+
+interface FormData {
+  title: string;
+  availability: string;
+  generalInstructions: string;
+}
 
 interface Passage {
   id: number;
@@ -50,37 +56,25 @@ function AddReadingTest() {
 
   const [nextQuestionId, setNextQuestionId] = useState(1);
 
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
-    testType: "academic",
-    difficulty: "5.5-6",
-    duration: 60,
-    generalInstructions: "",
-    createdBy: "",
-    institution: "",
     availability: "public",
-    attempts: "unlimited",
-    description: "",
-    tags: "",
-    passingScore: 65,
-    autoGrading: "enabled",
-    showResults: "immediate",
-    allowReview: "with-answers",
-    timeWarning: "5",
-    objectives: "",
-    tips: "",
-    resources: "",
+    generalInstructions: "",
   });
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    setFormData((prev: any) => ({
+    setFormData((prev: FormData) => ({
       ...prev,
       [name]: type === "number" ? Number(value) : value,
     }));
   };
 
-  const updatePassage = (passageId: number, field: string, value: any) => {
+  const updateReadingPassage = (
+    passageId: number,
+    field: string,
+    value: any
+  ) => {
     setPassages((prev) =>
       prev.map((passage) =>
         passage.id === passageId ? { ...passage, [field]: value } : passage
@@ -88,7 +82,7 @@ function AddReadingTest() {
     );
   };
 
-  const togglePassageExpansion = (passageId: number) => {
+  const toggleReadingPassageExpansion = (passageId: number) => {
     setPassages((prev) =>
       prev.map((passage) =>
         passage.id === passageId
@@ -189,7 +183,7 @@ function AddReadingTest() {
     }, 100);
   };
 
-  const updateQuestion = (
+  const updateReadingQuestion = (
     passageId: number,
     questionId: any,
     field: any,
@@ -209,7 +203,7 @@ function AddReadingTest() {
     );
   };
 
-  const updateQuestionOption = (
+  const updateReadingQuestionOption = (
     passageId: number,
     questionId: any,
     optionIndex: any,
@@ -236,7 +230,7 @@ function AddReadingTest() {
     );
   };
 
-  const removeQuestion = (passageId: number, questionId: number) => {
+  const removeReadingQuestion = (passageId: number, questionId: number) => {
     setPassages((prev) =>
       prev.map((passage) =>
         passage.id === passageId
@@ -249,7 +243,7 @@ function AddReadingTest() {
     );
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form Data:", formData);
     console.log("Passages:", passages);
@@ -301,16 +295,18 @@ function AddReadingTest() {
                 {/* Passages Container */}
                 <div id="passagesContainer" className="mb-4">
                   {passages.map((passage, index) => (
-                    <PassageComponent
+                    <ReadingPassageComponent
                       key={passage.id}
                       passage={passage}
                       index={index}
-                      updatePassage={updatePassage}
-                      togglePassageExpansion={togglePassageExpansion}
+                      updateReadingPassage={updateReadingPassage}
+                      toggleReadingPassageExpansion={
+                        toggleReadingPassageExpansion
+                      }
                       addReadingQuestion={addReadingQuestion}
-                      removeQuestion={removeQuestion}
-                      updateQuestion={updateQuestion}
-                      updateQuestionOption={updateQuestionOption}
+                      removeReadingQuestion={removeReadingQuestion}
+                      updateReadingQuestion={updateReadingQuestion}
+                      updateReadingQuestionOption={updateReadingQuestionOption}
                     />
                   ))}
                 </div>
