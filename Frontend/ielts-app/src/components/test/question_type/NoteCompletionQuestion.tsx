@@ -11,33 +11,23 @@ interface NoteCompletionQuestionProps {
 function NoteCompletionQuestion({ prompt, items }: NoteCompletionQuestionProps) {
   return (
     <div className="mb-4">
-      <div className="fw-bold mb-2">{prompt}</div>
-      <ul className="list-unstyled">
+      <div className="fw-bold mb-3">{prompt}</div>
+      <div className="lh-lg">
         {items.map((item, idx) => (
-          <li key={idx} className="mb-3 d-flex align-items-center">
-            <span>{item.label} </span>
-            <input type="text" className="form-control d-inline-block w-auto mx-2" />
-            {item.after && <span>{item.after}</span>}
-          </li>
+          <div key={idx} className="mb-2">
+            <span className="me-1">{item.label}</span>
+            <input 
+              type="text" 
+              className="form-control d-inline-block border-1 border-dark bg-transparent px-2" 
+              style={{ width: '80px' }}
+            />
+            {item.after && <span className="ms-1">{item.after}</span>}
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
-
-// const noteCompletionProps: NoteCompletionQuestionProps = {
-//   prompt: "Trans-Australian Railway (TAR) Key Facts",
-//   items: [
-//     { label: "Longest straight track section:", after: "miles" },
-//     { label: "Original gauge of eastern/western railways:" },
-//     { label: "Year diesel replaced steam engines:" },
-//     { label: "Final year of the Tea and Sugar Train:" }
-//   ]
-// };
-
-// function NoteCompletionQuestionDemo() {
-//   return <NoteCompletionQuestion {...noteCompletionProps} />;
-// }
 
 function testNote(question : NoteCompletionQuestionProps[]) {
   return (
@@ -50,5 +40,4 @@ function testNote(question : NoteCompletionQuestionProps[]) {
 }
 
 export {testNote};
-// export { NoteCompletionQuestionDemo };
 export default NoteCompletionQuestion;
