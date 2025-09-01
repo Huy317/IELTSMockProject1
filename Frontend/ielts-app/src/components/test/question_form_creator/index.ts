@@ -8,4 +8,5 @@ export { default as MatchingHeadings } from "./MatchingHeadings";
 export { default as SentenceCompletion } from "./SentenceCompletion";
 export { default as SummaryCompletion } from "./SummaryCompletion";
 export { default as ShortAnswer } from "./ShortAnswer";
-export { default as PassageComponent } from "./PassageComponent";
+export { default as ReadingPassageComponent } from "./ReadingPassageComponent";
+export { default as ListeningSectionComponent } from "./ListeningSectionComponent";

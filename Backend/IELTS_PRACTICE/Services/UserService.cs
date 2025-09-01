@@ -84,7 +84,13 @@ namespace IELTS_PRACTICE.Services
 
             user.FullName = userDto.FullName;
             user.Email = userDto.Email;
-            user.Password = _passwordHasher.HashPassword(null!, userDto.Password); // Ensure password is hashed in a real application
+            
+            // Only update password if it's provided
+            if (!string.IsNullOrEmpty(userDto.Password))
+            {
+                user.Password = _passwordHasher.HashPassword(null!, userDto.Password);
+            }
+            
             user.PhoneNumber = userDto.PhoneNumber;
 
             _context.Users.Update(user);

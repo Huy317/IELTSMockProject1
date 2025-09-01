@@ -1,10 +1,145 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { getUserById, updateUser } from "../services/userService";
+import type { User } from "../types/User";
+
 function AdminSetting() {
+  const { userId } = useParams();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  // Separate states for profile and password
+  const [profileData, setProfileData] = useState({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+
+  useEffect(() => {
+    loadUserData();
+  }, [userId]);
+
+  async function loadUserData() {
+    try {
+      setLoading(true);
+      if (userId) {
+        const userData = await getUserById(userId);
+        setUser(userData);
+        setProfileData({
+          fullName: userData.fullName,
+          email: userData.email,
+          phoneNumber: userData.phoneNumber,
+        });
+        setPasswordData({
+          newPassword: "",
+          confirmNewPassword: "",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load user data:", error);
+      toast.error("Failed to load user data");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleProfileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setProfileData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+
+  function handlePasswordInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+
+  async function handleProfileSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    
+    if (!user) {
+      toast.error("No user data available");
+      return;
+    }
+
+    try {
+      const updateData = {
+        fullName: profileData.fullName,
+        email: profileData.email,
+        phoneNumber: profileData.phoneNumber,
+      };
+
+      await updateUser(user.id, updateData);
+      toast.success("Profile updated successfully!");
+      
+      await loadUserData();
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      toast.error("Failed to update profile");
+    }
+  }
+
+  async function handlePasswordSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    
+    if (!user) {
+      toast.error("No user data available");
+      return;
+    }
+
+    // Validate passwords match
+    if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    try {
+      const updateData = {
+        fullName: profileData.fullName,
+        email: profileData.email,
+        phoneNumber: profileData.phoneNumber,
+        password: passwordData.newPassword,
+      };
+
+      await updateUser(user.id, updateData);
+      toast.success("Password updated successfully!");
+      
+      setPasswordData({
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+    } catch (error) {
+      console.error("Failed to update password:", error);
+      toast.error("Failed to update password");
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-3">
         <h5>Settings</h5>
       </div>
-      <form>
+      <form onSubmit={handleProfileSubmit}>
         <div className="card mt-3">
           <div className="card-body">
             <div className="profile-upload-group">
@@ -37,140 +172,54 @@ function AdminSetting() {
               <div className="row">
                 <div className="col-md-6">
                   <div className="mb-3">
-                    <label className="form-label">First Name <span className="text-danger">*</span></label>
-                    <input type="text" className="form-control" defaultValue="Eugene" />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">Last Name <span className="text-danger">*</span></label>
-                    <input type="text" className="form-control" defaultValue="Andre" />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
                     <label className="form-label">User Name <span className="text-danger">*</span></label>
-                    <input type="text" className="form-control" defaultValue="instructordemo" />
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      name="fullName"
+                      value={profileData.fullName}
+                      onChange={handleProfileInputChange}
+                      required
+                    />
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className="mb-3">
-                    <label className="form-label">Phone Number <span className="text-danger">*</span></label>
-                    <input type="text" className="form-control" defaultValue="90154-91036" />
+                    <label className="form-label">Email <span className="text-danger">*</span></label>
+                    <input 
+                      type="email" 
+                      className="form-control" 
+                      name="email"
+                      value={profileData.email}
+                      onChange={handleProfileInputChange}
+                      required
+                    />
                   </div>
                 </div>
-                <div className="col-md-12">
-                  <div className="mb-4">
-                    <label className="form-label">Bio <span className="text-danger">*</span></label>
-                    <textarea rows={4} className="form-control" defaultValue="I am a web developer with a vast array of knowledge in many different front end and back end languages, responsive frameworks, databases, and best code practices." />
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">Phone Number</label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      name="phoneNumber"
+                      value={profileData.phoneNumber}
+                      onChange={handleProfileInputChange}
+                    />
                   </div>
                 </div>
-                <div className="mt-3 mb-3">
-                  <h5 className="mb-1 fs-18">Educational Details</h5>
-                  <p>Edit your Educational information</p>
-                </div>
-                <div className="col-md-12">
-                  <div className="row">
-                    <div className="col-xl-7">
-                      <div className="row">
-                        <div className="col-md-6">
-                          <div className="mb-3">
-                            <label className="form-label">Degree<span className="text-danger">*</span></label>
-                            <input type="text" className="form-control" />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="mb-3">
-                            <label className="form-label">University<span className="text-danger">*</span></label>
-                            <input type="text" className="form-control" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-xl-5">
-                      <div className="row">
-                        <div className="col-md-6">
-                          <div className="mb-3">
-                            <label className="form-label">From Date<span className="text-danger">*</span></label>
-                            <div className="input-icon position-relative calender-input">
-                              <span className="input-icon-addon">
-                                <i className="isax isax-calendar"></i>
-                              </span>
-                              <input type="text" className="form-control datetimepicker" placeholder="" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="mb-3">
-                            <label className="form-label">To Date<span className="text-danger">*</span></label>
-                            <div className="input-icon position-relative calender-input">
-                              <span className="input-icon-addon calender-input">
-                                <i className="isax isax-calendar"></i>
-                              </span>
-                              <input type="text" className="form-control datetimepicker" placeholder="" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">Role</label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      value={user?.role || ""} 
+                      readOnly 
+                    />
                   </div>
-                  <a href="#" className="d-inline-flex align-items-center text-secondary fw-medium mb-3">
-                    <i className="isax isax-add me-1"></i> Add New
-                  </a>
                 </div>
-                <div className="mt-3 mb-3">
-                  <h5 className="mb-1 fs-18">Experience</h5>
-                  <p>Edit your Experience</p>
-                </div>
-                <div className="col-md-12">
-                  <div className="row">
-                    <div className="col-xl-7">
-                      <div className="row">
-                        <div className="col-md-6">
-                          <div className="mb-3">
-                            <label className="form-label">Company<span className="text-danger">*</span></label>
-                            <input type="text" className="form-control" />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="mb-3">
-                            <label className="form-label">Position<span className="text-danger">*</span></label>
-                            <input type="text" className="form-control" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-xl-5">
-                      <div className="row">
-                        <div className="col-md-6">
-                          <div className="mb-3">
-                            <label className="form-label">From Date<span className="text-danger">*</span></label>
-                            <div className="input-icon position-relative calender-input">
-                              <span className="input-icon-addon">
-                                <i className="isax isax-calendar"></i>
-                              </span>
-                              <input type="text" className="form-control datetimepicker" placeholder="" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="mb-3">
-                            <label className="form-label">To Date<span className="text-danger">*</span></label>
-                            <div className="input-icon position-relative calender-input">
-                              <span className="input-icon-addon calender-input">
-                                <i className="isax isax-calendar"></i>
-                              </span>
-                              <input type="text" className="form-control datetimepicker" placeholder="" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <a href="#" className="d-inline-flex align-items-center text-secondary fw-medium mb-3">
-                    <i className="isax isax-add me-1"></i> Add New
-                  </a>
-                </div>
+                
                 <div className="col-md-12">
                   <button className="btn btn-secondary rounded-pill" type="submit">Update Profile</button>
                 </div>
@@ -178,15 +227,56 @@ function AdminSetting() {
             </div>
           </div>
         </div>
+      </form>
+      
+      <form onSubmit={handlePasswordSubmit}>
         <div className="card mb-0 mt-3">
           <div className="card-body">
-            <h5 className="fs-18 mb-3">Delete Account</h5>
-            <h6 className="mb-1">Are you sure you want to delete your account?</h6>
-            <p className="mb-3">Refers to the action of permanently removing a user's account and associated data from a system, service and platform.</p>
-            <a href="#" className="btn btn-secondary">Delete Account</a>
+            <h5 className="fs-18 mb-3">Update Password</h5>
+            <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">New Password <span className="text-danger">*</span></label>
+                    <input 
+                      type="password" 
+                      className="form-control" 
+                      name="newPassword"
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordInputChange}
+                      placeholder="Enter new password" 
+                      minLength={8}
+                      title="Password must be at least 8 characters long"
+                      required
+                    />
+                    <div className="form-text">Password must be at least 8 characters long</div>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">Confirm New Password <span className="text-danger">*</span></label>
+                    <input 
+                      type="password" 
+                      className="form-control" 
+                      name="confirmNewPassword"
+                      value={passwordData.confirmNewPassword}
+                      onChange={handlePasswordInputChange}
+                      placeholder="Confirm new password" 
+                      required
+                    />
+                  </div>
+                </div>
+            <button className="btn btn-secondary" type="submit">Update Password</button>
           </div>
         </div>
       </form>
+      
+      <div className="card mb-0 mt-3">
+        <div className="card-body">
+          <h5 className="fs-18 mb-3">Delete Account</h5>
+          <h6 className="mb-1">Are you sure you want to delete your account?</h6>
+          <p className="mb-3">Refers to the action of permanently removing a user's account and associated data from a system, service and platform.</p>
+          <a href="#" className="btn btn-secondary">Delete Account</a>
+        </div>
+      </div>
     </div>
   );
 }
