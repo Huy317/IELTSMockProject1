@@ -1,36 +1,102 @@
 function ContentReading() {
   return (
-    <div style={{ maxHeight: '600px', overflowY: 'auto', paddingRight: '10px', border: '1px solid #eee', borderRadius: '8px' }}>
-      <h2>The Trans-Australian Railway (TAR)</h2>
-      <p>
-        Up until the first part of the 20th century, communications across the
-        Australian continent were relatively undeveloped. Perth, the capital of
-        Western Australia, remained isolated from Australia's eastern states
-        until the Trans-Australian Railway (TAR) was built across the arid area
-        known as the Nullarbor (No Trees) Plain. During the 19th century, the
-        only form of transport between the west coast and the eastern cities was
-        a long and often rough sea voyage across the Great Australian Bight,
-        while the first east-west crossing of the Nullarbor Plain on foot was
-        achieved by the English explorer Edward Eyre and his indigenous
-        Australian guide Wylie in 1841. In 1877 a telegraph line was built
-        across the plain, and it was this man-made structure that a mining
-        engineer called Arthur Richardson followed, when he set out in 1896 to
-        be the first to ride a bicycle around the Australian continent.
+    <div
+      style={{
+        maxHeight: "600px",
+        overflowY: "auto",
+        paddingRight: "10px",
+        border: "1px solid #eee",
+        borderRadius: "8px",
+      }}
+    >
+      <h2 className="text-primary fw-bold mb-4 pb-2 border-bottom">
+        Urban farming
+      </h2>
+
+      <p className="lh-lg mb-4" style={{ textIndent: "2rem" }}>
+        On top of a striking new exhibition hall in southern Paris, the world's
+        largest urban rooftop farm has started to bear fruit. Strawberries that
+        are small, intensely flavoured and resplendently red sprout abundantly
+        from large plastic tubes. Peer inside and you see the tubes are
+        completely hollow, the roots of dozens of strawberry plants dangling
+        down inside them. From identical vertical tubes nearby burst row upon
+        row of lettuces; near those are aromatic herbs, such as basil, sage and
+        peppermint. Opposite, in narrow, horizontal trays packed not with soil
+        but with coconut fibre, grow cherry tomatoes, shiny aubergines and
+        brightly coloured chards.
       </p>
-      <p>
-        Up until the first part of the 20th century, communications across the
-        Australian continent were relatively undeveloped. Perth, the capital of
-        Western Australia, remained isolated from Australia's eastern states
-        until the Trans-Australian Railway (TAR) was built across the arid area
-        known as the Nullarbor (No Trees) Plain. During the 19th century, the
-        only form of transport between the west coast and the eastern cities was
-        a long and often rough sea voyage across the Great Australian Bight,
-        while the first east-west crossing of the Nullarbor Plain on foot was
-        achieved by the English explorer Edward Eyre and his indigenous
-        Australian guide Wylie in 1841. In 1877 a telegraph line was built
-        across the plain, and it was this man-made structure that a mining
-        engineer called Arthur Richardson followed, when he set out in 1896 to
-        be the first to ride a bicycle around the Australian continent.
+
+      <p className="lh-lg mb-4" style={{ textIndent: "2rem" }}>
+        Pascal Hardy, an engineer and sustainable development consultant, began
+        experimenting with vertical farming and aeroponic growing towers- as the
+        soil-free plastic tubes are known – on his Paris apartment block roof
+        five years ago. The urban rooftop space above the exhibition hall is
+        somewhat bigger: 14,000 square metres and almost exactly the size of a
+        couple of football pitches. Already, the team of young urban farmers who
+        tend it have picked, in one day, 3,000 lettuces and 150 punnets of
+        strawberries. When the remaining two thirds of the vast open area are in
+        production, 20 staff will harvest up to 1,000 kg of perhaps 35 different
+        varieties of fruit and vegetables, every day. 'We're not ever,
+        obviously, going to feed the whole city this way,' cautions Hardy. 'In
+        the urban environment you're working with very significant practical
+        constraints, clearly, on what you can do and where. But if enough unused
+        space can be developed like this, there's no reason why you shouldn't
+        eventually target maybe between 5% and 10% of consumption."
+      </p>
+
+      <p className="lh-lg mb-4" style={{ textIndent: "2rem" }}>
+        Perhaps most significantly, however, this is a real-life showcase for
+        the work of Hardy's flourishing urban agriculture consultancy,
+        Agripolis, which is currently fielding enquiries from around the world
+        to design, build and equip a new breed of soil-free inner-city farm.
+        'The method's advantages are many,' he says. 'First, I don't much like
+        the fact that most of the fruit and vegetables we eat have been treated
+        with something like 17 different pesticides, or that the intensive
+        farming techniques that produced them are such huge generators of
+        greenhouse gases. I don't much like the fact, either, that they've
+        travelled an average of 2,000 refrigerated kilometres to my plate, that
+        their quality is so poor, because the varieties are selected for their
+        capacity to withstand such substantial journeys, or that 80% of the
+        price I pay goes to wholesalers and transport companies, not the
+        producers.
+      </p>
+
+      <p className="lh-lg mb-4" style={{ textIndent: "2rem" }}>
+        Produce grown using this soil-free method, on the other hand- which
+        relies solely on a small quantity of water, enriched with organic
+        nutrients, pumped around a closed circuit of pipes, towers and trays –
+        is 'produced up here, and sold locally, just down there. It barely
+        travels at all,' Hardy says. 'You can select crop varieties for their
+        flavour, not their resistance to the transport and storage chain, and
+        you can pick them when they're really at their best, and not before.' No
+        soil is exhausted, and the water that gently showers the plants' roots
+        every 12 minutes is recycled, so the method uses 90% less water than a
+        classic intensive farm for the same yield.
+      </p>
+
+      <p className="lh-lg mb-4" style={{ textIndent: "2rem" }}>
+        Urban farming is not, of course, a new phenomenon. Inner-city
+        agriculture is booming from Shanghai to Detroit and Tokyo to Bangkok.
+        Strawberries are being grown in disused shipping containers, mushrooms
+        in underground carparks. Aeroponic farming, he says, is 'virtuous'. The
+        equipment weighs little, can be installed on almost any flat surface and
+        is cheap to buy: roughly €100 to 150 per square meter. It is cheap to
+        run, too, consuming a tiny fraction of the electricity used by some
+        techniques.
+      </p>
+
+      <p className="lh-lg mb-4" style={{ textIndent: "2rem" }}>
+        Produce grown this way typically sells at prices that, while generally
+        higher than those of classic intensive agriculture, are lower than
+        soil-based organic growers. There are limits to what farmers can grow
+        this way, of course, and much of the produce is suited to the summer
+        months. 'Root vegetables we cannot do, at least not yet,' he says.
+        'Radishes are OK, but carrots, potatoes, that kind of thing- the roots
+        are simply too long. Fruit trees are obviously not an option. And beans
+        tend to take up a lot of space for not much return.' Nevertheless, urban
+        farming of the kind being practised in Paris is one part of a bigger and
+        fast-changing picture that is bringing food production closer to our
+        lives.
       </p>
     </div>
   );
