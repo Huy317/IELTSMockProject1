@@ -84,7 +84,7 @@ const router = createBrowserRouter([
             element: <StudentDashboard />,
           },
           {
-            path: "profile",
+            path: "profile/:userId",
             element: <StudentProfile />,
           },
           {
