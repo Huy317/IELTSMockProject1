@@ -2,6 +2,7 @@ import React from "react";
 import HeaderReading from "../components/test/header-reading";
 import ContentReading from "../components/test/content-reading";
 import QuestionReading from "../components/test/question-reading";
+import Pagination from "../components/utils/Pagination";
 
 function ReadingTestPage() {
   return (
@@ -15,6 +16,7 @@ function ReadingTestPage() {
           <QuestionReading />
         </div>
       </div>
+      <Pagination/>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import HeaderReading from "../components/test/header-reading";
 import QuestionReading from "../components/test/question-reading";
+import Pagination from "../components/utils/Pagination";
 
 function ListeningTestPage() {
     return (
@@ -10,6 +11,7 @@ function ListeningTestPage() {
           <QuestionReading />
         </div>
       </div>
+      <Pagination/>
     </div>
   );
 }
