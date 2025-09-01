@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 function Footer() {
   return (
     <footer className="footer">
@@ -14,42 +16,41 @@ function Footer() {
                   <img src="/assets/img/logo.svg" alt="" />
                 </div>
                 <p>
-                  Platform designed to help organizations, educators, and learners manage, deliver, and
-                  track learning and training activities.
+                  Comprehensive IELTS mock test platform designed to help students prepare for the International English Language Testing System exam with realistic practice tests and detailed performance analytics.
                 </p>
-                <div className="d-flex align-items-center">
-                  <a href="#" className="me-2">
+                {/* <div className="d-flex align-items-center">
+                  <Link to="#" className="me-2">
                     <img src="/assets/img/icon/appstore.svg" alt="" />
-                  </a>
-                  <a href="#">
+                  </Link>
+                  <Link to="#">
                     <img src="/assets/img/icon/googleplay.svg" alt="" />
-                  </a>
-                </div>
+                  </Link>
+                </div> */}
               </div>
             </div>
             <div className="col-lg-8">
               <div className="row row-gap-4">
-                <div className="col-lg-3">
+                {/* <div className="col-lg-3">
                   <div className="footer-widget footer-menu">
                     <h5 className="footer-title">For Instructor</h5>
                     <ul>
-                      <li><a href="/course-grid">Search Mentors</a></li>
-                      <li><a href="/login">Login</a></li>
-                      <li><a href="/register">Register</a></li>
-                      <li><a href="/course-list">Booking</a></li>
-                      <li><a href="/student-dashboard">Students Dashboard</a></li>
+                      <li><Link to="/course-grid">Search Mentors</Link></li>
+                      <li><Link to="/login">Login</Link></li>
+                      <li><Link to="/register">Register</Link></li>
+                      <li><Link to="/course-list">Booking</Link></li>
+                      <li><Link to="/student-dashboard">Students Dashboard</Link></li>
                     </ul>
                   </div>
-                </div>
+                </div> */}
                 <div className="col-lg-3">
                   <div className="footer-widget footer-menu">
                     <h5 className="footer-title">For Student</h5>
                     <ul>
-                      <li><a href="#">Appointments</a></li>
-                      <li><a href="/instructor-message">Chat</a></li>
-                      <li><a href="/login">Login</a></li>
-                      <li><a href="/register">Register</a></li>
-                      <li><a href="/instructor-dashboard">Instructor Dashboard</a></li>
+                      <li><Link to="/test/list">Tests List</Link></li>
+                      <li><Link to="/student/dashboard">Dashboard</Link></li>
+                      <li><Link to="/login">Login</Link></li>
+                      <li><Link to="/register">Register</Link></li>
+                      <li><Link to="/student/settings">Settings</Link></li>
                     </ul>
                   </div>
                 </div>
@@ -79,7 +80,7 @@ function Footer() {
                           className="img-fluid me-2"
                         />
                         <p>
-                          3556 Beech Street, San Francisco,<br /> California, CA 94108
+                          81 Nam Kỳ Khởi Nghĩa, Phường Bình Dương, <br /> Thành phố, Hồ Chí Minh
                         </p>
                       </div>
                       <div className="footer-address d-flex align-items-center">
@@ -89,7 +90,7 @@ function Footer() {
                           className="img-fluid me-2"
                         />
                         <p>
-                          <a href="mailto:info@example.com">info@example.com</a>
+                          <Link to="mailto:info@example.com">info@example.com</Link>
                         </p>
                       </div>
                       <div className="footer-address d-flex align-items-center">
@@ -113,14 +114,14 @@ function Footer() {
           <div className="row row-gap-2">
             <div className="col-md-6">
               <div className="text-center text-md-start">
-                <p className="text-white">Copyright &copy; 2025 DreamsLMS. All rights reserved.</p>
+                <p className="text-white">Copyright &copy; 2025 IELTS-MOCK. All rights reserved.</p>
               </div>
             </div>
             <div className="col-md-6">
               <div>
                 <ul className="d-flex align-items-center justify-content-center justify-content-md-end footer-link">
-                  <li><a href="/terms-and-conditions">Terms & Conditions</a></li>
-                  <li><a href="/privacy-policy">Privacy Policy</a></li>
+                  <li><Link to="/terms-and-conditions">Terms & Conditions</Link></li>
+                  <li><Link to="/privacy-policy">Privacy Policy</Link></li>
                 </ul>
               </div>
             </div>
