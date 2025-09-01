@@ -3,7 +3,7 @@ import BannerSearch from './BannerSearch';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 
-import 'swiper/swiper-bundle.css';
+
 
 function HeroBanner() {
   return (

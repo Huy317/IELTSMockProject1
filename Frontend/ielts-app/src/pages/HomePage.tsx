@@ -6,7 +6,6 @@ import TopCategoriesSection from "../components/home/TopCategoriesSection";
 import TrustSection from "../components/home/TrustSection";
 import FeaturedTestsSection from "../components/home/FeaturedTestsSection";
 import CommunitySection from "../components/home/CommunitySection";
-import HowItWorksSection from "../components/home/HowItWorksSection";
 import useScriptInitialization from "../hooks/useScriptInitialization";
 
 function HomePage() {
@@ -22,10 +21,9 @@ function HomePage() {
       <TrustSection />
       <FeaturedTestsSection />
       <CommunitySection />
-      <HowItWorksSection />
       
       {/* Temporary content - will be replaced with more sections */}
-      <div className="container my-5">
+      {/* <div className="container my-5">
         <div className="row">
           <div className="col-12">
             <div className="text-center">
@@ -36,7 +34,7 @@ function HomePage() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
