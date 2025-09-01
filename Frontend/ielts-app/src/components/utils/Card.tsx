@@ -10,12 +10,12 @@ interface CardProps {
 }
 
 function Card({ title = "No Title",
-        image,
-        questionCount = 0,
-        attemptCount = "Unknown",
-        type = "",
-        timeMinutes = "0",
-    }: CardProps) {
+    image,
+    questionCount = 0,
+    attemptCount = "Unknown",
+    type = "",
+    timeMinutes = "0",
+}: CardProps) {
 
     return (
         <div className="course-item-two course-item mb-0">
@@ -43,7 +43,7 @@ function Card({ title = "No Title",
                         {type}
                     </span>
                 </div>
-                
+
                 <p className="d-flex align-items-center mb-3">
                     <i className="ti ti-clock me-2"></i>{timeMinutes} min
                 </p>
