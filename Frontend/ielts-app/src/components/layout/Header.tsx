@@ -49,7 +49,7 @@ function Header() {
                       Test List
                     </NavLink>
                   </li>
-                  <li><Link to="/course-resume">Course Resume</Link></li>
+                  {/* <li><Link to="/course-resume">Course Resume</Link></li> */}
                 </ul>
               </li>
               <li className="has-submenu">
