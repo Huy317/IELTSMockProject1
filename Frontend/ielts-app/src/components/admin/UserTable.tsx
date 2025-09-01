@@ -79,10 +79,17 @@ function UserTable() {
                   >
                     <i className="isax isax-eye text-info"></i>
                   </Link>
-                  <Link to="#" className="d-inline-flex fs-14 action-icon">
+                  <Link
+                    to={`/student/settings/${user.id}`}
+                    className="d-inline-flex fs-14 action-icon"
+                  >
                     <i className="isax isax-edit"></i>
                   </Link>
-                  <Link onClick={() => handleDelete(user.id)} to="#" className="d-inline-flex fs-14 action-icon">
+                  <Link
+                    onClick={() => handleDelete(user.id)}
+                    to="#"
+                    className="d-inline-flex fs-14 action-icon"
+                  >
                     <i className="isax isax-trash text-danger"></i>
                   </Link>
                 </div>
