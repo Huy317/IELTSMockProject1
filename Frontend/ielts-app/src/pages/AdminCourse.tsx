@@ -71,11 +71,11 @@ function AdminCourse() {
           <thead className="thead-light">
             <tr>
               <th>Test Name</th>
-              <th>Attempt</th>
+              {/* <th>Attempt</th> */}
               <th>Created At</th>
               <th>Resource</th>
               <th>Status</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
