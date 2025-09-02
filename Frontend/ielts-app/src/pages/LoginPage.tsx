@@ -13,8 +13,13 @@ function LoginPage(){
     const {register, handleSubmit, formState: { errors }} = useForm<LoginInputs>();
     
     let [alertMessage, setAlertMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     let navigate = useNavigate();
+
+    function togglePasswordVisibility() {
+        setShowPassword(!showPassword);
+    }
 
     function loginSuccess(){
         navigate('/');
@@ -124,7 +129,7 @@ function LoginPage(){
                                             <label className="form-label">Password <span className="text-danger ms-1" >*</span></label>
                                             <div className="position-relative" id="passwordInput">
                                                 <input 
-                                                    type="password" 
+                                                    type={showPassword ? "text" : "password"}
                                                     className="pass-inputs form-control form-control-lg" 
                                                     {...register("password", { 
                                                         required: "Password is required",
@@ -134,7 +139,11 @@ function LoginPage(){
                                                         }
                                                     })}
                                                 />
-                                                <span className="isax toggle-passwords isax-eye-slash fs-14"></span>
+                                                <span 
+                                                    className={`isax toggle-passwords fs-14 ${showPassword ? 'isax-eye' : 'isax-eye-slash'}`}
+                                                    onClick={togglePasswordVisibility}
+                                                    style={{ cursor: 'pointer' }}
+                                                ></span>
                                             </div>
                                             {errors.password && <div className="text-danger mt-1 fs-12">{errors.password.message}</div>}
                                         </div>
