@@ -172,7 +172,7 @@ function AdminSetting() {
               <div className="row">
                 <div className="col-md-6">
                   <div className="mb-3">
-                    <label className="form-label">User Name <span className="text-danger">*</span></label>
+                    <label className="form-label">Full Name <span className="text-danger">*</span></label>
                     <input 
                       type="text" 
                       className="form-control" 

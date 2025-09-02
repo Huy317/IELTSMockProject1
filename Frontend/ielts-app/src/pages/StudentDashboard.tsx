@@ -5,7 +5,7 @@ function StudentDashboard() {
   return (
     <div>
       {/* Profile Card */}
-      <div className="profile-card overflow-hidden bg-blue-gradient2 mb-5 p-5">
+      {/* <div className="profile-card overflow-hidden bg-blue-gradient2 mb-5 p-5">
         <div className="profile-card-bg">
           <img
             src="/assets/img/bg/card-bg-01.png"
@@ -44,10 +44,10 @@ function StudentDashboard() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Quiz Card */}
-      <div className="card bg-light quiz-ans-card mb-4">
+      {/* <div className="card bg-light quiz-ans-card mb-4">
         <img
           src="/assets/img/shapes/withdraw-bg1.svg"
           className="quiz-ans-bg1"
@@ -58,7 +58,7 @@ function StudentDashboard() {
           className="quiz-ans-bg2"
           alt="img"
         />
-      </div>
+      </div> */}
 
       {/* Dashboard Widgets */}
       <div className="row">
@@ -70,7 +70,7 @@ function StudentDashboard() {
                   <img src="/assets/img/icon/graduation.svg" alt="" />
                 </span>
                 <div>
-                  <span className="d-block">Enrolled Courses</span>
+                  <span className="d-block">Taken Tests</span>
                   <h4 className="fs-24 mt-1">12</h4>
                 </div>
               </div>
@@ -85,7 +85,7 @@ function StudentDashboard() {
                   <img src="/assets/img/icon/book.svg" alt="" />
                 </span>
                 <div>
-                  <span className="d-block">Active Courses</span>
+                  <span className="d-block">Active Tests</span>
                   <h4 className="fs-24 mt-1">03</h4>
                 </div>
               </div>
@@ -100,7 +100,7 @@ function StudentDashboard() {
                   <img src="/assets/img/icon/bookmark.svg" alt="" />
                 </span>
                 <div>
-                  <span className="d-block">Completed Courses</span>
+                  <span className="d-block">Completed Tests</span>
                   <h4 className="fs-24 mt-1">10</h4>
                 </div>
               </div>
@@ -110,7 +110,7 @@ function StudentDashboard() {
       </div>
 
       {/* Recently Enrolled Courses */}
-      <h5 className="mb-3 fs-18">Recently Enrolled Courses</h5>
+      <h5 className="mb-3 fs-18">Recently Taken Tests</h5>
       <div className="row">
         <TestCard/>
       </div>
