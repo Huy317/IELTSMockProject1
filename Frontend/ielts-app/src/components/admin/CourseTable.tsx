@@ -61,7 +61,7 @@ function CourseTable() {
             </div>
           </td>
           {/* <td>{row.attempted}</td> */}
-          <td>{test.createdBy}</td>
+          {/* <td>{test.createdBy}</td> */}
           <td>{test.createdAt}</td>
           <td>{test.resource}</td>
           <td>

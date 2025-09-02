@@ -12,7 +12,7 @@ function AdminProfile() {
         </a>
       </div>
       <InforCard />
-      <div className="card">
+      {/* <div className="card">
         <div className="card-body">
           <h5 className="fs-18 pb-3 border-bottom mb-3">Education</h5>
           <div className="education-flow">
@@ -36,8 +36,8 @@ function AdminProfile() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="card mb-0">
+      </div> */}
+      {/* <div className="card mb-0">
         <div className="card-body">
           <h5 className="fs-18 pb-3 border-bottom mb-3">Experience</h5>
           <div className="d-flex align-items-center mb-4">
@@ -55,7 +55,7 @@ function AdminProfile() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

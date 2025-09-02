@@ -12,11 +12,11 @@ export interface AdminBasicInfo {
 const infoList: AdminBasicInfo[] = [
   {
     id: "1",
-    fullName: "Nguyen Thanh Duy",
-    email: "[email@protected]",
+    fullName: "Eugene Andre",
+    email: "EugeneAndre@protected",
     phoneNumber: "89104-71829",
     createdAt: "16 Jan 2024, 11:15 AM",
-    role: "Instructor"
+    role: "Admin"
   },
 ];
 
@@ -28,7 +28,7 @@ function InforCard() {
           <div className="card-body">
             <h5 className="fs-18 pb-3 border-bottom mb-3">Basic Information</h5>
             <div className="row">
-              <div className="col-md-4"><div className="mb-3"><h6>Id</h6><span>{info.id}</span></div></div>
+              {/* <div className="col-md-4"><div className="mb-3"><h6>Id</h6><span>{info.id}</span></div></div> */}
               <div className="col-md-4"><div className="mb-3"><h6>Full Name</h6><span>{info.fullName}</span></div></div>
               <div className="col-md-4"><div className="mb-3"><h6>Email</h6><span>{info.email}</span></div></div>
               <div className="col-md-4"><div className="mb-3"><h6>Phone Number</h6><span>{info.phoneNumber}</span></div></div>

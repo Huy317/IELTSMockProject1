@@ -62,7 +62,7 @@ function Header() {
                     <ul className="submenu">
                       <li><Link to="/admin/dashboard">Dashboard</Link></li>
                       <li><Link to="/admin/profile">My Profile</Link></li>
-                      <li><Link to="/admin/courses">Course</Link></li>
+                      <li><Link to="/admin/courses">Courses</Link></li>
                       <li><Link to="/admin/users">User List</Link></li>
                       <li><Link to="/admin/settings">Settings</Link></li>
                     </ul>
