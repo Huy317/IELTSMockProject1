@@ -40,63 +40,22 @@ function TestCategoriesLayout() {
                     <div className="accordion-body">
                       <div>
                         <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Backend (3)
+                          <input type="checkbox" name="select_specialist" defaultChecked/>
+                          <span className="checkmark"></span> Listening (1)
                         </label>
                       </div>
                       <div>
                         <label className="custom_check">
                           <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> CSS (2)
+                          <span className="checkmark"></span> Reading (2)
                         </label>
                       </div>
-                      <div>
-                        <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Frontend (2)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> General (2)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check">
-                          <input
-                            type="checkbox"
-                            name="select_specialist"
-                            defaultChecked
-                          />
-                          <span className="checkmark"></span> IT & Software (2)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Photography (2)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Programming
-                          Language (3)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check mb-0">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Technology (2)
-                        </label>
-                      </div>
-                      <a
+                      {/* <a
                         onClick={(e) => e.preventDefault()}
                         className="see-more-btn"
                       >
                         See More
-                      </a>
+                      </a> */}
                     </div>
                   </div>
                 </div>
@@ -122,149 +81,25 @@ function TestCategoriesLayout() {
                     <div className="accordion-body">
                       <div>
                         <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Keny White (10)
+                          <input type="checkbox" name="select_specialist" defaultChecked/>
+                          <span className="checkmark"></span> Brenda Slaton (1)
                         </label>
                       </div>
                       <div>
                         <label className="custom_check">
                           <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Hinata Hyuga (5)
+                          <span className="checkmark"></span> Ana Reyes (1)
                         </label>
                       </div>
                       <div>
                         <label className="custom_check">
                           <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> John Doe (3)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check mb-0">
-                          <input
-                            type="checkbox"
-                            name="select_specialist"
-                            defaultChecked
-                          />
-                          <span className="checkmark"></span> Nicole Brown
+                          <span className="checkmark"></span> Andrew Pirtle (1)
                         </label>
                       </div>
                       <a href="javascript:void(0);" className="see-more-btn">
                         See More
                       </a>
-                    </div>
-                  </div>
-                </div>
-                <div className="accordion-item">
-                  <h2 className="accordion-header" id="headingcustomicon1Three">
-                    <a
-                      href="#"
-                      className="accordion-button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapsecustomicon1Three"
-                      aria-expanded="false"
-                      aria-controls="collapsecustomicon1Three"
-                    >
-                      Price<i className="fa-solid fa-chevron-down"></i>
-                    </a>
-                  </h2>
-                  <div
-                    id="collapsecustomicon1Three"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="headingcustomicon1Three"
-                    data-bs-parent="#accordioncustomicon1Example"
-                  >
-                    <div className="accordion-body">
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> All (10)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Free (5)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one mb-0">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Paid (3)
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* <div className="accordion-item">
-                  <h2 className="accordion-header" id="headingcustomicon1Four">
-                    <a
-                      href="#"
-                      className="accordion-button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapsecustomicon1Four"
-                      aria-expanded="false"
-                      aria-controls="collapsecustomicon1Four"
-                    >
-                      Range<i className="fa-solid fa-chevron-down"></i>
-                    </a>
-                  </h2>
-                  <div
-                    id="collapsecustomicon1Four"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="headingcustomicon1Four"
-                    data-bs-parent="#accordioncustomicon1Example"
-                  >
-                    <div className="accordion-body">
-                      <div className="filter-range">
-                        <input type="text" className="input-range" />
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
-                <div className="accordion-item">
-                  <h2 className="accordion-header" id="headingcustomicon1Five">
-                    <a
-                      href="#"
-                      className="accordion-button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapsecustomicon1Five"
-                      aria-expanded="false"
-                      aria-controls="collapsecustomicon1Five"
-                    >
-                      Level<i className="fa-solid fa-chevron-down"></i>
-                    </a>
-                  </h2>
-                  <div
-                    id="collapsecustomicon1Five"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="headingcustomicon1Five"
-                    data-bs-parent="#accordioncustomicon1Example"
-                  >
-                    <div className="accordion-body">
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span>Beginner (10)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Intermediate (5)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span>Advanced (21)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one mb-0">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span>Expert (3)
-                        </label>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -374,9 +209,8 @@ function TestCategoriesLayout() {
                         </div>
                         <select className="form-select">
                           <option>Newly Published</option>
-                          <option>Trending Courses</option>
+                          <option>Most Attempts</option>
                           <option>Top Rated</option>
-                          <option>Free Courses</option>
                         </select>
                         <div className="search-group">
                           <i className="isax isax-search-normal-1"></i>
