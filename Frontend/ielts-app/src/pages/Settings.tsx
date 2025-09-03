@@ -200,11 +200,12 @@ function AdminSetting() {
                   <div className="mb-3">
                     <label className="form-label">Phone Number</label>
                     <input 
-                      type="text" 
+                      type="tel" 
                       className="form-control" 
                       name="phoneNumber"
                       value={profileData.phoneNumber}
                       onChange={handleProfileInputChange}
+                      placeholder="Enter phone number"
                     />
                   </div>
                 </div>

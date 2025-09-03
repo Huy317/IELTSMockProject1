@@ -1,8 +1,12 @@
-import React from "react";
-import AdminBasicInfoCard from "../components/admin/InforCard";
 import InforCard from "../components/admin/InforCard";
+import { useParams } from "react-router-dom";
 
 function AdminProfile() {
+  const { userId } = useParams();
+  
+  // For now, using a hardcoded ID. You should replace this with actual current user ID from auth context
+  const currentUserId = userId || "12"; // Replace with actual current user ID
+  
   return (
     <div>
       <div className="page-title d-flex align-items-center justify-content-between">
@@ -11,7 +15,7 @@ function AdminProfile() {
           <i className="isax isax-edit-2"></i>
         </a>
       </div>
-      <InforCard />
+      <InforCard userId={currentUserId} />
       {/* <div className="card">
         <div className="card-body">
           <h5 className="fs-18 pb-3 border-bottom mb-3">Education</h5>
