@@ -33,9 +33,20 @@ namespace IELTS_PRACTICE.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<QuestionDTO>> CreateTest(CreateQuestionDTO rq)
+        public async Task<ActionResult<QuestionDTO>> CreateQuestion(CreateQuestionDTO rq)
         {
             await _questionService.CreateQuestion(rq);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<QuestionDTO>> UpdateQuestion(int id, UpdateQuestionDTO rq)
+        {
+            var current = await _questionService.GetQuestionById(id);
+            if (current == null) { 
+                return NotFound();
+            }
+            await _questionService.UpdateQuestion(id, rq);
             return Ok();
         }
 
