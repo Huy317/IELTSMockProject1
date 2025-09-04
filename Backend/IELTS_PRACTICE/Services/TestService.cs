@@ -42,6 +42,26 @@ namespace IELTS_PRACTICE.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<TestDTO> UpdateTest(int id, UpdateTestDTO rq) {
+            var testt = await _context.Tests.FindAsync(id);
+            if (testt == null) return null;
+            testt.TestName = rq.TestName;
+            testt.CreatedBy = rq.CreatedBy;
+            testt.Resource = rq.Resource;
+            testt.IsActive = rq.IsActive;
+
+            _context.Tests.Update(testt);
+            _context.SaveChanges();
+            return new TestDTO
+            {
+                Id = testt.Id,
+                CreatedBy = testt.CreatedBy,
+                CreatedAt = testt.CreatedAt,
+                Resource = testt.Resource,
+                IsActive = testt.IsActive,
+            };
+        }
+
         public async Task<TestDTO> CreateTest(CreateTestDTO rq) {
             var newTest = new Test
             {

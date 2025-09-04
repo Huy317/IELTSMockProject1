@@ -2,6 +2,8 @@
 using IELTS_PRACTICE.DTOs.Responses;
 using IELTS_PRACTICE.DTOs.Resquests;
 using IELTS_PRACTICE.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace IELTS_PRACTICE.Services
@@ -53,6 +55,7 @@ namespace IELTS_PRACTICE.Services
                 _context.SaveChanges();
                 return new QuestionDTO
                 {
+                    Id = content.Id,
                     Content = rq.Content,
                 };
             }
@@ -73,10 +76,38 @@ namespace IELTS_PRACTICE.Services
             _context.SaveChanges();
             return new QuestionDTO
             {
+                Id = question.Id,
                 QuestionType = question.QuestionType,
                 Content = question.Content,
                 CorrectAnswer = question.CorrectAnswer,
                 Choices= question.Choices,
+                Explanation = question.Explanation,
+            };
+        }
+
+        public async Task<QuestionDTO> UpdateQuestion(int id, UpdateQuestionDTO rq)
+        {
+            var question = await _context.Questions.FindAsync(id);
+            if (question == null)
+            {
+                return null;
+            }
+
+            question.QuestionType = rq.QuestionType;
+            question.Content = rq.Content;
+            question.CorrectAnswer = rq.CorrectAnswer;
+            question.Choices = rq.Choices;
+            question.Explanation = rq.Explanation;
+            question.Link = rq.Link;
+
+            _context.Questions.Update(question);
+            await _context.SaveChangesAsync();
+            return new QuestionDTO
+            {
+                QuestionType = question.QuestionType,
+                Content = question.Content,
+                CorrectAnswer = question.CorrectAnswer,
+                Choices = question.Choices,
                 Explanation = question.Explanation,
             };
         }
