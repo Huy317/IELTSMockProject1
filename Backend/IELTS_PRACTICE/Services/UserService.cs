@@ -119,5 +119,16 @@ namespace IELTS_PRACTICE.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<User> FindUserByEmail(string email) {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+        }
+
+        public async Task<bool> CheckPassword(User user, string password) {
+            var result = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
+            return result == PasswordVerificationResult.Success
+                    || result == PasswordVerificationResult.SuccessRehashNeeded;
+            //allow when enter correct password even 
+        }
     }
 }
