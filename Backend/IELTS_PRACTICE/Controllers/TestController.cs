@@ -2,6 +2,7 @@
 using IELTS_PRACTICE.DTOs.Resquests;
 using IELTS_PRACTICE.Models;
 using IELTS_PRACTICE.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IELTS_PRACTICE.Controllers
@@ -16,6 +17,7 @@ namespace IELTS_PRACTICE.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Student")]
         public async Task<ActionResult<IEnumerable<TestDTO>>> GetAllTest() { 
             return await _testService.GetAllTest();
         }

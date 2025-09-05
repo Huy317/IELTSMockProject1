@@ -2,6 +2,7 @@
 using IELTS_PRACTICE.Services;
 using IELTS_PRACTICE.DTOs.Responses;
 using IELTS_PRACTICE.DTOs.Resquests;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IELTS_PRACTICE.Controllers
 {
@@ -18,6 +19,7 @@ namespace IELTS_PRACTICE.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<UserBasicDto>>> GetUsers()
         {
             var users = await _userService.GetAllUsersAsync();

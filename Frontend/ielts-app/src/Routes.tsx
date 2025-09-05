@@ -58,7 +58,7 @@ const router = createBrowserRouter([
             element: <AdminDashboard />,
           },
           {
-            path: "profile",
+            path: "profile/:userId",
             element: <AdminProfile />,
           },
           {
