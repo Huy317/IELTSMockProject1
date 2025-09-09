@@ -2,9 +2,11 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useState } from 'react';
 import '../../assets/css/custom.css';
 import CreateTestModal from '../utils/CreateTestModal';
+import { useAuth } from '../../contexts/AuthContext';
 
 function AdminDashboardLayout() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { logout } = useAuth();
 
     const handleCreateTest = (testData: { testName: string; testType: 'Reading' | 'Listening' }) => {
         console.log('Creating test:', testData);
@@ -20,6 +22,10 @@ function AdminDashboardLayout() {
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
+    };
+
+    const handleLogout = () => {
+        logout();
     };
     return (
         <div className="content">
@@ -225,6 +231,7 @@ function AdminDashboardLayout() {
                                         <NavLink
                                             to="/login"
                                             className="d-inline-flex align-items-center"
+                                            onClick={handleLogout}
                                         >
                                             <i className="isax isax-logout5 me-2"></i>Logout
                                         </NavLink>

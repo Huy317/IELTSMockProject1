@@ -21,6 +21,10 @@ import AddReadingTest from "./pages/AddReadingTest";
 import ReadingTestPage from "./pages/ReadingTestPage";
 import ListeningTestPage from "./pages/ListeningTestPage";
 
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { LoginForm } from "./pages/TestLogin";
+import { AuthProvider } from "./contexts/AuthContext";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,7 +55,12 @@ const router = createBrowserRouter([
       },
       {
         path: "admin",
-        element: <AdminLayout />,
+        // element: <AdminLayout />,
+        element: (
+          <ProtectedRoute requiredRole="Admin">
+            <AdminLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "dashboard",
@@ -77,7 +86,12 @@ const router = createBrowserRouter([
       },
       {
         path: "student",
-        element: <StudentLayout />,
+        // element: <StudentLayout />,
+        element: (
+          <ProtectedRoute requiredRole="Student">
+            <StudentLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "dashboard",
@@ -101,7 +115,8 @@ const router = createBrowserRouter([
   },
   {
     path: "login",
-    element: <LoginPage />,
+    element: <LoginForm />,
+    // element: <LoginPage />,
   },
   {
     path: "register",
@@ -119,6 +134,10 @@ const router = createBrowserRouter([
     path: "listening",
     element: <ListeningTestPage />,
   },
+  {
+    path: "unauthorized",
+    element: <div>Unauthorized Access</div>,
+  }
 ]);
 
 export default function Routes() {

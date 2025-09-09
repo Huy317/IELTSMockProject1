@@ -22,7 +22,7 @@ interface JWTPayload {
   exp: number; // Expiration (standard claim)
 }
 
-interface UserInfo {
+export interface UserInfo {
   id: string;
   name: string;
   email: string;
@@ -36,7 +36,7 @@ const client = axios.create({
 export async function login(
   credentials: LoginRequestDTO
 ): Promise<AuthResponseDTO> {
-  const response = await client.post("api/Auth/login", credentials);
+  const response = await client.post("Auth/login", credentials);
   return response.data;
 }
 
@@ -53,10 +53,11 @@ export function removeToken(): void {
 }
 
 const CLAIMS = {
-  NAME_IDENTIFIER: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+  NAME_IDENTIFIER:
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
   NAME: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
   EMAIL: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
-  ROLE: "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+  ROLE: "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
 } as const;
 
 export function getCurrentUser(): UserInfo | null {
@@ -75,7 +76,7 @@ export function getCurrentUser(): UserInfo | null {
       id: decoded[CLAIMS.NAME_IDENTIFIER],
       email: decoded[CLAIMS.EMAIL],
       role: decoded[CLAIMS.ROLE],
-      name: decoded[CLAIMS.NAME]
+      name: decoded[CLAIMS.NAME],
     };
   } catch (error) {
     console.error("Token decode error:", error);
@@ -85,5 +86,33 @@ export function getCurrentUser(): UserInfo | null {
 }
 
 export function getUserId(): string | null {
-    return getCurrentUser()?.id || null;
+  return getCurrentUser()?.id || null;
 }
+
+export function isTokenExpired(): boolean {
+  const token = getToken();
+  const decoded = jwtDecode<JWTPayload>(token || "");
+  if (decoded.exp * 1000 < Date.now()) {
+    return true;
+  }
+  return false;
+}
+
+client.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      removeToken();
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
