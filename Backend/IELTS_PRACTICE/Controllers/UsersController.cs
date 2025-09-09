@@ -19,7 +19,7 @@ namespace IELTS_PRACTICE.Controllers
 
         // GET: api/Users
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<UserBasicDto>>> GetUsers()
         {
             var users = await _userService.GetAllUsersAsync();

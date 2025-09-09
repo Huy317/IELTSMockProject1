@@ -94,10 +94,6 @@ namespace IELTS_PRACTICE
 
             var app = builder.Build();
 
-            //for authen/author
-            app.UseAuthentication();
-            app.UseAuthorization();
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -107,10 +103,11 @@ namespace IELTS_PRACTICE
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-
-
             app.UseCors("AllowFrontend");
+
+            //for authen/author
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
 
