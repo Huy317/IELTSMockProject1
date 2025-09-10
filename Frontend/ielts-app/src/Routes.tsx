@@ -22,9 +22,6 @@ import ReadingTestPage from "./pages/ReadingTestPage";
 import ListeningTestPage from "./pages/ListeningTestPage";
 
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { LoginForm } from "./pages/TestLogin";
-import { AuthProvider } from "./contexts/AuthContext";
-import LoginPagex from "./pages/TestLoginFinal";
 import LoginPageFinal from "./pages/TestLoginFinal";
 
 const router = createBrowserRouter([
@@ -69,7 +66,7 @@ const router = createBrowserRouter([
             element: <AdminDashboard />,
           },
           {
-            path: "profile/:userId",
+            path: "profile",
             element: <AdminProfile />,
           },
           {
@@ -88,9 +85,9 @@ const router = createBrowserRouter([
       },
       {
         path: "student",
-        // element: <StudentLayout />,
+        // element: <StudentLayout />, for student UI allow both admin and student to access for convienience
         element: (
-          <ProtectedRoute requiredRole="Student">
+          <ProtectedRoute allowedRoles={["Student", "Admin"]}>
             <StudentLayout />
           </ProtectedRoute>
         ),
@@ -104,11 +101,19 @@ const router = createBrowserRouter([
             element: <StudentProfile />,
           },
           {
+            path: "profile",
+            element: <StudentProfile />,
+          },
+          {
             path: "courses",
             element: <StudentCourses />,
           },
           {
             path: "settings/:userId",
+            element: <Settings />,
+          },
+          {
+            path: "settings",
             element: <Settings />,
           },
         ],
