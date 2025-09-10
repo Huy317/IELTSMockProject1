@@ -26,6 +26,7 @@ function AdminDashboardLayout() {
 
     const handleLogout = () => {
         logout();
+        // window.location.href = '/login';
     };
     return (
         <div className="content">

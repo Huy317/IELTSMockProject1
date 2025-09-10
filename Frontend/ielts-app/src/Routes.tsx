@@ -24,6 +24,8 @@ import ListeningTestPage from "./pages/ListeningTestPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { LoginForm } from "./pages/TestLogin";
 import { AuthProvider } from "./contexts/AuthContext";
+import LoginPagex from "./pages/TestLoginFinal";
+import LoginPageFinal from "./pages/TestLoginFinal";
 
 const router = createBrowserRouter([
   {
@@ -115,7 +117,7 @@ const router = createBrowserRouter([
   },
   {
     path: "login",
-    element: <LoginForm />,
+    element: <LoginPageFinal />,
     // element: <LoginPage />,
   },
   {

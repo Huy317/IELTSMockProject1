@@ -28,11 +28,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = (userData: UserInfo, token: string) => {
     setUser(userData);
+    setLoading(false);
   };
 
   const logout = () => {
     removeToken();
     setUser(null);
+    window.location.href = '/login';
+    setLoading(false);
   };
 
   const value = {
