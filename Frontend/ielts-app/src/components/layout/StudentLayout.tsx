@@ -1,7 +1,15 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import '../../assets/css/custom.css';
+import { useAuth } from '../../contexts/AuthContext';
 
 function StudentLayout() {
+    const { logout } = useAuth();
+
+    const handleLogout = () => {
+        logout();
+        // window.location.href = '/login';
+    };
+
     return (
         <div className="content">
             <div className="container">
@@ -201,6 +209,7 @@ function StudentLayout() {
                                         <NavLink
                                             to="/login"
                                             className="d-inline-flex align-items-center"
+                                            onClick={handleLogout}
                                         >
                                             <i className="isax isax-logout5 me-2"></i>Logout
                                         </NavLink>

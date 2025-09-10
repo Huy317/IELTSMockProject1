@@ -1,11 +1,20 @@
 import InforCard from "../components/admin/InforCard";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 function StudentProfile() {
-  const { userId } = useParams();
-  
   // Use the userId from URL params, or fallback to a default
-  const studentUserId = userId || "12"; // Replace with actual logic
+  // const studentUserId = userId || "12"; // Replace with actual logic
+
+  //PROBLEM IN HERE: Admin/Student login, they see their OWN profile, work correctly.
+  //But if Admin tries to view a Student profile via URL with student userId, it still shows Admin's profile.
+  //Need to fix this to show the correct profile based on the userId in the URL when Admin is viewing a Student's profile.
+  const { user, isAuthenticated } = useAuth();
+  const { userId } = useParams();
+  const studentUserId = userId || "12";
+
+  const isOwn = !userId;
+  const isAdminView = !!userId;
   
   return (
     <div className="col-lg-9">
@@ -13,7 +22,21 @@ function StudentProfile() {
         <h5 className="fw-bold">My Profile</h5>
         <a href="#" className="edit-profile-icon"><i className="isax isax-edit-2"></i></a>
       </div>
-      <InforCard userId={studentUserId} />
+      {/* <InforCard userId={studentUserId} /> */}
+
+      {/* display from ADMIN view profile */}
+      {isAuthenticated && user && isAdminView ? (
+        <InforCard userId={studentUserId} />
+      ) : (
+        <p>Please log in to view your profile.</p>
+      )}
+
+      {/* display from OWN profile */}
+      {isAuthenticated && user && isOwn ? (
+        <InforCard userId={user.id} />
+      ) : (
+        <p>Please log in to view your profile.</p>
+      )}
     </div>
   );
 }

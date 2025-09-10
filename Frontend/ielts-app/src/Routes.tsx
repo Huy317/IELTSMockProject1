@@ -21,6 +21,9 @@ import AddReadingTest from "./pages/AddReadingTest";
 import ReadingTestPage from "./pages/ReadingTestPage";
 import ListeningTestPage from "./pages/ListeningTestPage";
 
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import LoginPageFinal from "./pages/TestLoginFinal";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,14 +54,19 @@ const router = createBrowserRouter([
       },
       {
         path: "admin",
-        element: <AdminLayout />,
+        // element: <AdminLayout />,
+        element: (
+          <ProtectedRoute requiredRole="Admin">
+            <AdminLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "dashboard",
             element: <AdminDashboard />,
           },
           {
-            path: "profile/:userId",
+            path: "profile",
             element: <AdminProfile />,
           },
           {
@@ -77,7 +85,12 @@ const router = createBrowserRouter([
       },
       {
         path: "student",
-        element: <StudentLayout />,
+        // element: <StudentLayout />, for student UI allow both admin and student to access for convienience
+        element: (
+          <ProtectedRoute allowedRoles={["Student", "Admin"]}>
+            <StudentLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "dashboard",
@@ -88,11 +101,19 @@ const router = createBrowserRouter([
             element: <StudentProfile />,
           },
           {
+            path: "profile",
+            element: <StudentProfile />,
+          },
+          {
             path: "courses",
             element: <StudentCourses />,
           },
           {
             path: "settings/:userId",
+            element: <Settings />,
+          },
+          {
+            path: "settings",
             element: <Settings />,
           },
         ],
@@ -101,7 +122,8 @@ const router = createBrowserRouter([
   },
   {
     path: "login",
-    element: <LoginPage />,
+    element: <LoginPageFinal />,
+    // element: <LoginPage />,
   },
   {
     path: "register",
@@ -119,6 +141,10 @@ const router = createBrowserRouter([
     path: "listening",
     element: <ListeningTestPage />,
   },
+  {
+    path: "unauthorized",
+    element: <div>Unauthorized Access</div>,
+  }
 ]);
 
 export default function Routes() {

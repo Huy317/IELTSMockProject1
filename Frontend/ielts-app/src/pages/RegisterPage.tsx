@@ -116,11 +116,11 @@ const RegisterPage = () => {
         try {
             // Prepare user data for API (map form data to DTO format)
             const newUserData = {
-                fullName: data.fullName, // API expects 'fullName' (camelCase)
+                fullName: data.fullName,
                 email: data.email,
                 password: data.password,
-                phoneNumber: data.phoneNumber || null, // Use form value or null if empty
-                role: 'student' // Default role or get from form
+                phoneNumber: data.phoneNumber || null,
+                role: 'Student'
             };
 
             // Call API to create users

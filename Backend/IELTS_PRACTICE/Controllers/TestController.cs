@@ -17,7 +17,7 @@ namespace IELTS_PRACTICE.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Student")]
+        //[Authorize(Roles = "Student")]
         public async Task<ActionResult<IEnumerable<TestDTO>>> GetAllTest() { 
             return await _testService.GetAllTest();
         }
