@@ -1,11 +1,5 @@
-import axios from "axios";
 import type { User } from "../types/User";
-
-const API_BASE = import.meta.env.VITE_API_BASE as string;
-
-const client = axios.create({
-  baseURL: `${API_BASE}/api`,
-});
+import { client } from "./authService"; // Use the authenticated client
 
 interface UserCreateDTO {
   fullName: string;
