@@ -24,18 +24,14 @@ function StudentProfile() {
       </div>
       {/* <InforCard userId={studentUserId} /> */}
 
-      {/* display from ADMIN view profile */}
       {isAuthenticated && user && isAdminView ? (
         <InforCard userId={studentUserId} />
       ) : (
-        <p>Please log in to view your profile.</p>
-      )}
-
-      {/* display from OWN profile */}
-      {isAuthenticated && user && isOwn ? (
-        <InforCard userId={user.id} />
-      ) : (
-        <p>Please log in to view your profile.</p>
+        isOwn && user ? (
+          <InforCard userId={user.id} />
+        ) : (
+          <p>Please log in to view your profile.</p>
+        )
       )}
     </div>
   );
