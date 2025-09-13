@@ -1,13 +1,13 @@
 import React from "react";
 
 export interface SingleEnrolledCourseCardProps {
-  image: string;
-  adminAvatar: string;
-  adminName: string;
-  skillType: string;
-  title: string;
-  rating: number;
-  reviewCount: number;
+  image?: string;
+  adminAvatar?: string;
+  adminName?: string;
+  skillType?: string;
+  title?: string;
+  rating?: number;
+  reviewCount?: number;
 }
 
 const enrolledCourseCards: SingleEnrolledCourseCardProps[] = [
@@ -30,6 +30,64 @@ const enrolledCourseCards: SingleEnrolledCourseCardProps[] = [
     reviewCount: 200,
   },
 ];
+
+export function TestCardNew({
+  image,
+  adminAvatar,
+  adminName,
+  skillType,
+  title,
+  rating,
+  reviewCount,
+}: SingleEnrolledCourseCardProps) {
+  return (
+    <div className="col-xl-4 col-md-6">
+      <div className="course-item-two course-item mx-0">
+        <div className="course-img">
+          <a href="#">
+            <img src={image} alt="img" className="img-fluid" />
+          </a>
+        </div>
+        <div className="course-content">
+          <div className="d-flex justify-content-between mb-2">
+            <div className="d-flex align-items-center">
+              <a href="#" className="avatar avatar-sm">
+                <img
+                  src={adminAvatar}
+                  alt="img"
+                  className="img-fluid avatar avatar-sm rounded-circle"
+                />
+              </a>
+              <div className="ms-2">
+                <a href="#" className="link-default fs-14">
+                  {adminName}
+                </a>
+              </div>
+            </div>
+            <span className="badge badge-light rounded-pill bg-light d-inline-flex align-items-center fs-13 fw-medium mb-0">
+              {skillType}
+            </span>
+          </div>
+          <h6 className="title mb-2">
+            <a href="#">{title}</a>
+          </h6>
+          <p className="d-flex align-items-center mb-3">
+            <i className="fa-solid fa-star text-warning me-2"></i>
+            {rating} ({reviewCount} Attempts)
+          </p>
+          <div className="d-flex align-items-center justify-content-between">
+            <a
+              href="#"
+              className="btn btn-dark btn-sm d-inline-flex align-items-center"
+            >
+              View Course<i className="isax isax-arrow-right-3 ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function TestCard() {
   return (

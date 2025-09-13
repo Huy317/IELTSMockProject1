@@ -121,7 +121,7 @@ function TopCategoriesSection() {
             </div>
           </div> */}
         </Slider>
-        <Link to="/tests" className="btn btn-primary btn-md">
+        <Link to="/test/list" className="btn btn-primary btn-md">
           View All Tests
         </Link>
       </div>
