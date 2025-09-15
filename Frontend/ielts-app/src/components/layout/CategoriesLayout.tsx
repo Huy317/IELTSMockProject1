@@ -1,7 +1,50 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "../../assets/css/custom.css";
+import { useEffect, useState } from "react";
+import { getAllAuthorNames } from "../../services/testService";
 
 function TestCategoriesLayout() {
+  const [instructors, setInstructors] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedInstructor, setSelectedInstructor] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Hardcoded categories
+  const categories = [
+    { id: "listening", name: "Listening" },
+    { id: "reading", name: "Reading" },
+    { id: "writing", name: "Writing" },
+    { id: "speaking", name: "Speaking" },
+  ];
+
+  useEffect(() => {
+    const fetchInstructorNames = async () => {
+      setLoading(true);
+      try {
+        const names = await getAllAuthorNames();
+        setInstructors(names);
+      } catch (error) {
+        console.error("Error fetching instructor names:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInstructorNames();
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedCategory) params.append("skillName", selectedCategory);
+    if (selectedInstructor) params.append("instructorName", selectedInstructor);
+
+    const newSearch = params.toString();
+    navigate(`${location.pathname}?${newSearch}`, { replace: true });
+  }, [selectedCategory, selectedInstructor, navigate, location.pathname]);
+
   return (
     <div className="course-content">
       <div className="container">
@@ -12,7 +55,11 @@ function TestCategoriesLayout() {
                 <h5>
                   <i className="feather-filter me-2"></i>Filters
                 </h5>
-                <a onClick={(e) => e.preventDefault()} className="clear-text">
+                <a onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedCategory("");
+                    setSelectedInstructor("");
+                  }} className="clear-text">
                   Clear
                 </a>
               </div>
@@ -40,22 +87,34 @@ function TestCategoriesLayout() {
                     <div className="accordion-body">
                       <div>
                         <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" defaultChecked/>
-                          <span className="checkmark"></span> Listening (1)
+                          <input
+                            type="radio"
+                            name="category_filter"
+                            value=""
+                            checked={selectedCategory === ""}
+                            onChange={(e) =>
+                              setSelectedCategory(e.target.value)
+                            }
+                          />
+                          <span className="checkmark"></span> All Categories
                         </label>
                       </div>
-                      <div>
-                        <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Reading (2)
-                        </label>
-                      </div>
-                      {/* <a
-                        onClick={(e) => e.preventDefault()}
-                        className="see-more-btn"
-                      >
-                        See More
-                      </a> */}
+                      {categories.map((category) => (
+                        <div key={category.id}>
+                          <label className="custom_check">
+                            <input
+                              type="radio"
+                              name="category_filter"
+                              value={category.id}
+                              checked={selectedCategory === category.id}
+                              onChange={(e) =>
+                                setSelectedCategory(e.target.value)
+                              }
+                            />
+                            <span className="checkmark"></span> {category.name}
+                          </label>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -79,31 +138,47 @@ function TestCategoriesLayout() {
                     data-bs-parent="#accordioncustomicon1Example"
                   >
                     <div className="accordion-body">
-                      <div>
-                        <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" defaultChecked/>
-                          <span className="checkmark"></span> Brenda Slaton (1)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Ana Reyes (1)
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span> Andrew Pirtle (1)
-                        </label>
-                      </div>
-                      <a href="javascript:void(0);" className="see-more-btn">
-                        See More
-                      </a>
+                      {loading ? (
+                        <div>Loading instructors...</div>
+                      ) : (
+                        <>
+                          <div>
+                            <label className="custom_check">
+                              <input
+                                type="radio"
+                                name="instructor_filter"
+                                value=""
+                                checked={selectedInstructor === ""}
+                                onChange={(e) =>
+                                  setSelectedInstructor(e.target.value)
+                                }
+                              />
+                              <span className="checkmark"></span> All
+                              Instructors
+                            </label>
+                          </div>
+                          {instructors.map((instructor, index) => (
+                            <div key={index}>
+                              <label className="custom_check">
+                                <input
+                                  type="radio"
+                                  name="instructor_filter"
+                                  value={instructor}
+                                  checked={selectedInstructor === instructor}
+                                  onChange={(e) =>
+                                    setSelectedInstructor(e.target.value)
+                                  }
+                                />
+                                <span className="checkmark"></span> {instructor}
+                              </label>
+                            </div>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
-                <div className="accordion-item">
+                {/* <div className="accordion-item">
                   <h2 className="accordion-header" id="headingcustomicon1Six">
                     <a
                       href="#"
@@ -180,7 +255,7 @@ function TestCategoriesLayout() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
