@@ -59,5 +59,21 @@ namespace IELTS_PRACTICE.Controllers
             await _testService.DeleteTest(id);
             return NoContent();
         }
+
+        [HttpGet("filter")]
+        public async Task<IActionResult> FilterTests([FromQuery] string? skillName, [FromQuery] string? instructorName) { 
+            var result = await _testService.FilterTest(skillName, instructorName);
+            if (result == null) { 
+                return NotFound("No tests match with criteria");
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("authornames")]
+        public async Task<ActionResult> GetAllAuthorNames()
+        {
+            var result = await _testService.GetAllAuthorNames();
+            return Ok(result);
+        }
     }
 }

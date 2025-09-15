@@ -42,7 +42,7 @@ function Footer() {
                     </ul>
                   </div>
                 </div> */}
-                <div className="col-lg-3">
+                <div className="col-lg-6">
                   <div className="footer-widget footer-menu">
                     <h5 className="footer-title">For Student</h5>
                     <ul>

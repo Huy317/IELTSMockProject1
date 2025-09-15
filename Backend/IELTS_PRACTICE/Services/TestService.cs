@@ -89,5 +89,39 @@ namespace IELTS_PRACTICE.Services
             _context.Tests.Remove(test);
             _context.SaveChanges();
         }
+
+        public async Task<List<TestDTO>> FilterTest(string? skillName, string? instructorName) {
+            var query = from t in _context.Tests
+                        join u in _context.Users on t.CreatedBy equals u.Id
+                        select new { Test = t, User = u };
+
+            if (!string.IsNullOrEmpty(skillName))
+            {
+                query = query.Where(x => EF.Functions.Like(x.Test.TestName, $"%{skillName}%"));
+            }
+
+            if (!string.IsNullOrEmpty(instructorName))
+            {
+                query = query
+                    .Where(x => EF.Functions.Like(x.User.FullName, instructorName));
+            }
+
+            return await query
+                .Select(x => new TestDTO {
+                    Id = x.Test.Id,
+                    TestName = x.Test.TestName,
+                    CreatedBy = x.Test.CreatedBy,
+                    CreatedAt = x.Test.CreatedAt,
+                    Resource = x.Test.Resource,
+                    IsActive = x.Test.IsActive,
+                }).ToListAsync();
+        }
+
+        public async Task<List<string>> GetAllAuthorNames() { 
+            return await _context.Users
+                .Where(x => x.Role.Equals("Admin"))
+                .Select(x => x.FullName)
+                .ToListAsync();
+        }
     }
 }
