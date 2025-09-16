@@ -91,21 +91,34 @@ namespace IELTS_PRACTICE.Services
             _context.SaveChanges();
         }
 
-        public async Task<List<TestDTO>> FilterTest(string? skillName, string? instructorName) {
+        public async Task<List<TestDTO>> FilterTest(List<string>? skillName, List<string>? instructorName) {
             var query = from t in _context.Tests
                         join u in _context.Users on t.CreatedBy equals u.Id
-                        select new { Test = t, User = u };
+                        join ts in _context.TypeSkills on t.TypeId equals ts.Id
+                        select new { Test = t, User = u, TypeSkill = ts };
 
-            if (!string.IsNullOrEmpty(skillName))
+            // Filter by skill names
+            if (skillName != null && skillName.Any())
             {
-                query = query.Where(x => EF.Functions.Like(x.Test.TestName, $"%{skillName}%"));
+                query = query.Where(x => skillName.Contains(x.TypeSkill.TypeName));
             }
 
-            if (!string.IsNullOrEmpty(instructorName))
+            // Filter by instructor names
+            if (instructorName != null && instructorName.Any())
             {
-                query = query
-                    .Where(x => EF.Functions.Like(x.User.FullName, instructorName));
+                query = query.Where(x => instructorName.Contains(x.User.FullName));
             }
+
+            //if (!string.IsNullOrEmpty(skillName))
+            //{
+            //    query = query.Where(x => EF.Functions.Like(x.Test.TestName, $"%{skillName}%"));
+            //}
+
+            //if (!string.IsNullOrEmpty(instructorName))
+            //{
+            //    query = query
+            //        .Where(x => EF.Functions.Like(x.User.FullName, instructorName));
+            //}
 
             return await query
                 .Select(x => new TestDTO {
@@ -115,6 +128,8 @@ namespace IELTS_PRACTICE.Services
                     CreatedAt = x.Test.CreatedAt,
                     Resource = x.Test.Resource,
                     IsActive = x.Test.IsActive,
+                    InstructorName = x.User.FullName,
+                    TypeName = x.TypeSkill.TypeName,
                 }).ToListAsync();
         }
 
