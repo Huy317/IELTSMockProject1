@@ -8,7 +8,7 @@
         public string Choices { get; set; }
         public string Explanation { get; set; }
         public int ParentId { get; set; }
-        public int TypeId { get; set; }
+        //public int TypeId { get; set; }
         public int TestId { get; set; }
         public string Link { get; set; }
     }

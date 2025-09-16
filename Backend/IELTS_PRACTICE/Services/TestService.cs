@@ -69,6 +69,7 @@ namespace IELTS_PRACTICE.Services
                 CreatedBy = rq.CreatedBy,
                 CreatedAt = rq.CreatedAt,
                 Resource = rq.Resource,
+                TypeId = rq.TypeId,
                 IsActive = rq.IsActive,
             };
 

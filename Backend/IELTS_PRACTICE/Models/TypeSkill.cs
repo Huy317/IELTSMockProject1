@@ -6,6 +6,7 @@
         public string TypeName { get; set; }
         public string Duration { get; set; }
         //Navigation
-        public ICollection<Question> Questions { get; set; }
+        //public ICollection<Question> Questions { get; set; }
+        public ICollection<Test> Tests { get; set; }
     }
 }
