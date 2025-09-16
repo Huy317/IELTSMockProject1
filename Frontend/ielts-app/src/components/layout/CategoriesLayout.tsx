@@ -5,8 +5,8 @@ import { getAllAuthorNames } from "../../services/testService";
 
 function TestCategoriesLayout() {
   const [instructors, setInstructors] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedInstructor, setSelectedInstructor] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+  const [selectedInstructor, setSelectedInstructor] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -38,12 +38,18 @@ function TestCategoriesLayout() {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (selectedCategory) params.append("skillName", selectedCategory);
-    if (selectedInstructor) params.append("instructorName", selectedInstructor);
+
+    selectedCategory.forEach((category) => {
+      params.append("skillName", category);
+    });
+
+    selectedInstructor.forEach((instructor) => {
+      params.append("instructorName", instructor);
+    });
 
     const newSearch = params.toString();
     navigate(`${location.pathname}?${newSearch}`, { replace: true });
-  }, [selectedCategory, selectedInstructor, navigate, location.pathname]);
+  }, [JSON.stringify(selectedCategory), JSON.stringify(selectedInstructor), navigate, location.pathname]);
 
   return (
     <div className="course-content">
@@ -55,11 +61,14 @@ function TestCategoriesLayout() {
                 <h5>
                   <i className="feather-filter me-2"></i>Filters
                 </h5>
-                <a onClick={(e) => {
+                <a
+                  onClick={(e) => {
                     e.preventDefault();
-                    setSelectedCategory("");
-                    setSelectedInstructor("");
-                  }} className="clear-text">
+                    setSelectedCategory([]);
+                    setSelectedInstructor([]);
+                  }}
+                  className="clear-text"
+                >
                   Clear
                 </a>
               </div>
@@ -88,13 +97,19 @@ function TestCategoriesLayout() {
                       <div>
                         <label className="custom_check">
                           <input
-                            type="radio"
-                            name="category_filter"
-                            value=""
-                            checked={selectedCategory === ""}
-                            onChange={(e) =>
-                              setSelectedCategory(e.target.value)
+                            type="checkbox"
+                            checked={
+                              selectedCategory.length === categories.length
                             }
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedCategory(
+                                  categories.map((cat) => cat.id)
+                                );
+                              } else {
+                                setSelectedCategory([]);
+                              }
+                            }}
                           />
                           <span className="checkmark"></span> All Categories
                         </label>
@@ -103,13 +118,22 @@ function TestCategoriesLayout() {
                         <div key={category.id}>
                           <label className="custom_check">
                             <input
-                              type="radio"
+                              type="checkbox"
                               name="category_filter"
                               value={category.id}
-                              checked={selectedCategory === category.id}
-                              onChange={(e) =>
-                                setSelectedCategory(e.target.value)
-                              }
+                              checked={selectedCategory.includes(category.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedCategory((prev) => [
+                                    ...prev,
+                                    category.id,
+                                  ]);
+                                } else {
+                                  setSelectedCategory((prev) =>
+                                    prev.filter((cat) => cat !== category.id)
+                                  );
+                                }
+                              }}
                             />
                             <span className="checkmark"></span> {category.name}
                           </label>
@@ -145,13 +169,18 @@ function TestCategoriesLayout() {
                           <div>
                             <label className="custom_check">
                               <input
-                                type="radio"
-                                name="instructor_filter"
-                                value=""
-                                checked={selectedInstructor === ""}
-                                onChange={(e) =>
-                                  setSelectedInstructor(e.target.value)
+                                type="checkbox"
+                                checked={
+                                  selectedInstructor.length ===
+                                  instructors.length
                                 }
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedInstructor([...instructors]);
+                                  } else {
+                                    setSelectedInstructor([]);
+                                  }
+                                }}
                               />
                               <span className="checkmark"></span> All
                               Instructors
@@ -161,13 +190,26 @@ function TestCategoriesLayout() {
                             <div key={index}>
                               <label className="custom_check">
                                 <input
-                                  type="radio"
+                                  type="checkbox"
                                   name="instructor_filter"
                                   value={instructor}
-                                  checked={selectedInstructor === instructor}
-                                  onChange={(e) =>
-                                    setSelectedInstructor(e.target.value)
-                                  }
+                                  checked={selectedInstructor.includes(
+                                    instructor
+                                  )}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedInstructor((prev) => [
+                                        ...prev,
+                                        instructor,
+                                      ]);
+                                    } else {
+                                      setSelectedInstructor((prev) =>
+                                        prev.filter(
+                                          (inst) => inst !== instructor
+                                        )
+                                      );
+                                    }
+                                  }}
                                 />
                                 <span className="checkmark"></span> {instructor}
                               </label>
@@ -178,84 +220,6 @@ function TestCategoriesLayout() {
                     </div>
                   </div>
                 </div>
-                {/* <div className="accordion-item">
-                  <h2 className="accordion-header" id="headingcustomicon1Six">
-                    <a
-                      href="#"
-                      className="accordion-button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapsecustomicon1Six"
-                      aria-expanded="false"
-                      aria-controls="collapsecustomicon1Six"
-                    >
-                      Reviews <i className="fa-solid fa-chevron-down"></i>
-                    </a>
-                  </h2>
-                  <div
-                    id="collapsecustomicon1Six"
-                    className="accordion-collapse collapse show"
-                    aria-labelledby="headingcustomicon1Six"
-                    data-bs-parent="#accordioncustomicon1Example"
-                  >
-                    <div className="accordion-body">
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning"></i>
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-light"></i>
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-light me-1"></i>
-                          <i className="fa-solid fa-star text-light"></i>
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-light me-1"></i>
-                          <i className="fa-solid fa-star text-light me-1"></i>
-                          <i className="fa-solid fa-star text-light"></i>
-                        </label>
-                      </div>
-                      <div>
-                        <label className="custom_check custom_one mb-0">
-                          <input type="checkbox" name="select_specialist" />
-                          <span className="checkmark"></span>
-                          <i className="fa-solid fa-star text-warning me-1"></i>
-                          <i className="fa-solid fa-star text-light me-1"></i>
-                          <i className="fa-solid fa-star text-light me-1"></i>
-                          <i className="fa-solid fa-star text-light me-1"></i>
-                          <i className="fa-solid fa-star text-light"></i>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>

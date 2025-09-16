@@ -8,5 +8,8 @@
         public DateTime CreatedAt { get; set; }
         public string Resource { get; set; }
         public Boolean IsActive { get; set; }
+
+        public string InstructorName { get; set; }
+        public string TypeName { get; set; }
     }
 }

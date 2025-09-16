@@ -60,14 +60,9 @@ namespace IELTS_PRACTICE.Migrations
                     b.Property<int>("TestId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TestId");
-
-                    b.HasIndex("TypeId");
 
                     b.ToTable("Questions");
                 });
@@ -122,7 +117,12 @@ namespace IELTS_PRACTICE.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TypeId");
 
                     b.ToTable("Tests");
                 });
@@ -248,15 +248,7 @@ namespace IELTS_PRACTICE.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IELTS_PRACTICE.Models.TypeSkill", "TypeSkill")
-                        .WithMany("Questions")
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Test");
-
-                    b.Navigation("TypeSkill");
                 });
 
             modelBuilder.Entity("IELTS_PRACTICE.Models.StudentMetaData", b =>
@@ -268,6 +260,17 @@ namespace IELTS_PRACTICE.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("IELTS_PRACTICE.Models.Test", b =>
+                {
+                    b.HasOne("IELTS_PRACTICE.Models.TypeSkill", "TypeSkill")
+                        .WithMany("Tests")
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TypeSkill");
                 });
 
             modelBuilder.Entity("IELTS_PRACTICE.Models.TestSubmission", b =>
@@ -315,7 +318,7 @@ namespace IELTS_PRACTICE.Migrations
 
             modelBuilder.Entity("IELTS_PRACTICE.Models.TypeSkill", b =>
                 {
-                    b.Navigation("Questions");
+                    b.Navigation("Tests");
                 });
 
             modelBuilder.Entity("IELTS_PRACTICE.Models.User", b =>

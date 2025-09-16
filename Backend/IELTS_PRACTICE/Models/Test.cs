@@ -8,7 +8,9 @@
         public DateTime CreatedAt { get; set; }
         public string Resource { get; set; }
         public Boolean IsActive { get; set; }
+        public int TypeId { get; set; }
         //Navigation
+        public TypeSkill TypeSkill { get; set; }
         public ICollection<Question> Questions { get; set; }
         public ICollection<TestSubmission> TestSubmissions { get; set; }
     }
