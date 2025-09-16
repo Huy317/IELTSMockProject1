@@ -1,68 +1,41 @@
 import { Link } from "react-router-dom";
 import TestCard, { TestCardNew } from "../components/student/TestCard";
 import { useEffect, useState } from "react";
-import type { Test } from "../types/Test";
-import { getTests } from "../services/testService";
+import type { TestWithAuthorName } from "../types/Test";
 import { useSearchParams } from "react-router-dom";
-import { getFilteredTests } from "../services/testService"; // Add your filter API function
+import { getFilteredTests } from "../services/testService";
 
 function TestList() {
-  const [tests, setTests] = useState<Test[]>([]);
+  const [tests, setTests] = useState<TestWithAuthorName[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
 
-  const skillName = searchParams.get("skillName") || "";
-  const instructorName = searchParams.get("instructorName") || "";
-
-  // const fetchTests = async () => {
-  //   const data = await getTests();
-  //   setTests(data);
-  // }
-
-  // useEffect(() => {
-  //   fetchTests();
-  // }, [])
-
-  const fetchFilteredTests = async () => {
-    setLoading(true);
-    try {
-      const data = await getFilteredTests({
-        skillName: skillName || undefined,
-        instructorName: instructorName || undefined,
-      });
-      setTests(data);
-    } catch (error) {
-      console.error("Error fetching filtered tests:", error);
-      setTests([]); // Show empty list on error
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchFilteredTests = async () => {
+      setLoading(true);
+      try {
+        const skillNames = searchParams.getAll("skillName");
+        const instructorNames = searchParams.getAll("instructorName");
+
+        const data = await getFilteredTests({
+          skillName: skillNames.length > 0 ? skillNames : undefined,
+          instructorName:
+            instructorNames.length > 0 ? instructorNames : undefined,
+        });
+        setTests(data);
+        console.log("Filtered tests data:", data);
+      } catch (error) {
+        console.error("Error fetching filtered tests:", error);
+        setTests([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchFilteredTests();
-  }, [skillName, instructorName]);
+  }, [searchParams]);
 
   return (
-    // <div className="row">
-    //   {tests.map((test, idx) => (
-    //     <TestCardNew
-    //       key={idx}
-    //       image="/assets/img/course/course-01.jpg"
-    //       adminAvatar="/assets/img/user/user-29.jpg"
-    //       adminName={test.createdBy.toString() + "LATER"}
-    //       title={test.testName}
-    //       rating={4.9}
-    //       reviewCount={200}
-    //       skillType={
-    //         test.testName.toLowerCase().includes("listening")
-    //           ? "Listening"
-    //           : "Reading"
-    //       }
-    //     />
-    //   ))}
-    // </div>
-
     <div className="row">
       {loading ? (
         <div className="col-12 text-center">
@@ -77,15 +50,11 @@ function TestList() {
             key={idx}
             image="/assets/img/course/course-01.jpg"
             adminAvatar="/assets/img/user/user-29.jpg"
-            adminName={test.createdBy.toString() + "LATER"}
+            adminName={test.instructorName.toUpperCase()}
             title={test.testName}
             rating={4.9}
             reviewCount={200}
-            skillType={
-              test.testName.toLowerCase().includes("listening")
-                ? "Listening"
-                : "Reading"
-            }
+            skillType={test.typeName}
           />
         ))
       ) : (

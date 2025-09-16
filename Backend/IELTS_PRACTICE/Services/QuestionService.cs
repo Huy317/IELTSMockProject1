@@ -68,7 +68,7 @@ namespace IELTS_PRACTICE.Services
                 Choices = rq.Choices,
                 Explanation = rq.Explanation,
                 ParentId = rq.ParentId,
-                TypeId = rq.TypeId,
+                //TypeId = rq.TypeId,
                 TestId = rq.TestId,
                 Link = rq.Link,
             };

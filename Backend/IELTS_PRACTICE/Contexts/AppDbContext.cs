@@ -34,15 +34,20 @@ namespace IELTS_PRACTICE.Contexts
                 .WithMany(t => t.Questions)
                 .HasForeignKey(q => q.TestId);
 
-            modelBuilder.Entity<Question>()
-                .HasOne(q => q.TypeSkill)
-                .WithMany(t => t.Questions)
-                .HasForeignKey(q => q.TypeId);
+            //modelBuilder.Entity<Question>()
+            //    .HasOne(q => q.TypeSkill)
+            //    .WithMany(t => t.Questions)
+            //    .HasForeignKey(q => q.TypeId);
 
             modelBuilder.Entity<Test>()
                 .HasMany(t => t.TestSubmissions)
                 .WithOne(ts => ts.Test)
                 .HasForeignKey(ts => ts.TestId);
+
+            modelBuilder.Entity<Test>()
+                .HasOne(t => t.TypeSkill)
+                .WithMany(ts => ts.Tests)
+                .HasForeignKey(t => t.TypeId);
 
             modelBuilder.Entity<TestSubmission>()
                 .HasOne(ts => ts.TestSubmissionDetail)
