@@ -50,23 +50,23 @@ function AdminSetting() {
 
   function handleProfileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setProfileData(prev => ({
+    setProfileData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   }
 
   function handlePasswordInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setPasswordData(prev => ({
+    setPasswordData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   }
 
   async function handleProfileSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+
     if (!user) {
       toast.error("No user data available");
       return;
@@ -81,7 +81,7 @@ function AdminSetting() {
 
       await updateUser(user.id, updateData);
       toast.success("Profile updated successfully!");
-      
+
       await loadUserData();
     } catch (error) {
       console.error("Failed to update profile:", error);
@@ -91,7 +91,7 @@ function AdminSetting() {
 
   async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+
     if (!user) {
       toast.error("No user data available");
       return;
@@ -113,7 +113,7 @@ function AdminSetting() {
 
       await updateUser(user.id, updateData);
       toast.success("Password updated successfully!");
-      
+
       setPasswordData({
         newPassword: "",
         confirmNewPassword: "",
@@ -126,7 +126,10 @@ function AdminSetting() {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "200px" }}
+      >
         <div className="spinner-border" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -144,20 +147,41 @@ function AdminSetting() {
           <div className="card-body">
             <div className="profile-upload-group">
               <div className="d-flex align-items-center">
-                <a href="#" className="avatar flex-shrink-0 avatar-xxxl avatar-rounded border me-3">
-                  <img src="/assets/img/user/user-01.jpg" alt="Img" className="img-fluid" />
+                <a
+                  href="#"
+                  className="avatar flex-shrink-0 avatar-xxxl avatar-rounded border me-3"
+                >
+                  <img
+                    src="/assets/img/user/user-01.jpg"
+                    alt="Img"
+                    className="img-fluid"
+                  />
                 </a>
                 <div className="profile-upload-head">
-                  <h6><a href="#">Your Avatar</a></h6>
-                  <p className="fs-14 mb-0">PNG or JPG no bigger than 800px width and height</p>
+                  <h6>
+                    <a href="#">Your Avatar</a>
+                  </h6>
+                  <p className="fs-14 mb-0">
+                    PNG or JPG no bigger than 800px width and height
+                  </p>
                   <div className="new-employee-field">
                     <div className="d-flex align-items-center mt-2">
                       <div className="image-upload position-relative mb-0 me-2">
                         <input type="file" />
-                        <a href="#" className="btn bg-gray-100 btn-sm rounded-pill image-uploads">Upload</a>
+                        <a
+                          href="#"
+                          className="btn bg-gray-100 btn-sm rounded-pill image-uploads"
+                        >
+                          Upload
+                        </a>
                       </div>
                       <div className="img-delete">
-                        <a href="#" className="btn btn-secondary btn-sm rounded-pill">Delete</a>
+                        <a
+                          href="#"
+                          className="btn btn-secondary btn-sm rounded-pill"
+                        >
+                          Delete
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -169,47 +193,53 @@ function AdminSetting() {
                 <h5 className="mb-1 fs-18">Personal Details</h5>
                 <p>Edit your personal information</p>
               </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">Full Name <span className="text-danger">*</span></label>
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      name="fullName"
-                      value={profileData.fullName}
-                      onChange={handleProfileInputChange}
-                      required
-                    />
-                  </div>
+              {/* <div className="row"> */}
+              <div className="col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">
+                    Full Name <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="fullName"
+                    value={profileData.fullName}
+                    onChange={handleProfileInputChange}
+                    placeholder="Enter full name"
+                    required
+                  />
                 </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">Email <span className="text-danger">*</span></label>
-                    <input 
-                      type="email" 
-                      className="form-control" 
-                      name="email"
-                      value={profileData.email}
-                      onChange={handleProfileInputChange}
-                      required
-                    />
-                  </div>
+              </div>
+              <div className="col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">
+                    Email <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    name="email"
+                    value={profileData.email}
+                    onChange={handleProfileInputChange}
+                    placeholder="Enter email"
+                    required
+                  />
                 </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">Phone Number</label>
-                    <input 
-                      type="tel" 
-                      className="form-control" 
-                      name="phoneNumber"
-                      value={profileData.phoneNumber}
-                      onChange={handleProfileInputChange}
-                      placeholder="Enter phone number"
-                    />
-                  </div>
+              </div>
+              <div className="col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">Phone Number</label>
+                  <input
+                    type="tel"
+                    className="form-control"
+                    name="phoneNumber"
+                    value={profileData.phoneNumber}
+                    onChange={handleProfileInputChange}
+                    placeholder="Enter phone number"
+                  />
                 </div>
-                {/* <div className="col-md-6">
+              </div>
+              {/* <div className="col-md-6">
                   <div className="mb-3">
                     <label className="form-label">Role</label>
                     <input 
@@ -220,64 +250,93 @@ function AdminSetting() {
                     />
                   </div>
                 </div> */}
-                
-                <div className="col-md-12">
-                  <button className="btn btn-secondary rounded-pill" type="submit">Update Profile</button>
-                </div>
+
+              <div className="col-md-12">
+                <button
+                  className="btn btn-secondary rounded-pill"
+                  type="submit"
+                >
+                  Update Profile
+                </button>
               </div>
+              {/* </div> */}
             </div>
           </div>
         </div>
       </form>
-      
+
       <form onSubmit={handlePasswordSubmit}>
         <div className="card mb-0 mt-3">
           <div className="card-body">
             <h5 className="fs-18 mb-3">Update Password</h5>
             <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">New Password <span className="text-danger">*</span></label>
-                    <input 
-                      type="password" 
-                      className="form-control" 
-                      name="newPassword"
-                      value={passwordData.newPassword}
-                      onChange={handlePasswordInputChange}
-                      placeholder="Enter new password" 
-                      minLength={8}
-                      title="Password must be at least 8 characters long"
-                      required
-                    />
-                    <div className="form-text">Password must be at least 8 characters long</div>
-                  </div>
+              <div className="mb-3">
+                <label className="form-label">
+                  Current Password <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  name="currentPassword"
+                  // value={passwordData.currentPassword}
+                  onChange={handlePasswordInputChange}
+                  placeholder="Enter current password"
+                  required
+                />
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="mb-3">
+                <label className="form-label">
+                  New Password <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  name="newPassword"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordInputChange}
+                  placeholder="Enter new password"
+                  minLength={8}
+                  title="Password must be at least 8 characters long"
+                  required
+                />
+                <div className="form-text">
+                  Password must be at least 8 characters long
                 </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label className="form-label">Confirm New Password <span className="text-danger">*</span></label>
-                    <input 
-                      type="password" 
-                      className="form-control" 
-                      name="confirmNewPassword"
-                      value={passwordData.confirmNewPassword}
-                      onChange={handlePasswordInputChange}
-                      placeholder="Confirm new password" 
-                      required
-                    />
-                  </div>
-                </div>
-            <button className="btn btn-secondary" type="submit">Update Password</button>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="mb-3">
+                <label className="form-label">
+                  Confirm New Password <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  name="confirmNewPassword"
+                  value={passwordData.confirmNewPassword}
+                  onChange={handlePasswordInputChange}
+                  placeholder="Confirm new password"
+                  required
+                />
+              </div>
+            </div>
+            <button className="btn btn-secondary" type="submit">
+              Update Password
+            </button>
           </div>
         </div>
       </form>
-      
-      <div className="card mb-0 mt-3">
+
+      {/* <div className="card mb-0 mt-3">
         <div className="card-body">
           <h5 className="fs-18 mb-3">Delete Account</h5>
           <h6 className="mb-1">Are you sure you want to delete your account?</h6>
           <p className="mb-3">Refers to the action of permanently removing a user's account and associated data from a system, service and platform.</p>
           <a href="#" className="btn btn-secondary">Delete Account</a>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
