@@ -209,7 +209,7 @@ function AdminSetting() {
                     />
                   </div>
                 </div>
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
                   <div className="mb-3">
                     <label className="form-label">Role</label>
                     <input 
@@ -219,7 +219,7 @@ function AdminSetting() {
                       readOnly 
                     />
                   </div>
-                </div>
+                </div> */}
                 
                 <div className="col-md-12">
                   <button className="btn btn-secondary rounded-pill" type="submit">Update Profile</button>
