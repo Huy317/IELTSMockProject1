@@ -23,6 +23,9 @@ import ListeningTestPage from "./pages/ListeningTestPage";
 
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import LoginPageFinal from "./pages/TestLoginFinal";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import Faq from "./pages/Faq";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +54,18 @@ const router = createBrowserRouter([
       {
         path: "createreadingtest",
         element: <AddReadingTest />,
+      },
+      {
+        path: "about-us",
+        element: <AboutUs />,
+      },
+      {
+        path: "contact-us",
+        element: <ContactUs />,
+      },
+      {
+        path: "faq",
+        element: <Faq />,
       },
       {
         path: "admin",
@@ -144,7 +159,7 @@ const router = createBrowserRouter([
   {
     path: "unauthorized",
     element: <div>Unauthorized Access</div>,
-  }
+  },
 ]);
 
 export default function Routes() {
