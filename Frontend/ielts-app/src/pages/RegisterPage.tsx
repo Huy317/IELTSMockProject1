@@ -168,8 +168,9 @@ const RegisterPage = () => {
                             <div className="loginbox">
                                 <div className="w-100">
                                     <div className="d-flex align-items-center justify-content-between login-header">
-                                        <img src="../assets/img/logo.svg" className="img-fluid" alt="IELTS Mock Platform Logo" />
-                                        <Link to="/" className="link-1">Back to Home</Link>
+                                        <Link to="/" className="link-1"><img src="../assets/img/logo.svg" className="img-fluid" alt="IELTS Mock Platform Logo" /></Link>
+                                        
+                                        {/* <Link to="/" className="link-1">Back to Home</Link> */}
                                     </div>
                                     <div className={"alert alert-danger "+(alertMessage != "" ? "d-block" : "d-none")}>{alertMessage}</div>
                                     <h1 className="fs-32 fw-bold topic">Create Your IELTS Account</h1>
@@ -217,13 +218,23 @@ const RegisterPage = () => {
                                             <div className="position-relative">
                                                 <input
                                                     type="tel"
+                                                    inputMode='numeric'
                                                     className="form-control form-control-lg"
                                                     {...register("phoneNumber", {
+                                                        required: "Phone number is required",
                                                         pattern: {
                                                             value: /^[\+]?[0-9\s\-\(\)]{10,}$/,
                                                             message: "Please enter a valid phone number"
                                                         }
                                                     })}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        if (/^\+?\d*$/.test(val)) {
+                                                            e.target.value = val;
+                                                        }else{
+                                                            e.target.value = e.target.value = val.slice(0, -1);
+                                                        }
+                                                    }}
                                                 />
                                                 <span><i className="isax isax-call input-icon text-gray-7 fs-14"></i></span>
                                             </div>

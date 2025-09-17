@@ -18258,7 +18258,8 @@ fieldset .quiz-attempt-card {
   }
 }
 .featured-courses-section .feature-course-slider-2 {
-  margin-bottom: 44px;
+  margin-bottom: 0px;
+
 }
 .featured-courses-section .feature-course-slider-2 .feature-course-item {
   padding: 20px;

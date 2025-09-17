@@ -17,39 +17,39 @@ function Faq() {
   const faqData: FaqItem[] = [
     {
       id: "faqone",
-      question: "Is there a 14-days trial?",
+      question: "How are your IELTS mock tests structured?",
       answer:
-        "No, we currently do not offer a 14-day trial. However, you can explore our platform through free demo courses or contact our team for a personalized walkthrough of the features.",
+        "Each mock test follows the real IELTS order: Listening, Reading, Writing (Task 1 & 2), and Speaking simulation. Timing and section formats match the official exam.",
     },
     {
       id: "faqtwo",
-      question: "How much time I will need to learn this app?",
+      question: "How accurate are the band score estimates?",
       answer:
-        "No, we currently do not offer a 14-day trial. However, you can explore our platform through free demo courses or contact our team for a personalized walkthrough of the features.",
+        "Listening and Reading are auto‑scored using official-style conversion tables. Writing and Speaking bands use examiner-aligned rubrics. Estimates typically fall within ±0.5 band.",
     },
     {
       id: "faqthree",
-      question: "Is there a month-to-month payment option?",
+      question: "Is there a free mock test before upgrading?",
       answer:
-        "No, we currently do not offer a 14-day trial. However, you can explore our platform through free demo courses or contact our team for a personalized walkthrough of the features.",
+        "Yes. You can attempt one full-length mock test with limited reports. Upgrading unlocks unlimited tests, detailed analytics, and writing/speaking evaluations.",
     },
     {
       id: "faqfour",
-      question: "What's the benefits of the Premium Membership?",
+      question: "How do you simulate the Speaking test?",
       answer:
-        "No, we currently do not offer a 14-day trial. However, you can explore our platform through free demo courses or contact our team for a personalized walkthrough of the features.",
+        "You record answers to Part 1, 2, and 3 prompts with on‑screen timing. Our system analyzes delivery and you receive band feedback plus sample high-band responses.",
     },
     {
       id: "faqfive",
-      question: "Are there any free tutorials available?",
+      question: "When do I get my results and feedback?",
       answer:
-        "No, we currently do not offer a 14-day trial. However, you can explore our platform through free demo courses or contact our team for a personalized walkthrough of the features.",
+        "Listening and Reading scores are instant. Writing and Speaking feedback (if included in your plan) is returned within 12–24 hours with band breakdowns.",
     },
     {
       id: "faqsix",
-      question: "How can I cancel my subscription plan?",
+      question: "Can I review mistakes and see model answers?",
       answer:
-        "No, we currently do not offer a 14-day trial. However, you can explore our platform through free demo courses or contact our team for a personalized walkthrough of the features.",
+        "Yes. You can view your selected answers, correct answers, band descriptors, model Writing responses, and suggested Speaking phrases in the review dashboard.",
     },
   ];
 
@@ -86,53 +86,53 @@ function Faq() {
           </p>
 
           {/* Replace the current FAQ rendering with this Bootstrap accordion approach */}
-<div className="row">
-  {/* Left Column - First 3 FAQs */}
-  <div className="col-lg-6">
-    {faqData.slice(0, 3).map((faq, index) => (
-      <div key={faq.id} className="faq-card">
-        <h6 className="faq-title">
-          <a 
-            className="collapsed" 
-            data-bs-toggle="collapse" 
-            href={`#${faq.id}`} 
-            aria-expanded="false"
-          >
-            {faq.question}
-          </a>
-        </h6>
-        <div id={faq.id} className="collapse">
-          <div className="faq-detail">
-            <p>{faq.answer}</p>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
+          <div className="row">
+            {/* Left Column - First 3 FAQs */}
+            <div className="col-lg-6">
+              {faqData.slice(0, 3).map((faq, index) => (
+                <div key={faq.id} className="faq-card">
+                  <h6 className="faq-title">
+                    <a
+                      className="collapsed"
+                      data-bs-toggle="collapse"
+                      href={`#${faq.id}`}
+                      aria-expanded="false"
+                    >
+                      {faq.question}
+                    </a>
+                  </h6>
+                  <div id={faq.id} className="collapse">
+                    <div className="faq-detail">
+                      <p>{faq.answer}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-  {/* Right Column - Last 3 FAQs */}
-  <div className="col-lg-6">
-    {faqData.slice(3, 6).map((faq, index) => (
-      <div key={faq.id} className="faq-card">
-        <h6 className="faq-title">
-          <a 
-            className="collapsed" 
-            data-bs-toggle="collapse" 
-            href={`#${faq.id}`} 
-            aria-expanded="false"
-          >
-            {faq.question}
-          </a>
-        </h6>
-        <div id={faq.id} className="collapse">
-          <div className="faq-detail">
-            <p>{faq.answer}</p>
+            {/* Right Column - Last 3 FAQs */}
+            <div className="col-lg-6">
+              {faqData.slice(3, 6).map((faq, index) => (
+                <div key={faq.id} className="faq-card">
+                  <h6 className="faq-title">
+                    <a
+                      className="collapsed"
+                      data-bs-toggle="collapse"
+                      href={`#${faq.id}`}
+                      aria-expanded="false"
+                    >
+                      {faq.question}
+                    </a>
+                  </h6>
+                  <div id={faq.id} className="collapse">
+                    <div className="faq-detail">
+                      <p>{faq.answer}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
 
           {/* Contact Us Section */}
           <div className="bg-light border rounded p-4 p-sm-5 mt-4">
