@@ -95,7 +95,7 @@ function TestCategoriesLayout() {
                   >
                     <div className="accordion-body">
                       <div>
-                        <label className="custom_check">
+                        {/* <label className="custom_check">
                           <input
                             type="checkbox"
                             checked={
@@ -112,7 +112,7 @@ function TestCategoriesLayout() {
                             }}
                           />
                           <span className="checkmark"></span> All Categories
-                        </label>
+                        </label> */}
                       </div>
                       {categories.map((category) => (
                         <div key={category.id}>
@@ -167,7 +167,7 @@ function TestCategoriesLayout() {
                       ) : (
                         <>
                           <div>
-                            <label className="custom_check">
+                            {/* <label className="custom_check">
                               <input
                                 type="checkbox"
                                 checked={
@@ -184,7 +184,7 @@ function TestCategoriesLayout() {
                               />
                               <span className="checkmark"></span> All
                               Instructors
-                            </label>
+                            </label> */}
                           </div>
                           {instructors.map((instructor, index) => (
                             <div key={index}>
@@ -235,7 +235,7 @@ function TestCategoriesLayout() {
                   <div className="show-filter add-course-info">
                     <form action="#">
                       <div className="d-sm-flex justify-content-center justify-content-lg-end mb-1 mb-lg-0">
-                        <div className="view-icons mb-2 mb-sm-0">
+                        {/* <div className="view-icons mb-2 mb-sm-0">
                           <NavLink
                             to="/course-grid"
                             className="grid-view active"
@@ -245,11 +245,12 @@ function TestCategoriesLayout() {
                           <NavLink to="/course-list" className="list-view">
                             <i className="isax isax-task"></i>
                           </NavLink>
-                        </div>
+                        </div> */}
                         <select className="form-select">
-                          <option>Newly Published</option>
+                          {/* <option>Newly Published</option> */}
                           <option>Most Attempts</option>
-                          <option>Top Rated</option>
+                          <option>Least Attempts</option>
+                          {/* <option>Top Rated</option> */}
                         </select>
                         <div className="search-group">
                           <i className="isax isax-search-normal-1"></i>

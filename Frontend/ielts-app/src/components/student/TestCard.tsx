@@ -80,7 +80,7 @@ export function TestCardNew({
               href="#"
               className="btn btn-dark btn-sm d-inline-flex align-items-center"
             >
-              View Course<i className="isax isax-arrow-right-3 ms-1"></i>
+              View Test<i className="isax isax-arrow-right-3 ms-1"></i>
             </a>
           </div>
         </div>
