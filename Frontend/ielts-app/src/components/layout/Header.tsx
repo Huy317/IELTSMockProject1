@@ -5,7 +5,7 @@ function Header() {
   const { user, logout } = useAuth();
   const handleLogout = () => {
     logout();
-  }
+  };
   return (
     <header className="header-two">
       <div className="container">
@@ -31,6 +31,7 @@ function Header() {
               </Link>
             </div>
           </div>
+
           <div className="main-menu-wrapper">
             <div className="menu-header">
               <Link to="/" className="menu-logo">
@@ -44,58 +45,37 @@ function Header() {
                 <i className="fas fa-times"></i>
               </a>
             </div>
-            <ul className="main-nav">
-              <li className="">
-                {/* <a href="/">Home</a> */}
-                <NavLink
-                  to="/"
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                >
-                  Home
-                </NavLink>
-              </li>
-              <li className="has-submenu">
-                <a href="#">
-                  Tests <i className="fas fa-chevron-down"></i>
-                </a>
-                <ul className="submenu">
-                  <li>
-                    {/* <a href="/course-grid">Course Grid</a> */}
+
+            {user?.role === "Admin" ? (
+              <>
+                <ul className="main-nav">
+                  <li className=""></li>
+                </ul>
+              </>
+            ) : (
+              <>
+                <ul className="main-nav">
+                  <li className="">
+                    <NavLink
+                      to="/"
+                      className={({ isActive }) => (isActive ? "active" : "")}
+                    >
+                      Home
+                    </NavLink>
+                  </li>
+                  <li className="">
                     <NavLink
                       to="/test/list"
                       className={({ isActive }) => (isActive ? "active" : "")}
                     >
-                      Test List
+                      Exams
                     </NavLink>
                   </li>
-                  {/* <li><Link to="/course-resume">Course Resume</Link></li> */}
-                </ul>
-              </li>
-              <li className="has-submenu">
+                  {/* <li className="has-submenu">
                 <a href="#">
                   Dashboard <i className="fas fa-chevron-down"></i>
                 </a>
                 <ul className="submenu">
-                  {/* <li className="has-submenu">
-                    <a href="#">Instructor Dashboard</a>
-                    <ul className="submenu">
-                      <li><Link to="/admin/dashboard">Dashboard</Link></li>
-                      <li><Link to="/admin/profile">My Profile</Link></li>
-                      <li><Link to="/admin/courses">Courses</Link></li>
-                      <li><Link to="/admin/users">User List</Link></li>
-                      <li><Link to="/admin/settings">Settings</Link></li>
-                    </ul>
-                  </li>
-                  <li className="has-submenu">
-                    <a href="#">Student Dashboard</a>
-                    <ul className="submenu">
-                      <li><Link to="/student/dashboard">Dashboard</Link></li>
-                      <li><Link to="/student/profile">My Profile</Link></li>
-                      <li><Link to="/student/courses">Courses</Link></li>
-                      <li><Link to="/student/settings">Settings</Link></li>
-                    </ul>
-                  </li> */}
-
                   {user && user.role === "Admin" ? (
                     <>
                       <li>
@@ -131,8 +111,8 @@ function Header() {
                     </>
                   )}
                 </ul>
-              </li>
-              <li className="has-submenu">
+              </li> */}
+                  {/* <li className="has-submenu">
                 <a href="#">
                   Pages <i className="fas fa-chevron-down"></i>
                 </a>
@@ -161,8 +141,34 @@ function Header() {
                     <Link to="/faq">FAQ</Link>
                   </li>
                 </ul>
-              </li>
-            </ul>
+              </li> */}
+                  <li className="">
+                    <NavLink
+                      to="/about-us"
+                      className={({ isActive }) => (isActive ? "active" : "")}
+                    >
+                      About us
+                    </NavLink>
+                  </li>
+                  <li className="">
+                    <NavLink
+                      to="/contact-us"
+                      className={({ isActive }) => (isActive ? "active" : "")}
+                    >
+                      Contact us
+                    </NavLink>
+                  </li>
+                  <li className="">
+                    <NavLink
+                      to="/faq"
+                      className={({ isActive }) => (isActive ? "active" : "")}
+                    >
+                      FAQ
+                    </NavLink>
+                  </li>
+                </ul>
+              </>
+            )}
 
             <div className="menu-dropdown">
               <div className="dropdown flag-dropdown mb-2">
@@ -242,29 +248,96 @@ function Header() {
               </Link>
             </div>
           </div>
-          <div className="header-btn d-flex align-items-center">
-            <div className="icon-btn me-2">
-              <a
-                href="#"
-                id="dark-mode-toggle"
-                className="theme-toggle activate"
-              >
-                <i className="isax isax-sun-15"></i>
-              </a>
-              <a href="#" id="light-mode-toggle" className="theme-toggle">
-                <i className="isax isax-moon"></i>
-              </a>
-            </div>
 
-            {/* <Link
-              to="/login"
-              className="btn btn-light d-inline-flex align-items-center me-2"
-            >
-              <i className="isax isax-lock-circle me-2"></i>Sign In
-            </Link>
-            <Link to="/register" className="btn btn-secondary me-0">
-              <i className="isax isax-user-edit me-2"></i>Register
-            </Link> */}
+          <div className="header-btn d-flex align-items-center">
+            {user?.role === "Student" ? (
+              <div className="main-menu-wrapper">
+              <ul className="main-nav">
+                <li className="has-submenu">
+                  <a href="#">
+                    Hello, {user?.name} <i className="fas fa-chevron-down"></i>
+                  </a>
+                  <ul className="submenu">
+                    <li>
+                      <NavLink
+                        to="student/dashboard"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                      >
+                        Dashboard
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to="student/profile"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                      >
+                        Your Profile
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to="student/courses"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                      >
+                        Your Tests
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to="student/settings"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                      >
+                        Settings
+                      </NavLink>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            ) :(<></>)}
+            {/* <div className="main-menu-wrapper">
+              <ul className="main-nav">
+                <li className="has-submenu">
+                  <a href="#">
+                    Hello, {user?.name} <i className="fas fa-chevron-down"></i>
+                  </a>
+                  <ul className="submenu">
+                    <li>
+                      <NavLink
+                        to="student/dashboard"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                      >
+                        Dashboard
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to="student/profile"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                      >
+                        Your Profile
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to="student/courses"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                      >
+                        Your Tests
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to="student/settings"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                      >
+                        Settings
+                      </NavLink>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div> */}
 
             {user === null ? (
               <>
@@ -280,7 +353,11 @@ function Header() {
               </>
             ) : (
               <>
-                <Link to="/login" onClick={handleLogout} className="btn btn-secondary me-0">
+                <Link
+                  to="/login"
+                  onClick={handleLogout}
+                  className="btn btn-secondary me-0"
+                >
                   <i className="isax isax-user-edit me-2"></i>Logout
                 </Link>
               </>
