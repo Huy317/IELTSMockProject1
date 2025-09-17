@@ -84,14 +84,14 @@ function LoginPageFinal() {
             <div className="loginbox">
               <div className="w-100">
                 <div className="d-flex align-items-center justify-content-between login-header">
-                  <img
+                  
+                  {/* <a href="index.html" className="link-1">Back to Home</a> */}
+                  <Link to="/" className="link-1">
+                    <img
                     src="../assets/img/logo.svg"
                     className="img-fluid"
                     alt="Logo"
                   />
-                  {/* <a href="index.html" className="link-1">Back to Home</a> */}
-                  <Link to="/" className="link-1">
-                    Back to Home
                   </Link>
                 </div>
                 <div
