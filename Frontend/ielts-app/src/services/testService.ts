@@ -29,6 +29,7 @@ export async function getAllAuthorNames(): Promise<string[]> {
 export async function getFilteredTests(filters : {
   skillName? : string[];
   instructorName? : string[];
+  search? : string;
 }) : Promise<TestWithAuthorName[]> {
   const params = new URLSearchParams();
   if (filters.skillName) {
@@ -37,6 +38,10 @@ export async function getFilteredTests(filters : {
   if (filters.instructorName) {
     filters.instructorName.forEach(instr => params.append("instructorName", instr));
   }
+  if (filters.search) {
+    params.append("search", filters.search);
+  }
+  
   const res = await client.get<TestWithAuthorName[]>(`/Test/filter?${params.toString()}`);
   return res.data;
 }
