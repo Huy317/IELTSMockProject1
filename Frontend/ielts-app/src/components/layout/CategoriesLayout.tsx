@@ -7,6 +7,7 @@ function TestCategoriesLayout() {
   const [instructors, setInstructors] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [selectedInstructor, setSelectedInstructor] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -47,9 +48,13 @@ function TestCategoriesLayout() {
       params.append("instructorName", instructor);
     });
 
+    if (searchTerm.trim()) {
+      params.append("search", searchTerm.trim());
+    }
+
     const newSearch = params.toString();
     navigate(`${location.pathname}?${newSearch}`, { replace: true });
-  }, [JSON.stringify(selectedCategory), JSON.stringify(selectedInstructor), navigate, location.pathname]);
+  }, [JSON.stringify(selectedCategory), JSON.stringify(selectedInstructor), searchTerm, navigate, location.pathname]);
 
   return (
     <div className="course-content">
@@ -66,6 +71,7 @@ function TestCategoriesLayout() {
                     e.preventDefault();
                     setSelectedCategory([]);
                     setSelectedInstructor([]);
+                    setSearchTerm("");
                   }}
                   className="clear-text"
                 >
@@ -95,7 +101,7 @@ function TestCategoriesLayout() {
                   >
                     <div className="accordion-body">
                       <div>
-                        <label className="custom_check">
+                        {/* <label className="custom_check">
                           <input
                             type="checkbox"
                             checked={
@@ -112,7 +118,7 @@ function TestCategoriesLayout() {
                             }}
                           />
                           <span className="checkmark"></span> All Categories
-                        </label>
+                        </label> */}
                       </div>
                       {categories.map((category) => (
                         <div key={category.id}>
@@ -167,7 +173,7 @@ function TestCategoriesLayout() {
                       ) : (
                         <>
                           <div>
-                            <label className="custom_check">
+                            {/* <label className="custom_check">
                               <input
                                 type="checkbox"
                                 checked={
@@ -184,7 +190,7 @@ function TestCategoriesLayout() {
                               />
                               <span className="checkmark"></span> All
                               Instructors
-                            </label>
+                            </label> */}
                           </div>
                           {instructors.map((instructor, index) => (
                             <div key={index}>
@@ -227,15 +233,15 @@ function TestCategoriesLayout() {
             <div className="showing-list mb-4">
               <div className="row align-items-center">
                 <div className="col-lg-4">
-                  <div className="show-result text-center text-lg-start">
+                  {/* <div className="show-result text-center text-lg-start">
                     <h6 className="fw-medium">Showing 1-9 of 50 results</h6>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="col-lg-8">
                   <div className="show-filter add-course-info">
                     <form action="#">
                       <div className="d-sm-flex justify-content-center justify-content-lg-end mb-1 mb-lg-0">
-                        <div className="view-icons mb-2 mb-sm-0">
+                        {/* <div className="view-icons mb-2 mb-sm-0">
                           <NavLink
                             to="/course-grid"
                             className="grid-view active"
@@ -245,11 +251,12 @@ function TestCategoriesLayout() {
                           <NavLink to="/course-list" className="list-view">
                             <i className="isax isax-task"></i>
                           </NavLink>
-                        </div>
+                        </div> */}
                         <select className="form-select">
-                          <option>Newly Published</option>
+                          {/* <option>Newly Published</option> */}
                           <option>Most Attempts</option>
-                          <option>Top Rated</option>
+                          <option>Least Attempts</option>
+                          {/* <option>Top Rated</option> */}
                         </select>
                         <div className="search-group">
                           <i className="isax isax-search-normal-1"></i>
@@ -257,12 +264,15 @@ function TestCategoriesLayout() {
                             type="text"
                             className="form-control"
                             placeholder="Search"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                           />
                         </div>
                       </div>
                     </form>
                   </div>
                 </div>
+                
               </div>
             </div>
             <Outlet />

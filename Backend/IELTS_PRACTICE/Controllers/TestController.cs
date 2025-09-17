@@ -12,20 +12,24 @@ namespace IELTS_PRACTICE.Controllers
     public class TestController : ControllerBase
     {
         private readonly TestService _testService;
-        public TestController(TestService testService) { 
+        public TestController(TestService testService)
+        {
             _testService = testService;
         }
 
         [HttpGet]
         //[Authorize(Roles = "Student")]
-        public async Task<ActionResult<IEnumerable<TestDTO>>> GetAllTest() { 
+        public async Task<ActionResult<IEnumerable<TestDTO>>> GetAllTest()
+        {
             return await _testService.GetAllTest();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TestDTO>> GetTestById(int id) { 
+        public async Task<ActionResult<TestDTO>> GetTestById(int id)
+        {
             var test = await _testService.GetTestById(id);
-            if (test == null) { 
+            if (test == null)
+            {
                 return NotFound();
             }
             return Ok(test);
@@ -39,10 +43,11 @@ namespace IELTS_PRACTICE.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<TestDTO>> UpdateTest(int id ,UpdateTestDTO rq)
+        public async Task<ActionResult<TestDTO>> UpdateTest(int id, UpdateTestDTO rq)
         {
             var currentTest = await _testService.GetTestById(id);
-            if (currentTest == null) {
+            if (currentTest == null)
+            {
                 return NotFound();
             }
             await _testService.UpdateTest(id, rq);
@@ -53,7 +58,8 @@ namespace IELTS_PRACTICE.Controllers
         public async Task<IActionResult> DeleteTest(int id)
         {
             var test = await _testService.GetTestById(id);
-            if (test == null) {
+            if (test == null)
+            {
                 return NotFound();
             }
             await _testService.DeleteTest(id);
@@ -61,9 +67,11 @@ namespace IELTS_PRACTICE.Controllers
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> FilterTests([FromQuery] List<string>? skillName, [FromQuery] List<string>? instructorName) { 
-            var result = await _testService.FilterTest(skillName, instructorName);
-            if (result == null) { 
+        public async Task<IActionResult> FilterTests([FromQuery] List<string>? skillName, [FromQuery] List<string>? instructorName, [FromQuery] string? search)
+        {
+            var result = await _testService.FilterTest(skillName, instructorName, search);
+            if (result == null || !result.Any())
+            {
                 return NotFound("No tests match with criteria");
             }
             return Ok(result);
@@ -75,5 +83,7 @@ namespace IELTS_PRACTICE.Controllers
             var result = await _testService.GetAllAuthorNames();
             return Ok(result);
         }
+
+
     }
 }

@@ -16,14 +16,15 @@ function TestList() {
       try {
         const skillNames = searchParams.getAll("skillName");
         const instructorNames = searchParams.getAll("instructorName");
+        const searchTerm = searchParams.get("search");
 
         const data = await getFilteredTests({
           skillName: skillNames.length > 0 ? skillNames : undefined,
           instructorName:
             instructorNames.length > 0 ? instructorNames : undefined,
+          search: searchTerm || undefined,
         });
         setTests(data);
-        console.log("Filtered tests data:", data);
       } catch (error) {
         console.error("Error fetching filtered tests:", error);
         setTests([]);
@@ -63,6 +64,7 @@ function TestList() {
           <p>Try adjusting your filter criteria.</p>
         </div>
       )}
+      
     </div>
   );
 }
