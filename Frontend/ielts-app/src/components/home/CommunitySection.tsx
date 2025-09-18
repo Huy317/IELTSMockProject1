@@ -52,7 +52,7 @@ function CommunitySection() {
               <Link to="/register" className="btn btn-secondary btn-md">
                 Start Free Practice
               </Link>
-              <Link to="/about" className="btn btn-dark btn-md">
+              <Link to="/about-us" className="btn btn-dark btn-md">
                 Learn More
               </Link>
             </div>

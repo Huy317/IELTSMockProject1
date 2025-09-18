@@ -18,7 +18,7 @@ function Card({ title = "No Title",
 }: CardProps) {
 
     return (
-        <div className="course-item-two course-item mb-0">
+        <div className="course-item-two course-item mb-0 mx-1">
             {/* Not display <img> when no img props */}
             {image && (
                 <div className="course-img">

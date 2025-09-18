@@ -21,20 +21,6 @@ function HomePage() {
       <TrustSection />
       <FeaturedTestsSection />
       <CommunitySection />
-      
-      {/* Temporary content - will be replaced with more sections */}
-      {/* <div className="container my-5">
-        <div className="row">
-          <div className="col-12">
-            <div className="text-center">
-              <h2>More sections coming soon...</h2>
-              <p>Hero Banner, Benefits, Institutions, Test Categories, Trust, Featured Tests, Community, and How It Works sections are now React components!</p>
-              <Link to="/course-grid" className="btn btn-primary me-2">Go to Course Grid</Link>
-              <Link to="/admin" className="btn btn-secondary">Go to Admin Page</Link>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </>
   );
 };

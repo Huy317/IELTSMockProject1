@@ -69,6 +69,10 @@ const router = createBrowserRouter([
         element: <Faq />,
       },
       {
+        path: "test/:id",
+        element: <TestDetail />,
+      },
+      {
         path: "admin",
         // element: <AdminLayout />,
         element: (
@@ -132,10 +136,6 @@ const router = createBrowserRouter([
             path: "settings",
             element: <Settings />,
           },
-          {
-            path: "test/:id",
-            element: <TestDetail />,
-          }
         ],
       },
     ],

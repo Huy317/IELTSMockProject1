@@ -18258,7 +18258,7 @@ fieldset .quiz-attempt-card {
   }
 }
 .featured-courses-section .feature-course-slider-2 {
-  margin-bottom: 0px;
+  margin-bottom: 14px;
 
 }
 .featured-courses-section .feature-course-slider-2 .feature-course-item {
@@ -18905,8 +18905,9 @@ fieldset .quiz-attempt-card {
 
 .feature-course-slider-2 .slick-list {
   margin: 0 -12px;
+
 }
-.feature-course-slider-2 .slick-slide {
+.feature-course-slider-2 .slick-slider {
   margin: 0 12px;
 }
 
@@ -27753,7 +27754,7 @@ textarea:focus {
 [dir=rtl] .feature-course-slider-2-rtl .slick-list {
   margin: 0 -12px;
 }
-[dir=rtl] .feature-course-slider-2-rtl .slick-slide {
+[dir=rtl] .feature-course-slider-2-rtl .slick-slider {
   margin: 0 12px;
 }
 [dir=rtl] .faq-banner-bg::before {
