@@ -19,7 +19,8 @@ interface UserBasicDto {
 interface UserUpdateDto {
   fullName: string;
   email: string;
-  password?: string; // Make password optional
+  currentPassword?: string; // Optional current password for verification
+  password?: string;
   phoneNumber?: string;
 }
 

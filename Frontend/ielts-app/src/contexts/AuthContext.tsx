@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (userData: UserInfo, token: string) => void;
   logout: () => void;
+  updateUser: (updatedData: Partial<UserInfo>) => void;
   loading: boolean;
 }
 
@@ -22,7 +23,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const currentUser = getCurrentUser();
-    setUser(currentUser);
+    
+    // Check for updated user data in localStorage
+    const updatedUserData = localStorage.getItem('updatedUserData');
+    if (currentUser && updatedUserData) {
+      try {
+        const parsed = JSON.parse(updatedUserData);
+        setUser({ ...currentUser, ...parsed });
+      } catch (error) {
+        console.error('Error parsing updated user data:', error);
+        setUser(currentUser);
+      }
+    } else {
+      setUser(currentUser);
+    }
+    
     setLoading(false);
   }, []);
 
@@ -31,8 +46,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setLoading(false);
   };
 
+  const updateUser = (updatedData: Partial<UserInfo>) => {
+    setUser(prevUser => {
+      if (prevUser) {
+        const newUserData = { ...prevUser, ...updatedData };
+        
+        // Store updated data in localStorage
+        const updatedFields = { ...updatedData };
+        localStorage.setItem('updatedUserData', JSON.stringify(updatedFields));
+        
+        return newUserData;
+      }
+      return null;
+    });
+  };
+
   const logout = () => {
     removeToken();
+    localStorage.removeItem('updatedUserData'); // Clear updated user data
     setUser(null);
     window.location.href = '/login';
     setLoading(false);
@@ -43,6 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: !!user,
     login,
     logout,
+    updateUser,
     loading
   };
 

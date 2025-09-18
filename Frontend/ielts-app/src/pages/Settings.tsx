@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getUserById, updateUser } from "../services/userService";
 import type { User } from "../types/User";
+import { useAuth } from "../contexts/AuthContext";
 
 function AdminSetting() {
-  const { userId } = useParams();
+  const { user: authUser, updateUser: updateAuthUser } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Password visibility states
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   // Separate states for profile and password
   const [profileData, setProfileData] = useState({
     fullName: "",
@@ -16,19 +21,20 @@ function AdminSetting() {
   });
 
   const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
 
   useEffect(() => {
     loadUserData();
-  }, [userId]);
+  }, [authUser]);
 
   async function loadUserData() {
     try {
       setLoading(true);
-      if (userId) {
-        const userData = await getUserById(userId);
+      if (authUser?.id) {
+        const userData = await getUserById(authUser.id);
         setUser(userData);
         setProfileData({
           fullName: userData.fullName,
@@ -36,6 +42,7 @@ function AdminSetting() {
           phoneNumber: userData.phoneNumber,
         });
         setPasswordData({
+          currentPassword: "",
           newPassword: "",
           confirmNewPassword: "",
         });
@@ -64,6 +71,19 @@ function AdminSetting() {
     }));
   }
 
+  // Password visibility toggle functions
+  function toggleCurrentPasswordVisibility() {
+    setShowCurrentPassword(!showCurrentPassword);
+  }
+
+  function toggleNewPasswordVisibility() {
+    setShowNewPassword(!showNewPassword);
+  }
+
+  function toggleConfirmPasswordVisibility() {
+    setShowConfirmPassword(!showConfirmPassword);
+  }
+
   async function handleProfileSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -82,6 +102,12 @@ function AdminSetting() {
       await updateUser(user.id, updateData);
       toast.success("Profile updated successfully!");
 
+      // Update AuthContext with new user data
+      updateAuthUser({
+        name: profileData.fullName,
+        email: profileData.email,
+      });
+
       await loadUserData();
     } catch (error) {
       console.error("Failed to update profile:", error);
@@ -97,6 +123,18 @@ function AdminSetting() {
       return;
     }
 
+    // Validate current password is provided
+    if (!passwordData.currentPassword.trim()) {
+      toast.error("Current password is required");
+      return;
+    }
+
+    // Validate new password is provided
+    if (!passwordData.newPassword.trim()) {
+      toast.error("New password is required");
+      return;
+    }
+
     // Validate passwords match
     if (passwordData.newPassword !== passwordData.confirmNewPassword) {
       toast.error("New passwords do not match");
@@ -108,6 +146,7 @@ function AdminSetting() {
         fullName: profileData.fullName,
         email: profileData.email,
         phoneNumber: profileData.phoneNumber,
+        currentPassword: passwordData.currentPassword,
         password: passwordData.newPassword,
       };
 
@@ -115,12 +154,13 @@ function AdminSetting() {
       toast.success("Password updated successfully!");
 
       setPasswordData({
+        currentPassword: "",
         newPassword: "",
         confirmNewPassword: "",
       });
     } catch (error) {
       console.error("Failed to update password:", error);
-      toast.error("Failed to update password");
+      toast.error("Failed to update password. Please check your current password.");
     }
   }
 
@@ -274,15 +314,22 @@ function AdminSetting() {
                 <label className="form-label">
                   Current Password <span className="text-danger">*</span>
                 </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="currentPassword"
-                  // value={passwordData.currentPassword}
-                  onChange={handlePasswordInputChange}
-                  placeholder="Enter current password"
-                  required
-                />
+                <div className="position-relative">
+                  <input
+                    type={showCurrentPassword ? "text" : "password"}
+                    className="form-control"
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordInputChange}
+                    placeholder="Enter current password"
+                    required
+                  />
+                  <span 
+                    className={`isax toggle-passwords fs-14 ${showCurrentPassword ? 'isax-eye' : 'isax-eye-slash'}`}
+                    onClick={toggleCurrentPasswordVisibility}
+                    style={{ cursor: 'pointer', position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }}
+                  ></span>
+                </div>
               </div>
             </div>
             <div className="col-md-6">
@@ -290,17 +337,24 @@ function AdminSetting() {
                 <label className="form-label">
                   New Password <span className="text-danger">*</span>
                 </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="newPassword"
-                  value={passwordData.newPassword}
-                  onChange={handlePasswordInputChange}
-                  placeholder="Enter new password"
-                  minLength={8}
-                  title="Password must be at least 8 characters long"
-                  required
-                />
+                <div className="position-relative">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    className="form-control"
+                    name="newPassword"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordInputChange}
+                    placeholder="Enter new password"
+                    minLength={8}
+                    title="Password must be at least 8 characters long"
+                    required
+                  />
+                  <span 
+                    className={`isax toggle-passwords fs-14 ${showNewPassword ? 'isax-eye' : 'isax-eye-slash'}`}
+                    onClick={toggleNewPasswordVisibility}
+                    style={{ cursor: 'pointer', position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }}
+                  ></span>
+                </div>
                 <div className="form-text">
                   Password must be at least 8 characters long
                 </div>
@@ -311,15 +365,22 @@ function AdminSetting() {
                 <label className="form-label">
                   Confirm New Password <span className="text-danger">*</span>
                 </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="confirmNewPassword"
-                  value={passwordData.confirmNewPassword}
-                  onChange={handlePasswordInputChange}
-                  placeholder="Confirm new password"
-                  required
-                />
+                <div className="position-relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="form-control"
+                    name="confirmNewPassword"
+                    value={passwordData.confirmNewPassword}
+                    onChange={handlePasswordInputChange}
+                    placeholder="Confirm new password"
+                    required
+                  />
+                  <span 
+                    className={`isax toggle-passwords fs-14 ${showConfirmPassword ? 'isax-eye' : 'isax-eye-slash'}`}
+                    onClick={toggleConfirmPasswordVisibility}
+                    style={{ cursor: 'pointer', position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }}
+                  ></span>
+                </div>
               </div>
             </div>
             <button className="btn btn-secondary" type="submit">
