@@ -26,6 +26,7 @@ import LoginPageFinal from "./pages/TestLoginFinal";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Faq from "./pages/Faq";
+import TestDetail from "./pages/TestDetail";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "faq",
         element: <Faq />,
+      },
+      {
+        path: "test/:id",
+        element: <TestDetail />,
       },
       {
         path: "admin",

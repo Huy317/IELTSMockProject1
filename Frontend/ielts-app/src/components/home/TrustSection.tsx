@@ -21,7 +21,7 @@ function TrustSection() {
                 <Link to="/register" className="btn btn-secondary">
                   Start Free Tests
                 </Link>
-                <Link to="/about" className="btn btn-dark">
+                <Link to="/about-us" className="btn btn-dark">
                   Learn More
                 </Link>
               </div>

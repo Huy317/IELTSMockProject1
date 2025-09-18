@@ -15,6 +15,11 @@ export async function getAllAuthorNames(): Promise<string[]> {
   return res.data;
 }
 
+export async function getTestById(id: string | number): Promise<Test> {
+  const res = await client.get<Test>(`/Test/${id}`);
+  return res.data;
+}
+
 // export async function getFilteredTests(filters : {
 //   skillName? : string;
 //   instructorName? : string;
