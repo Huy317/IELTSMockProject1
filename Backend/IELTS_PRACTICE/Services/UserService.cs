@@ -130,5 +130,54 @@ namespace IELTS_PRACTICE.Services
                     || result == PasswordVerificationResult.SuccessRehashNeeded;
             //allow when enter correct password even 
         }
+
+        public async Task<int> TotalSubmission(int userId) {
+            return await _context.TestSubmissions
+                .Where(x => x.UserId == userId)
+                .CountAsync();
+        }
+
+        public async Task<double> AverageScore(int userId) {
+            var avr = await _context.TestSubmissions
+                .Where(x => x.UserId == userId)
+                .AverageAsync(x => x.Score);
+
+            return Rouded(avr);
+        }
+
+        public async Task<double> GetHighestScore(int userId) {
+            var avr = await _context.TestSubmissions
+                .Where(x => x.UserId == userId)
+                .MaxAsync(x => x.Score);
+            return Rouded(avr);
+        }
+
+        public async Task<double> GetLowestScore(int userId)
+        {
+            var avr = await _context.TestSubmissions
+                .Where(x => x.UserId == userId)
+                .MinAsync(x => x.Score);
+            return Rouded(avr);
+        }
+
+        public double Rouded(double avr) {
+            var integer = Math.Floor(avr);
+            var dec = avr - integer;
+
+            double rounded;
+            if (dec < 0.125)
+            {
+                rounded = integer; // .0
+            }
+            else if (dec < 0.75)
+            {
+                rounded = integer + 0.5; // .5
+            }
+            else
+            {
+                rounded = integer + 1.0; // next whole number
+            }
+            return rounded;
+        }
     }
 }

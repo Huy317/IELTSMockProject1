@@ -2,6 +2,7 @@ import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "../../assets/css/custom.css";
 import { useEffect, useState } from "react";
 import { getAllAuthorNames } from "../../services/testService";
+import { set } from "react-hook-form";
 
 function TestCategoriesLayout() {
   const [instructors, setInstructors] = useState<string[]>([]);
@@ -9,6 +10,8 @@ function TestCategoriesLayout() {
   const [selectedInstructor, setSelectedInstructor] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState(false);
+
+  const [sortBy, setSortBy] = useState<string>("Most Attempts");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,13 +51,17 @@ function TestCategoriesLayout() {
       params.append("instructorName", instructor);
     });
 
+    if(sortBy) {
+      params.append("sort", sortBy);
+    }
+
     if (searchTerm.trim()) {
       params.append("search", searchTerm.trim());
     }
 
     const newSearch = params.toString();
     navigate(`${location.pathname}?${newSearch}`, { replace: true });
-  }, [JSON.stringify(selectedCategory), JSON.stringify(selectedInstructor), searchTerm, navigate, location.pathname]);
+  }, [JSON.stringify(selectedCategory), JSON.stringify(selectedInstructor), sortBy, searchTerm, navigate, location.pathname]);
 
   return (
     <div className="course-content">
@@ -72,6 +79,7 @@ function TestCategoriesLayout() {
                     setSelectedCategory([]);
                     setSelectedInstructor([]);
                     setSearchTerm("");
+                    setSortBy("Most Attempts");
                   }}
                   className="clear-text"
                 >
@@ -252,10 +260,10 @@ function TestCategoriesLayout() {
                             <i className="isax isax-task"></i>
                           </NavLink>
                         </div> */}
-                        <select className="form-select">
+                        <select className="form-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                           {/* <option>Newly Published</option> */}
-                          <option>Most Attempts</option>
-                          <option>Least Attempts</option>
+                          <option value = "Most Attempts">Most Attempts</option>
+                          <option value = "Least Attempts">Least Attempts</option>
                           {/* <option>Top Rated</option> */}
                         </select>
                         <div className="search-group">

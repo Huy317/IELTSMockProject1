@@ -71,5 +71,32 @@ namespace IELTS_PRACTICE.Controllers
             }
             return NoContent();
         }
+
+        [HttpGet("gettotalsubmission")]
+        public async Task<IActionResult> TotalSubmissions(int id) { 
+            var result = await _userService.TotalSubmission(id);
+            return Ok(result);
+        }
+
+        [HttpGet("getavrscore")]
+        public async Task<IActionResult> AvrScore(int id)
+        {
+            var result = await _userService.AverageScore(id);
+            return Ok(result);
+        }
+
+        [HttpGet("gethighestscore")]
+        public async Task<IActionResult> HighestScore(int id)
+        {
+            var result = await _userService.GetHighestScore(id);
+            return Ok(result);
+        }
+
+        [HttpGet("getlowestscore")]
+        public async Task<IActionResult> LowestScore(int id)
+        {
+            var result = await _userService.GetLowestScore(id);
+            return Ok(result);
+        }
     }
 }

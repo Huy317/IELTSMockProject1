@@ -1,68 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TestCard from "../components/student/TestCard";
+import type { UserInfo } from "../services/authService";
+import { useAuth } from "../contexts/AuthContext";
+import { getAvrScore, getHighestScore, getLowestScore, getTotalSubmission } from "../services/userService";
 
 function StudentDashboard() {
+  const {user} = useAuth();
+  const [totalSub, setTotalSub] = useState<number>(0);
+  const [avr, setAvr] = useState<number>(0);
+  const [high, setHigh] = useState<number>(0);
+  const [low, setLow] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if(user) {
+        const data = await getTotalSubmission(user.id);
+        const data1 = await getAvrScore(user.id);
+        const data2 = await getHighestScore(user.id);
+        const data3 = await getLowestScore(user.id);
+        setTotalSub(data);
+        setAvr(data1);
+        setHigh(data2);
+        setLow(data3);
+      }
+    }
+
+    fetchData();
+  }, [])
   return (
     <div>
-      {/* Profile Card */}
-      {/* <div className="profile-card overflow-hidden bg-blue-gradient2 mb-5 p-5">
-        <div className="profile-card-bg">
-          <img
-            src="/assets/img/bg/card-bg-01.png"
-            className="profile-card-bg-1"
-            alt=""
-          />
-        </div>
-        <div className="row align-items-center row-gap-3">
-          <div className="col-lg-6">
-            <div className="d-flex align-items-center">
-              <span className="avatar avatar-xxl avatar-rounded me-3 border border-white border-2 position-relative">
-                <img src="/assets/img/user/user-02.jpg" alt="" />
-                <span className="verify-tick">
-                  <i className="isax isax-verify5"></i>
-                </span>
-              </span>
-              <div>
-                <h5 className="mb-1 text-white d-inline-flex align-items-center">
-                  <a href="#">Ronald Richard</a>
-                  <a href="#" className="link-light fs-16 ms-2">
-                    <i className="isax isax-edit-2"></i>
-                  </a>
-                </h5>
-                <p className="text-light">Student</p>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-6">
-            <div className="d-flex align-items-center justify-content-lg-end flex-wrap gap-2">
-              <a href="#" className="btn btn-white rounded-pill me-3">
-                Become an Instructor
-              </a>
-              <a href="#" className="btn btn-secondary rounded-pill">
-                Instructor Dashboard
-              </a>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
-      {/* Quiz Card */}
-      {/* <div className="card bg-light quiz-ans-card mb-4">
-        <img
-          src="/assets/img/shapes/withdraw-bg1.svg"
-          className="quiz-ans-bg1"
-          alt="img"
-        />
-        <img
-          src="/assets/img/shapes/withdraw-bg2.svg"
-          className="quiz-ans-bg2"
-          alt="img"
-        />
-      </div> */}
-
-      {/* Dashboard Widgets */}
       <div className="row">
-        <div className="col-md-6 col-xl-4">
+        <div className="col-md-6 col-xl-3">
           <div className="card">
             <div className="card-body">
               <div className="d-flex align-items-center">
@@ -71,13 +39,13 @@ function StudentDashboard() {
                 </span>
                 <div>
                   <span className="d-block">Taken Tests</span>
-                  <h4 className="fs-24 mt-1">12</h4>
+                  <h4 className="fs-24 mt-1">{totalSub}</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-6 col-xl-4">
+        <div className="col-md-6 col-xl-3">
           <div className="card">
             <div className="card-body">
               <div className="d-flex align-items-center">
@@ -85,14 +53,14 @@ function StudentDashboard() {
                   <img src="/assets/img/icon/book.svg" alt="" />
                 </span>
                 <div>
-                  <span className="d-block">Active Tests</span>
-                  <h4 className="fs-24 mt-1">03</h4>
+                  <span className="d-block">Average Score</span>
+                  <h4 className="fs-24 mt-1">{avr}</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-6 col-xl-4">
+        <div className="col-md-6 col-xl-3">
           <div className="card">
             <div className="card-body">
               <div className="d-flex align-items-center">
@@ -100,8 +68,23 @@ function StudentDashboard() {
                   <img src="/assets/img/icon/bookmark.svg" alt="" />
                 </span>
                 <div>
-                  <span className="d-block">Completed Tests</span>
-                  <h4 className="fs-24 mt-1">10</h4>
+                  <span className="d-block">Highest Score</span>
+                  <h4 className="fs-24 mt-1">{high}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 col-xl-3">
+          <div className="card">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <span className="icon-box bg-success-transparent me-2 me-xxl-3 flex-shrink-0">
+                  <img src="/assets/img/icon/bookmark.svg" alt="" />
+                </span>
+                <div>
+                  <span className="d-block">Lowest Score</span>
+                  <h4 className="fs-24 mt-1">{low}</h4>
                 </div>
               </div>
             </div>

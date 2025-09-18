@@ -11,5 +11,6 @@
 
         public string InstructorName { get; set; }
         public string TypeName { get; set; }
+        public int SubmissionCount { get; set; }
     }
 }

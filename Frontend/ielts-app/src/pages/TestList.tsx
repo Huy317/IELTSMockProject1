@@ -17,12 +17,14 @@ function TestList() {
         const skillNames = searchParams.getAll("skillName");
         const instructorNames = searchParams.getAll("instructorName");
         const searchTerm = searchParams.get("search");
+        const sortBy = searchParams.get("sort");
 
         const data = await getFilteredTests({
           skillName: skillNames.length > 0 ? skillNames : undefined,
           instructorName:
             instructorNames.length > 0 ? instructorNames : undefined,
           search: searchTerm || undefined,
+          sort: sortBy || undefined,
         });
         setTests(data);
       } catch (error) {
@@ -54,7 +56,7 @@ function TestList() {
             adminName={test.instructorName.toUpperCase()}
             title={test.testName}
             rating={4.9}
-            reviewCount={200}
+            reviewCount={test.submissionCount}
             skillType={test.typeName}
           />
         ))

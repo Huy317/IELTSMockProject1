@@ -16,4 +16,5 @@ export interface TestWithAuthorName {
   isActive: string;
   instructorName: string;
   typeName: string;
+  submissionCount: number;
 }
