@@ -88,9 +88,20 @@ namespace IELTS_PRACTICE.Services
             // Only update password if it's provided
             if (!string.IsNullOrEmpty(userDto.Password))
             {
+                // Require current password to change to a new password
+                if (string.IsNullOrEmpty(userDto.CurrentPassword)) {
+                    throw new Exception("Current password is required to change password.");
+                }
+
+                // Verify current password
+                var isCurrentPasswordValid = await CheckPassword(user, userDto.CurrentPassword);
+                if (!isCurrentPasswordValid) {
+                    throw new Exception("Current password is incorrect.");
+                }
+
                 user.Password = _passwordHasher.HashPassword(null!, userDto.Password);
             }
-            
+
             user.PhoneNumber = userDto.PhoneNumber;
 
             _context.Users.Update(user);

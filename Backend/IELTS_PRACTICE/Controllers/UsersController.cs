@@ -52,12 +52,23 @@ namespace IELTS_PRACTICE.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserUpdateDto userDto)
         {
-            var updatedUser = await _userService.UpdateUserAsync(id, userDto);
-            if (updatedUser == null)
+            try
             {
-                return NotFound();
+                var updatedUser = await _userService.UpdateUserAsync(id, userDto);
+                if (updatedUser == null)
+                {
+                    return NotFound();
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         // DELETE: api/Users/5
@@ -73,7 +84,8 @@ namespace IELTS_PRACTICE.Controllers
         }
 
         [HttpGet("gettotalsubmission")]
-        public async Task<IActionResult> TotalSubmissions(int id) { 
+        public async Task<IActionResult> TotalSubmissions(int id)
+        {
             var result = await _userService.TotalSubmission(id);
             return Ok(result);
         }

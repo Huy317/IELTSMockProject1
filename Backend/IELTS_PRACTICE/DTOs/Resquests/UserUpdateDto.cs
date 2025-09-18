@@ -8,6 +8,8 @@ namespace IELTS_PRACTICE.DTOs.Resquests
         public string FullName { get; set; } = default!;
         [Required(ErrorMessage = "Email is required."), EmailAddress]
         public string Email { get; set; } = default!;
+        // Current password is required when changing password, for validation purposes
+        public string? CurrentPassword { get; set; }
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
         public string? Password { get; set; }
         [Phone(ErrorMessage = "Invalid phone number format.")]

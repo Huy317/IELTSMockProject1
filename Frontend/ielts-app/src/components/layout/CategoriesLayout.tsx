@@ -241,9 +241,9 @@ function TestCategoriesLayout() {
             <div className="showing-list mb-4">
               <div className="row align-items-center">
                 <div className="col-lg-4">
-                  {/* <div className="show-result text-center text-lg-start">
-                    <h6 className="fw-medium">Showing 1-9 of 50 results</h6>
-                  </div> */}
+                  <div className="show-result text-center text-lg-start">
+                    <h6 className="fw-medium">&nbsp;</h6>
+                  </div>
                 </div>
                 <div className="col-lg-8">
                   <div className="show-filter add-course-info">

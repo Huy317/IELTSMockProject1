@@ -3,7 +3,7 @@ import '../../assets/css/custom.css';
 import { useAuth } from '../../contexts/AuthContext';
 
 function StudentLayout() {
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
 
     const handleLogout = () => {
         logout();
@@ -27,12 +27,12 @@ function StudentLayout() {
                                 {/* TODO: Change this to maybe a profile component that load user data */}
                                 <div>
                                     <h5 className="mb-1 text-white d-inline-flex align-items-center">
-                                        Eugene Andre
-                                        <NavLink to="/admin/profile" className="link-light fs-16 ms-2">
+                                        {user?.name || 'Loading...'}
+                                        <NavLink to="/student/profile" className="link-light fs-16 ms-2">
                                             <i className="isax isax-edit-2"></i>
                                         </NavLink>
                                     </h5>
-                                    <p className="text-light">Student</p>
+                                    <p className="text-light">{user?.role || 'Loading...'}</p>
                                 </div>
                             </div>
                         </div>
