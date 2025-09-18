@@ -67,9 +67,9 @@ namespace IELTS_PRACTICE.Controllers
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> FilterTests([FromQuery] List<string>? skillName, [FromQuery] List<string>? instructorName, [FromQuery] string? search)
+        public async Task<IActionResult> FilterTests([FromQuery] List<string>? skillName, [FromQuery] List<string>? instructorName, [FromQuery] string? search, [FromQuery] string? sort)
         {
-            var result = await _testService.FilterTest(skillName, instructorName, search);
+            var result = await _testService.FilterTest(skillName, instructorName, search, sort);
             if (result == null || !result.Any())
             {
                 return NotFound("No tests match with criteria");

@@ -55,3 +55,23 @@ export async function getUserById(id: string | number): Promise<User> {
   return res.data;
 }
 
+export async function getTotalSubmission(id: string | number) : Promise<number> {
+  const res = await client.get<number>(`/Users/gettotalsubmission?id=${id}`);
+  return res.data;
+}
+
+export async function getAvrScore(id: string | number) : Promise<number> {
+  const res = await client.get<number>(`/Users/getavrscore?id=${id}`);
+  return res.data;
+}
+
+export async function getHighestScore(id: string | number) : Promise<number> {
+  const res = await client.get<number>(`/Users/gethighestscore?id=${id}`);
+  return res.data;
+}
+
+export async function getLowestScore(id: string | number) : Promise<number> {
+  const res = await client.get<number>(`/Users/getlowestscore?id=${id}`);
+  return res.data;
+}
+

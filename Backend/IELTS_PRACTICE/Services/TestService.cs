@@ -91,12 +91,16 @@ namespace IELTS_PRACTICE.Services
             _context.SaveChanges();
         }
 
-        public async Task<List<TestDTO>> FilterTest(List<string>? skillName, List<string>? instructorName, string? search = null) {
+        public async Task<List<TestDTO>> FilterTest(List<string>? skillName, List<string>? instructorName, string? search = null, string? sort = null) {
             var query = from t in _context.Tests
                         join u in _context.Users on t.CreatedBy equals u.Id
                         join ts in _context.TypeSkills on t.TypeId equals ts.Id
-                        select new { Test = t, User = u, TypeSkill = ts };
-
+                        select new { 
+                            Test = t, 
+                            User = u, 
+                            TypeSkill = ts,
+                            SubmissionCount = t.TestSubmissions.Count(),
+                        };
             // Filter by skill names
             if (skillName != null && skillName.Any())
             {
@@ -109,23 +113,22 @@ namespace IELTS_PRACTICE.Services
                 query = query.Where(x => instructorName.Contains(x.User.FullName));
             }
 
-            //if (!string.IsNullOrEmpty(skillName))
-            //{
-            //    query = query.Where(x => EF.Functions.Like(x.Test.TestName, $"%{skillName}%"));
-            //}
+            //Filter by sort
+            if (sort != null) {
+                if (sort.Equals("Least Attempts")) {
+                    query = query
+                        .OrderBy(x => x.SubmissionCount);
+                } else if (sort.Equals("Most Attempts")) {
+                    query = query
+                        .OrderByDescending(x => x.SubmissionCount);
+                }
+            }
 
-            //if (!string.IsNullOrEmpty(instructorName))
-            //{
-            //    query = query
-            //        .Where(x => EF.Functions.Like(x.User.FullName, instructorName));
-            //}
-
-            //Add search functionality for search box
+            //Filter by search
             if(!string.IsNullOrEmpty(search))
             {
                 query = query.Where(x => EF.Functions.Like(x.Test.TestName, $"%{search}%"));
-            }
-
+            } 
 
             return await query
                 .Select(x => new TestDTO {
@@ -137,6 +140,7 @@ namespace IELTS_PRACTICE.Services
                     IsActive = x.Test.IsActive,
                     InstructorName = x.User.FullName,
                     TypeName = x.TypeSkill.TypeName,
+                    SubmissionCount = x.SubmissionCount,
                 }).ToListAsync();
         }
 
@@ -146,7 +150,5 @@ namespace IELTS_PRACTICE.Services
                 .Select(x => x.FullName)
                 .ToListAsync();
         }
-
-        
     }
 }
