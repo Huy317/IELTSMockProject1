@@ -27,6 +27,7 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Faq from "./pages/Faq";
 import TestDetail from "./pages/TestDetail";
+import CreateTestPage from "./components/test_rework/CreateTestPage";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: "createreadingtest",
         element: <AddReadingTest />,
+      },
+      {
+        path: "edit-test",
+        element: <CreateTestPage />,
       },
       {
         path: "about-us",
@@ -169,6 +174,7 @@ const router = createBrowserRouter([
     path: "unauthorized",
     element: <div>Unauthorized Access</div>,
   },
+
 ]);
 
 export default function Routes() {
