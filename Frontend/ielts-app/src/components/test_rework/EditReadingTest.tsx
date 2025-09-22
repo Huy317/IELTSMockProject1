@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import MultipleChoiceModal from './question_modal/MultipleChoiceModal';
 
 function CreateTestPage() {
     // Question types mapping table
@@ -11,6 +12,10 @@ function CreateTestPage() {
     // Handling state for paragraph texts and question types
     const [paragraphTexts, setParagraphTexts] = useState<string[]>(['', '', '']);
     const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(['MultipleChoice', 'MultipleChoice', 'MultipleChoice']);
+    
+    // Modal state management
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentParagraphIndex, setCurrentParagraphIndex] = useState<number | null>(null);
     // Handle paragraph text changes
     const handleParagraphChange = (paragraphIndex: number, value: string) => {
         const newParagraphTexts = [...paragraphTexts];
@@ -24,12 +29,33 @@ function CreateTestPage() {
         newSelectedQuestionTypes[paragraphIndex] = value;
         setSelectedQuestionTypes(newSelectedQuestionTypes);
     };
+
+    // Modal handler functions
+    const handleOpenModal = (paragraphIndex: number) => {
+        setCurrentParagraphIndex(paragraphIndex);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setCurrentParagraphIndex(null);
+    };
+
+    const handleModalSubmit = (data: any) => {
+        console.log('Question data submitted:', data, 'for paragraph:', currentParagraphIndex);
+        // Placeholder function for now
+        handleCloseModal();
+    };
     // --------------------------------------------------------------
 
     
     // Placeholder function to handle add question button clicks
     const handleAddQuestion = (paragraphIndex: number, questionType: string) => {
-        console.log(`Adding ${questionType} question for paragraph ${paragraphIndex + 1}`);
+        if (questionType === 'MultipleChoice') {
+            handleOpenModal(paragraphIndex);
+        } else {
+            console.log(`Adding ${questionType} question for paragraph ${paragraphIndex + 1}`);
+        }
     };
     
     // Placeholder function to handle save paragraph button clicks
@@ -237,6 +263,13 @@ function CreateTestPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Multiple Choice Modal */}
+            <MultipleChoiceModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSubmit={handleModalSubmit}
+            />
         </div>
     );
 }
