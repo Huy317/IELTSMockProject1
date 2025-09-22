@@ -27,7 +27,7 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Faq from "./pages/Faq";
 import TestDetail from "./pages/TestDetail";
-import CreateTestPage from "./components/test_rework/CreateTestPage";
+import CreateTestPage from "./components/test_rework/EditReadingTest";
 
 const router = createBrowserRouter([
   {
