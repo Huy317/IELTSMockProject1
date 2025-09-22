@@ -1,8 +1,13 @@
 import type { Test, TestWithAuthorName } from "../types/Test";
 import { client } from "./authService";
 
-export async function getTests(): Promise<Test[]> {
-  const res = await client.get<Test[]>("/Test");
+export async function getTests(): Promise<TestWithAuthorName[]> {
+  const res = await client.get<TestWithAuthorName[]>("/Test");
+  return res.data;
+}
+
+export async function getPopularTests(): Promise<TestWithAuthorName[]> {
+  const res = await client.get<TestWithAuthorName[]>("/Test/populartest");
   return res.data;
 }
 
@@ -15,8 +20,8 @@ export async function getAllAuthorNames(): Promise<string[]> {
   return res.data;
 }
 
-export async function getTestById(id: string | number): Promise<Test> {
-  const res = await client.get<Test>(`/Test/${id}`);
+export async function getTestById(id: string | number): Promise<TestWithAuthorName> {
+  const res = await client.get<TestWithAuthorName>(`/Test/${id}`);
   return res.data;
 }
 

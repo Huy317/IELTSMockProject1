@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Test } from "../types/Test";
+import type { Test, TestWithAuthorName } from "../types/Test";
 import { getTestById } from "../services/testService";
 
 function TestDetail() {
     const { id } = useParams<{ id: string }>();
 
-    const [test, setTest] = useState<Test | null>(null);
+    const [test, setTest] = useState<TestWithAuthorName | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -91,7 +91,7 @@ function TestDetail() {
                         <div className="card-body">
                             <dl className="row mb-0">
                                 <dt className="col-sm-4 mb-3">Created By</dt>
-                                <dd className="col-sm-8 mb-3">{test.createdBy}</dd>
+                                <dd className="col-sm-8 mb-3">{test.instructorName}</dd>
 
                                 <dt className="col-sm-4 mb-3">Created At</dt>
                                 <dd className="col-sm-8 mb-3">{formatDate(test.createdAt)}</dd>
@@ -99,6 +99,16 @@ function TestDetail() {
                                 <dt className="col-sm-4 mb-3">Resource</dt>
                                 <dd className="col-sm-8 mb-3">
                                     <span className="text-break">{test.resource}</span>
+                                </dd>
+
+                                <dt className="col-sm-4 mb-3">Type</dt>
+                                <dd className="col-sm-8 mb-3">
+                                    <span className="text-break">{test.typeName}</span>
+                                </dd>
+
+                                <dt className="col-sm-4 mb-3">Attempts</dt>
+                                <dd className="col-sm-8 mb-3">
+                                    <span className="text-break">{test.submissionCount}</span>
                                 </dd>
 
                                 <dt className="col-sm-4 mb-3">Status</dt>

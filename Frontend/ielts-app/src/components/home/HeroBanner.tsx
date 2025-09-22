@@ -3,11 +3,11 @@ import BannerSearch from "./BannerSearch";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { use, useEffect, useState } from "react";
-import type { Test } from "../../types/Test";
+import type { Test, TestWithAuthorName } from "../../types/Test";
 import { getTests } from "../../services/testService";
 
 function HeroBanner() {
-  const [tests, setTests] = useState<Test[]>([]);
+  const [tests, setTests] = useState<TestWithAuthorName[]>([]);
   const fetchTests = async () => {
     const data = await getTests();
     setTests(data);
@@ -107,12 +107,12 @@ function HeroBanner() {
                 {tests.map((test, idx) => (
                   <SwiperSlide key={idx}>
                     <Card
+                      id={test.id}
                       title={test.testName}
-                      attemptCount="submissions"
+                      attemptCount={test.submissionCount}
                       questionCount={40}
-                      // type="Listening"
-                      type = {test.testName.toLowerCase().includes("listening") ? "Listening" : "Reading"}
-                      timeMinutes={test.testName.toLowerCase().includes("listening") ? "40" : "60"}
+                      type={test.typeName}
+                      timeMinutes={test.typeName === "Listening" ? 40 : 60}
                     />
                   </SwiperSlide>
                 ))}
