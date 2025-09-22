@@ -70,7 +70,11 @@ const router = createBrowserRouter([
       },
       {
         path: "test/:id",
-        element: <TestDetail />,
+        element: (
+          <ProtectedRoute allowedRoles={["Student", "Admin"]}>
+            <TestDetail />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin",
