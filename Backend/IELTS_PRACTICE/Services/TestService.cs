@@ -13,33 +13,42 @@ namespace IELTS_PRACTICE.Services
             _context = context;
         }
 
-        public async Task<List<TestDTO>> GetAllTest() { 
-            var tests = _context.Tests
-                .Select(x => new TestDTO {
-                    Id = x.Id,
-                    TestName = x.TestName,
-                    CreatedBy = x.CreatedBy,
-                    CreatedAt = x.CreatedAt,
-                    Resource = x.Resource,
-                    IsActive = x.IsActive,
-                }).ToList();
+        public async Task<List<TestDTO>> GetAllTest() {
+            var tests = await (from t in _context.Tests
+                               join u in _context.Users on t.CreatedBy equals u.Id
+                               select new TestDTO
+                               {
+                                   Id = t.Id,
+                                   TestName = t.TestName,
+                                   CreatedBy = t.CreatedBy,
+                                   CreatedAt = t.CreatedAt,
+                                   Resource = t.Resource,
+                                   IsActive = t.IsActive,
+                                   InstructorName = u.FullName,
+                                   TypeName = t.TypeSkill.TypeName,
+                                   SubmissionCount = t.TestSubmissions.Count(),
+                               }).ToListAsync();
             return tests;
         }
 
         public async Task<TestDTO> GetTestById(int id)
         {
-            return await _context.Tests
-                .Where(x => x.Id == id)
-                .Select(x => new TestDTO
-                {
-                    Id = x.Id,
-                    TestName = x.TestName,
-                    CreatedBy = x.CreatedBy,
-                    CreatedAt = x.CreatedAt,
-                    Resource = x.Resource,
-                    IsActive = x.IsActive,
-                })
-                .FirstOrDefaultAsync();
+            var tests = await (from t in _context.Tests
+                               .Where(x => x.Id == id)
+                               join u in _context.Users on t.CreatedBy equals u.Id
+                               select new TestDTO
+                               {
+                                   Id = t.Id,
+                                   TestName = t.TestName,
+                                   CreatedBy = t.CreatedBy,
+                                   CreatedAt = t.CreatedAt,
+                                   Resource = t.Resource,
+                                   IsActive = t.IsActive,
+                                   InstructorName = u.FullName,
+                                   TypeName = t.TypeSkill.TypeName,
+                                   SubmissionCount = t.TestSubmissions.Count(),
+                               }).FirstOrDefaultAsync();
+            return tests;
         }
 
         public async Task<TestDTO> UpdateTest(int id, UpdateTestDTO rq) {
@@ -149,6 +158,26 @@ namespace IELTS_PRACTICE.Services
                 .Where(x => x.Role.Equals("Admin"))
                 .Select(x => x.FullName)
                 .ToListAsync();
+        }
+
+        public async Task<List<TestDTO>> GetTop5PopularTests() {
+            return await (from t in _context.Tests
+                          join u in _context.Users on t.CreatedBy equals u.Id
+                          orderby t.TestSubmissions.Count() descending
+                          select new TestDTO
+                          {
+                              Id = t.Id,
+                              TestName = t.TestName,
+                              CreatedBy = t.CreatedBy,
+                              CreatedAt = t.CreatedAt,
+                              Resource = t.Resource,
+                              IsActive = t.IsActive,
+                              InstructorName = u.FullName,
+                              TypeName = t.TypeSkill.TypeName,
+                              SubmissionCount = t.TestSubmissions.Count(),
+                          })
+                          .Take(5)
+                          .ToListAsync();
         }
     }
 }

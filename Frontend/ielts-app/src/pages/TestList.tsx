@@ -80,6 +80,7 @@ function TestList() {
         currentTests.map((test, idx) => (
           <TestCardNew
             key={test.id || idx}
+            id ={test.id}
             image="/assets/img/course/course-01.jpg"
             adminAvatar="/assets/img/user/user-29.jpg"
             adminName={test.instructorName.toUpperCase()}

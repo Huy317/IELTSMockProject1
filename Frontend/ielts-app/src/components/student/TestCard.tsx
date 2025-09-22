@@ -1,6 +1,7 @@
 import React from "react";
 
 export interface SingleEnrolledCourseCardProps {
+  id?: number;
   image?: string;
   adminAvatar?: string;
   adminName?: string;
@@ -32,6 +33,7 @@ const enrolledCourseCards: SingleEnrolledCourseCardProps[] = [
 ];
 
 export function TestCardNew({
+  id,
   image,
   adminAvatar,
   adminName,
@@ -77,7 +79,7 @@ export function TestCardNew({
           </p>
           <div className="d-flex align-items-center justify-content-between">
             <a
-              href="#"
+              href={`/test/${id}`}
               className="btn btn-dark btn-sm d-inline-flex align-items-center"
             >
               View Test<i className="isax isax-arrow-right-3 ms-1"></i>

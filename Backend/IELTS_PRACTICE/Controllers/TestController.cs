@@ -84,6 +84,11 @@ namespace IELTS_PRACTICE.Controllers
             return Ok(result);
         }
 
-
+        [HttpGet("populartest")]
+        public async Task<ActionResult> GetPopularTest()
+        {
+            var result = await _testService.GetTop5PopularTests();
+            return Ok(result);
+        }
     }
 }

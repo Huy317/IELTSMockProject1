@@ -2,15 +2,16 @@ import { Link } from "react-router-dom";
 import Card from "../utils/Card";
 import Slider from "react-slick";
 import { use, useEffect, useState } from "react";
-import type { Test } from "../../types/Test";
-import { getTests } from "../../services/testService";
+import type { Test, TestWithAuthorName } from "../../types/Test";
+import { getPopularTests, getTests } from "../../services/testService";
+import { get } from "react-hook-form";
 
 function FeaturedTestsSection() {
-  const [tests, setTests] = useState<Test[]>([]);
+  const [tests, setTests] = useState<TestWithAuthorName[]>([]);
 
   const fetchPopularTests = async () => {
     // write new api to get popular tests base on number of submissions
-    const data = await getTests();
+    const data = await getPopularTests();
     setTests(data);
   };
 
@@ -62,18 +63,13 @@ function FeaturedTestsSection() {
             {tests.map((test, idx) => (
               <div key={idx}>
                 <Card
+                  id={test.id}
                   title={test.testName}
-                  attemptCount={"number of submissions"}
+                  attemptCount={test.submissionCount}
                   questionCount={40}
-                  type={
-                    test.testName.toLowerCase().includes("listening")
-                      ? "Listening"
-                      : "Reading"
-                  }
+                  type={test.typeName}
                   timeMinutes={
-                    test.testName.toLowerCase().includes("listening")
-                      ? "40"
-                      : "60"
+                    (test.typeName === "Listening" ? 40 : 60)
                   }
                 />
               </div>

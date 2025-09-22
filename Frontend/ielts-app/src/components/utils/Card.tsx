@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 interface CardProps {
+    id?: number | string;
     title?: string;
     image?: string;
     attemptCount?: number | string;
@@ -10,6 +11,7 @@ interface CardProps {
 }
 
 function Card({ title = "No Title",
+    id,
     image,
     questionCount = 0,
     attemptCount = "Unknown",
@@ -49,7 +51,7 @@ function Card({ title = "No Title",
                 </p>
                 <div className="d-flex align-items-center justify-content-between">
                     <h6 className="text-secondary fs-16 fw-semi-bold mb-0">{questionCount} Questions</h6>
-                    <Link to="/cart" className="btn btn-dark btn-sm d-inline-flex align-items-center">
+                    <Link to={`/test/${id}`} className="btn btn-dark btn-sm d-inline-flex align-items-center">
                         Start This Test<i className="isax isax-arrow-right-3 ms-1"></i>
                     </Link>
                 </div>
