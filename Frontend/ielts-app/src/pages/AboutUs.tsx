@@ -54,36 +54,52 @@ function AboutUs() {
                   </span>
                   <h2>Empowering Learning, Inspiring Growth</h2>
                   <p>
-                    At DreamsLMS, we make education accessible to all with
-                    interactive courses and expert-led content. Learn anytime,
-                    anywhere, and achieve your goals seamlessly.
+                    Our specialized mock test platform are designed to bring the
+                    IELTS test experience to you, no matter where you are.
                   </p>
                 </div>
                 <div className="d-flex align-items-center about-us-banner">
                   <div>
                     <span className="bg-primary-transparent rounded-3 p-2 about-icon d-flex justify-content-center align-items-center">
-                      <i className="isax isax-book-1 fs-24"></i>
+                      <i className="isax isax-global fs-24"></i>
                     </span>
                   </div>
                   <div className="ps-3">
-                    <h6 className="mb-2">Learn from anywhere</h6>
+                    <h6 className="mb-2">Practice Anywhere, Anytime</h6>
                     <p>
-                      Learning from anywhere has become a transform aspect of
-                      modern education, allowing individuals.
+                      Access unlimited IELTS mock tests from any device,
+                      anywhere in the world. Practice at your own pace and
+                      convenience.
                     </p>
                   </div>
                 </div>
                 <div className="d-flex align-items-center about-us-banner">
                   <div>
                     <span className="bg-secondary-transparent rounded-3 p-2 about-icon d-flex justify-content-center align-items-center">
-                      <i className="isax isax-bookmark5 fs-24"></i>
+                      <i className="isax isax-teacher fs-24"></i>
                     </span>
                   </div>
                   <div className="ps-3">
-                    <h6 className="mb-2">Expert Mentors</h6>
+                    <h6 className="mb-2">Expert-Designed Content</h6>
                     <p>
-                      Expert mentors are invaluable assets in any field,
-                      providing seasoned guidance knowledge.
+                      Our mock tests are created by experienced IELTS
+                      instructors and follow the official test format and
+                      difficulty levels.
+                    </p>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center about-us-banner">
+                  <div>
+                    <span className="bg-secondary-transparent rounded-3 p-2 about-icon d-flex justify-content-center align-items-center">
+                      <i className="isax isax-chart-success fs-24"></i>
+                    </span>
+                  </div>
+                  <div className="ps-3">
+                    <h6 className="mb-2">Track Your Progress</h6>
+                    <p>
+                      Monitor your improvement with detailed performance
+                      analytics and get personalized recommendations for better
+                      scores.
                     </p>
                   </div>
                 </div>
@@ -100,10 +116,10 @@ function AboutUs() {
             <span className="fw-medium text-secondary text-decoration-underline mb-2 d-inline-block">
               Our Benefits
             </span>
-            <h2>Master the Skills to Drive your Career</h2>
+            <h2>Your Pathway to IELTS Excellence</h2>
             <p>
-              The right course, guided by an expert mentor, can provide
-              invaluable insights, practical skills.
+              Prepare with authentic practice, expert guidance, and the tools
+              you need to score higher.
             </p>
           </div>
           <div className="row">
@@ -114,12 +130,13 @@ function AboutUs() {
                     <img src="/assets/img/shapes/bg-1.png" alt="img" />
                   </div>
                   <div className="p-4 rounded-pill bg-primary-transparent d-inline-flex">
-                    <i className="isax isax-book-1 fs-24"></i>
+                    <i className="isax isax-star5 fs-24"></i>
                   </div>
-                  <h5 className="mt-3 mb-1">Flexible Learning</h5>
+                  <h5 className="mt-3 mb-1">Completely Free</h5>
                   <p>
-                    We believe that high-quality education should be accessible
-                    to everyone. Our pricing form in models are designed.
+                    Access unlimited IELTS mock tests without any cost. No
+                    hidden fees, no subscriptions - just free, high-quality
+                    practice tests for everyone.
                   </p>
                 </div>
               </div>
@@ -131,12 +148,13 @@ function AboutUs() {
                     <img src="/assets/img/shapes/bg-2.png" alt="img" />
                   </div>
                   <div className="p-4 rounded-pill bg-secondary-transparent d-inline-flex">
-                    <i className="isax isax-bookmark5 fs-24"></i>
+                    <i className="isax isax-task-square5 fs-24"></i>
                   </div>
-                  <h5 className="mt-3 mb-1">Lifetime Access</h5>
+                  <h5 className="mt-3 mb-1">Authentic Test Format</h5>
                   <p>
-                    When you enroll in our courses, you're not just signing up
-                    for a temporary learning to experience you're making.
+                    Experience real IELTS test conditions with authentic
+                    question types, timing, and difficulty levels to prepare you
+                    for the actual exam.
                   </p>
                 </div>
               </div>
@@ -148,12 +166,12 @@ function AboutUs() {
                     <img src="/assets/img/shapes/bg-3.png" alt="img" />
                   </div>
                   <div className="p-4 rounded-pill bg-skyblue-transparent d-inline-flex">
-                    <i className="isax isax-chart-26 fs-24"></i>
+                    <i className="isax isax-chart-21 fs-24"></i>
                   </div>
-                  <h5 className="mt-3 mb-1">Expert Instruction</h5>
+                  <h5 className="mt-3 mb-1">Instant Results & Feedback</h5>
                   <p>
-                    Our instructors are seasoned professionals with years of
-                    experience in their respective fields & Experts advice
+                    Get immediate scoring and detailed feedback on your
+                    performance with personalized recommendations.
                   </p>
                 </div>
               </div>
@@ -180,7 +198,7 @@ function AboutUs() {
                       <h4 className="text-info">
                         <span className="count-digit">10</span>K
                       </h4>
-                      <p>Online Courses</p>
+                      <p>Mock Tests</p>
                     </div>
                   </div>
                 </div>
@@ -200,7 +218,7 @@ function AboutUs() {
                       <h4 className="text-warning">
                         <span className="count-digit">200</span>+
                       </h4>
-                      <p>Expert Tutors</p>
+                      <p>Instructors</p>
                     </div>
                   </div>
                 </div>
@@ -218,9 +236,9 @@ function AboutUs() {
                     </div>
                     <div className="count-content">
                       <h4 className="text-skyblue">
-                        <span className="count-digit">6</span>K+
+                        <span className="count-digit">6</span>K
                       </h4>
-                      <p>Certified Courses</p>
+                      <p>Official Tests</p>
                     </div>
                   </div>
                 </div>
@@ -234,7 +252,7 @@ function AboutUs() {
                   </div>
                   <div className="count-content">
                     <h4 className="text-lightgreen">
-                      <span className="count-digit">60</span>K+
+                      <span className="count-digit">2</span>K
                     </h4>
                     <p>Online Students</p>
                   </div>
@@ -287,7 +305,7 @@ function AboutUs() {
                         aria-expanded="true"
                         aria-controls="collapsecustomicon1One"
                       >
-                        What's DreamLMS want to give you?{" "}
+                        What's IELTS Mock want to give you?{" "}
                         <i className="isax isax-add fs-20 fw-semibold ms-1"></i>
                       </button>
                     </h2>
@@ -299,9 +317,10 @@ function AboutUs() {
                     >
                       <div className="accordion-body pt-0">
                         <p>
-                          DreamLMS aims to provide you with a comprehensive and
-                          intuitive learning platform that enhances your
-                          educational experience.
+                          Our website gives you access to IELTS practice tests,
+                          study resources, and personalized learning tools that
+                          help you prepare effectively and build confidence for
+                          your exam.
                         </p>
                       </div>
                     </div>
@@ -316,7 +335,7 @@ function AboutUs() {
                         aria-expanded="true"
                         aria-controls="collapsecustomicon1One"
                       >
-                        What's DreamLMS want to give you?{" "}
+                        How does IELTS Mock improve your learning experience?{" "}
                         <i className="isax isax-add fs-20 fw-semibold ms-1"></i>
                       </button>
                     </h2>
@@ -328,9 +347,10 @@ function AboutUs() {
                     >
                       <div className="accordion-body pt-0">
                         <p>
-                          DreamLMS aims to provide you with a comprehensive and
-                          intuitive learning platform that enhances your
-                          educational experience.
+                          Our website improves your learning experience with
+                          interactive practice tests, instant feedback, and
+                          personalized study plans that make IELTS preparation
+                          more effective and engaging.
                         </p>
                       </div>
                     </div>
