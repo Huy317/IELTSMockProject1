@@ -1,31 +1,156 @@
-// TODO: add functionality for this thing
-function Pagination() {
+interface PaginationProps {
+	totalItems: number;
+	currentPage: number;
+	itemsPerPage?: number;
+	onPageChange: (page: number) => void;
+}
+
+function Pagination({ 
+	totalItems, 
+	currentPage, 
+	itemsPerPage = 4, 
+	onPageChange 
+}: PaginationProps) {
+	// Calculate total pages
+	const totalPages = Math.ceil(totalItems / itemsPerPage);
+	
+	// Don't render pagination if there's only one page or no items
+	if (totalPages <= 1) {
+		return null;
+	}
+
+	// Calculate which page numbers to show
+	const getVisiblePages = () => {
+		const pages: number[] = [];
+		const maxVisiblePages = 5;
+		
+		if (totalPages <= maxVisiblePages) {
+			// Show all pages if total is small
+			for (let i = 1; i <= totalPages; i++) {
+				pages.push(i);
+			}
+		} else {
+			// Show pages around current page
+			let start = Math.max(1, currentPage - 2);
+			let end = Math.min(totalPages, currentPage + 2);
+			
+			// Adjust if we're near the beginning or end
+			if (end - start < maxVisiblePages - 1) {
+				if (start === 1) {
+					end = Math.min(totalPages, start + maxVisiblePages - 1);
+				} else {
+					start = Math.max(1, end - maxVisiblePages + 1);
+				}
+			}
+			
+			for (let i = start; i <= end; i++) {
+				pages.push(i);
+			}
+		}
+		
+		return pages;
+	};
+
+	const handlePageClick = (page: number) => {
+		if (page >= 1 && page <= totalPages && page !== currentPage) {
+			onPageChange(page);
+		}
+	};
+
+	const visiblePages = getVisiblePages();
+
 	return (
 		<div className="row align-items-center mt-4">
 			<div className="col-md-2">
-				<p className="pagination-text">Page 1 of 2</p>
+				<p className="pagination-text">
+					Page {currentPage} of {totalPages}
+				</p>
 			</div>
 			<div className="col-md-10">
 				<ul className="pagination lms-page justify-content-center justify-content-md-end mt-2 mt-md-0">
-					<li className="page-item prev">
-						<a className="page-link" href="javascript:void(0)" tabIndex={-1}><i className="fas fa-angle-left"></i></a>
+					{/* Previous button */}
+					<li className={`page-item prev ${currentPage === 1 ? 'disabled' : ''}`}>
+						<a 
+							className="page-link" 
+							href="javascript:void(0)" 
+							tabIndex={currentPage === 1 ? -1 : 0}
+							onClick={() => handlePageClick(currentPage - 1)}
+						>
+							<i className="fas fa-angle-left"></i>
+						</a>
 					</li>
-					<li className="page-item first-page active">
-						<a className="page-link" href="javascript:void(0)">1</a>
-					</li>
-					<li className="page-item">
-						<a className="page-link" href="javascript:void(0)">2</a>
-					</li>
-					<li className="page-item">
-						<a className="page-link" href="javascript:void(0)">3</a>
-					</li>
-					<li className="page-item next">
-						<a className="page-link" href="javascript:void(0)"><i className="fas fa-angle-right"></i></a>
+
+					{/* First page if not visible */}
+					{visiblePages[0] > 1 && (
+						<>
+							<li className="page-item">
+								<a 
+									className="page-link" 
+									href="javascript:void(0)"
+									onClick={() => handlePageClick(1)}
+								>
+									1
+								</a>
+							</li>
+							{visiblePages[0] > 2 && (
+								<li className="page-item disabled">
+									<span className="page-link">...</span>
+								</li>
+							)}
+						</>
+					)}
+
+					{/* Visible page numbers */}
+					{visiblePages.map((page) => (
+						<li 
+							key={page}
+							className={`page-item ${page === currentPage ? 'active' : ''}`}
+						>
+							<a 
+								className="page-link" 
+								href="javascript:void(0)"
+								onClick={() => handlePageClick(page)}
+							>
+								{page}
+							</a>
+						</li>
+					))}
+
+					{/* Last page if not visible */}
+					{visiblePages[visiblePages.length - 1] < totalPages && (
+						<>
+							{visiblePages[visiblePages.length - 1] < totalPages - 1 && (
+								<li className="page-item disabled">
+									<span className="page-link">...</span>
+								</li>
+							)}
+							<li className="page-item">
+								<a 
+									className="page-link" 
+									href="javascript:void(0)"
+									onClick={() => handlePageClick(totalPages)}
+								>
+									{totalPages}
+								</a>
+							</li>
+						</>
+					)}
+
+					{/* Next button */}
+					<li className={`page-item next ${currentPage === totalPages ? 'disabled' : ''}`}>
+						<a 
+							className="page-link" 
+							href="javascript:void(0)"
+							tabIndex={currentPage === totalPages ? -1 : 0}
+							onClick={() => handlePageClick(currentPage + 1)}
+						>
+							<i className="fas fa-angle-right"></i>
+						</a>
 					</li>
 				</ul>
 			</div>
 		</div>
-	)
+	);
 }
 
 export default Pagination;

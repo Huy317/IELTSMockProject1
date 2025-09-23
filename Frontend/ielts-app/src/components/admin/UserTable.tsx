@@ -1,29 +1,22 @@
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { confirmToast } from "../layout/confirmToast";
-import { deleteUser, getAllUsers } from "../../services/userService";
+import { deleteUser } from "../../services/userService";
 import type { User } from "../../types/User";
 import { Link } from "react-router-dom";
 
-function UserTable() {
-  const [users, getUsers] = useState<User[]>([]);
+interface UserTableProps {
+  users: User[];
+  onUsersChange: () => Promise<void>;
+}
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
-
-  async function loadUsers() {
-    const data = await getAllUsers();
-    getUsers(data);
-  }
-
+function UserTable({ users, onUsersChange }: UserTableProps) {
   async function handleDelete(id: number) {
     confirmToast(
       "Are you sure you want to delete this user?",
       async () => {
         try {
           await deleteUser(id);
-          await loadUsers();
+          await onUsersChange();
           toast.success("User deleted successfully!");
         } catch (err) {
           console.error("Delete failed", err);
