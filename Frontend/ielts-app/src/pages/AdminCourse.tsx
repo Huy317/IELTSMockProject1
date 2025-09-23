@@ -1,5 +1,43 @@
+import { useEffect, useState } from "react";
 import CourseTable from "../components/admin/CourseTable";
+import Pagination from "../components/utils/Pagination";
+import { getTests } from "../services/testService";
+import type { Test } from "../types/Test";
+
 function AdminCourse() {
+  const [tests, setTests] = useState<Test[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const itemsPerPage = 5; // Default items per page
+
+  useEffect(() => {
+    loadTests();
+  }, []);
+
+  async function loadTests() {
+    const data = await getTests();
+    setTests(data);
+  }
+
+  // Filter tests based on search term
+  const filteredTests = tests.filter(test => 
+    test.testName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Calculate pagination for filtered results
+  const totalItems = filteredTests.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentTests = filteredTests.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
   return (
     <div>
       {/* Course Stats Cards */}
@@ -33,10 +71,10 @@ function AdminCourse() {
       {/* Page Title and Icons */}
       <div className="page-title d-flex align-items-center justify-content-between mb-3">
         <h5 className="fw-bold">Tests</h5>
-        <div className="d-flex align-items-center list-icons">
+        {/* <div className="d-flex align-items-center list-icons">
           <a href="#" className="active me-2"><i className="isax isax-task"></i></a>
           <a href="#"><i className="isax isax-element-3"></i></a>
-        </div>
+        </div> */}
       </div>
 
       {/* Filter and Search */}
@@ -60,7 +98,13 @@ function AdminCourse() {
             <span className="input-icon-addon">
               <i className="isax isax-search-normal-14"></i>
             </span>
-            <input type="text" className="form-control form-control-md" placeholder="Search" />
+            <input 
+              type="text" 
+              className="form-control form-control-md" 
+              placeholder="Search by test name" 
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
           </div>
         </div>
       </div>
@@ -79,10 +123,18 @@ function AdminCourse() {
             </tr>
           </thead>
           <tbody>
-            <CourseTable />
+            <CourseTable tests={currentTests} onTestsChange={loadTests} />
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        totalItems={totalItems}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

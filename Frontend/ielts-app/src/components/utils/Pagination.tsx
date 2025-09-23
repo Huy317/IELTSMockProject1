@@ -8,7 +8,7 @@ interface PaginationProps {
 function Pagination({ 
 	totalItems, 
 	currentPage, 
-	itemsPerPage = 4, 
+	itemsPerPage = 10, 
 	onPageChange 
 }: PaginationProps) {
 	// Calculate total pages
