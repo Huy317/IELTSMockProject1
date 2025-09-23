@@ -1,0 +1,200 @@
+
+import { useState } from 'react';
+
+interface Choice {
+    id: number;
+    text: string;
+    isCorrect: boolean;
+}
+
+interface MultipleChoiceModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSubmit: (data: any) => void;
+}
+
+function MultipleChoiceModal({ isOpen, onClose, onSubmit }: MultipleChoiceModalProps) {
+    const [questionContent, setQuestionContent] = useState('');
+    const [choices, setChoices] = useState<Choice[]>([
+        { id: 1, text: '', isCorrect: false },
+        { id: 2, text: '', isCorrect: false }
+    ]);
+    const [explanation, setExplanation] = useState('');
+    const [nextChoiceId, setNextChoiceId] = useState(3);
+
+    const handleAddChoice = () => {
+        const newChoice: Choice = {
+            id: nextChoiceId,
+            text: '',
+            isCorrect: false
+        };
+        setChoices([...choices, newChoice]);
+        setNextChoiceId(nextChoiceId + 1);
+    };
+
+    const handleChoiceTextChange = (id: number, text: string) => {
+        setChoices(choices.map(choice =>
+            choice.id === id ? { ...choice, text } : choice
+        ));
+    };
+
+    const handleChoiceCorrectChange = (id: number, isCorrect: boolean) => {
+        setChoices(choices.map(choice =>
+            choice.id === id ? { ...choice, isCorrect } : choice
+        ));
+    };
+
+    const handleDeleteChoice = (id: number) => {
+        // Prevent deleting if only 2 choices remain
+        if (choices.length <= 2) return;
+        setChoices(choices.filter(choice => choice.id !== id));
+    };
+
+    const handleSubmit = () => {
+        const data = {
+            questionContent,
+            choices,
+            explanation
+        };
+        onSubmit(data);
+    };
+
+    if (!isOpen) return null;
+
+    function ChoiceItem({ choice, index }: { choice: Choice; index: number }) {
+        return (
+            <div key={choice.id} className="border rounded p-3 mb-3 bg-light">
+                <div className="row align-items-center">
+                    <div className="col-9">
+                        <div className="input-group mb-2">
+                            <div className="input-group-text me-2">
+                                <input
+                                    className="form-check-input mt-0"
+                                    type="checkbox"
+                                    id={`correct-${choice.id}`}
+                                    checked={choice.isCorrect}
+                                    onChange={(e) => handleChoiceCorrectChange(choice.id, e.target.checked)}
+                                    title="Mark as correct answer"
+                                    style={{ 
+                                        cursor: 'pointer', 
+                                        width: '20px',
+                                        height: '20px',
+                                        border: '1px solid #f34444ff',
+                                    }}
+                                />
+                            </div>
+                            <input
+                                type="text"
+                                className="form-control "
+                                value={choice.text}
+                                onChange={(e) => handleChoiceTextChange(choice.id, e.target.value)}
+                                placeholder={`Enter choice ${index + 1}`}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-3 text-center">
+                        <button
+                            type="button"
+                            className="btn btn-outline-danger btn-md rounded-3"
+                            onClick={() => handleDeleteChoice(choice.id)}
+                            disabled={choices.length <= 2}
+                            title="Delete choice"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+
+    }
+
+
+    return (
+        <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <div className="modal-dialog modal-lg modal-dialog-centered">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Multiple Choice</h5>
+                        <button
+                            type="button"
+                            className="btn-close border-0 rounded-1"
+                            aria-label="Close"
+                            onClick={onClose}
+                        ></button>
+                    </div>
+                    <div className="modal-body">
+                        {/* Question Content */}
+                        <div className="mb-3">
+                            <label htmlFor="questionContent" className="form-label fw-bold">
+                                Question Content
+                            </label>
+                            <textarea
+                                className="form-control"
+                                id="questionContent"
+                                rows={3}
+                                value={questionContent}
+                                onChange={(e) => setQuestionContent(e.target.value)}
+                                placeholder="Enter your question here..."
+                            ></textarea>
+                        </div>
+
+                        {/* Choices Section */}
+                        <div className="mb-3">
+                            <label className="form-label fw-bold">Choices</label>
+                            <small className="form-text text-muted d-block mb-3">Select the correct choices</small>
+
+                            {/* Render all choices */}
+                            {choices.map((choice, index) => (
+                                <ChoiceItem key={choice.id} choice={choice} index={index} />
+                            ))}
+
+                            {/* Add Choice Button */}
+                            <button
+                                type="button"
+                                className="btn btn-outline-primary btn-sm rounded-1"
+                                onClick={handleAddChoice}
+                            >
+                                <i className="bi bi-plus me-1"></i>
+                                Add Choice
+                            </button>
+                        </div>
+
+                        {/* Explanation */}
+                        <div className="mb-3">
+                            <label htmlFor="explanation" className="form-label fw-bold">
+                                Explanation (optional)
+                            </label>
+                            <textarea
+                                className="form-control"
+                                id="explanation"
+                                rows={2}
+                                value={explanation}
+                                onChange={(e) => setExplanation(e.target.value)}
+                                placeholder="Enter explanation for the correct answer..."
+                            ></textarea>
+                        </div>
+                    </div>
+                    <div className="modal-footer">
+                        <button
+                            type="button"
+                            className="btn btn-secondary me-3 rounded-3"
+                            onClick={onClose}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-primary rounded-3"
+                            onClick={handleSubmit}
+                        >
+                            Create Question
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default MultipleChoiceModal;
