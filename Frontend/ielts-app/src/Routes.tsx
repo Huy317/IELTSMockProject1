@@ -27,7 +27,11 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Faq from "./pages/Faq";
 import TestDetail from "./pages/TestDetail";
+
 import { AdminTypeSkill } from "./pages/AdminTypeSkill";
+
+import CreateTestPage from "./components/test_rework/EditReadingTest";
+
 
 const router = createBrowserRouter([
   {
@@ -58,6 +62,10 @@ const router = createBrowserRouter([
         element: <AddReadingTest />,
       },
       {
+        path: "edit-test",
+        element: <CreateTestPage />,
+      },
+      {
         path: "about-us",
         element: <AboutUs />,
       },
@@ -71,7 +79,11 @@ const router = createBrowserRouter([
       },
       {
         path: "test/:id",
-        element: <TestDetail />,
+        element: (
+          <ProtectedRoute allowedRoles={["Student", "Admin"]}>
+            <TestDetail />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin",
@@ -170,6 +182,7 @@ const router = createBrowserRouter([
     path: "unauthorized",
     element: <div>Unauthorized Access</div>,
   },
+
 ]);
 
 export default function Routes() {
