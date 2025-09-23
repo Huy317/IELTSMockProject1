@@ -134,6 +134,16 @@ function AdminDashboardLayout() {
                                             <i className="isax isax-profile-2user5 me-2"></i>Users
                                         </NavLink>
                                     </li>
+                                    <li>
+                                        <NavLink
+                                            to="/admin/type-skill"
+                                            className={({ isActive }) =>
+                                                `d-inline-flex align-items-center ${isActive ? 'active' : ''}`
+                                            }
+                                        >
+                                            <i className="isax isax-profile-2user5 me-2"></i>Skills
+                                        </NavLink>
+                                    </li>
                                     {/* <li>
                                         <NavLink
                                             to="/admin/quiz"
