@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import TestCard from "../components/student/TestCard";
+import TestCard, { SubmissionCard, TestCardNew } from "../components/student/TestCard";
 import type { UserInfo } from "../services/authService";
 import { useAuth } from "../contexts/AuthContext";
 import { getAvrScore, getHighestScore, getLowestScore, getTotalSubmission } from "../services/userService";
+import type { ViewSubmissionDTO } from "../types/Submission";
+import { GetRecentlySubmissionById } from "../services/submissionService";
+import { set } from "react-hook-form";
 
 function StudentDashboard() {
   const {user} = useAuth();
@@ -10,6 +13,7 @@ function StudentDashboard() {
   const [avr, setAvr] = useState<number>(0);
   const [high, setHigh] = useState<number>(0);
   const [low, setLow] = useState<number>(0);
+  const [submissions, setSubmissions] = useState<ViewSubmissionDTO[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,6 +26,9 @@ function StudentDashboard() {
         setAvr(data1);
         setHigh(data2);
         setLow(data3);
+
+        const listSub = await GetRecentlySubmissionById(user.id);
+        setSubmissions(listSub);
       }
     }
 
@@ -95,7 +102,19 @@ function StudentDashboard() {
       {/* Recently Enrolled Courses */}
       <h5 className="mb-3 fs-18">Recently Taken Tests</h5>
       <div className="row">
-        <TestCard/>
+        {/* <TestCard/> */}
+        {submissions.map((sub, idx) => (
+          <SubmissionCard 
+            key={idx}
+            id={sub.id}
+            image="/assets/img/course/course-01.jpg"
+            adminAvatar="/assets/img/user/user-29.jpg"
+            adminName={sub.instructorName.toUpperCase()}
+            title={sub.testName}
+            rating={sub.score}
+            skillType={sub.typeName}
+          />
+        ))}
       </div>
     </div>
   );

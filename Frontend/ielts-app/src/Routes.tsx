@@ -27,6 +27,7 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Faq from "./pages/Faq";
 import TestDetail from "./pages/TestDetail";
+import { AdminTypeSkill } from "./pages/AdminTypeSkill";
 
 const router = createBrowserRouter([
   {
@@ -100,6 +101,10 @@ const router = createBrowserRouter([
           {
             path: "settings",
             element: <Settings />,
+          },
+          {
+            path: "type-skill",
+            element: <AdminTypeSkill />,
           },
         ],
       },
