@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getAllTypeSkills } from '../../services/typeSkillService';
+import type { TypeSkillBasicDto } from '../../types/TypeSkill';
 
 interface CreateTestModalProps {
     isOpen: boolean;
@@ -8,13 +10,15 @@ interface CreateTestModalProps {
 
 interface TestData {
     testName: string;
-    testType: 'Reading' | 'Listening';
+    testTypeId: number;
 }
 
 function CreateTestModal({ isOpen, onClose, onConfirm }: CreateTestModalProps) {
     const [testName, setTestName] = useState('');
-    const [testType, setTestType] = useState<'Reading' | 'Listening'>('Reading');
+    const [testTypeId, setTestTypeId] = useState(1);
     const [errors, setErrors] = useState<{ testName?: string }>({});
+
+    const [typeSkills, setTypeSkills] = useState<TypeSkillBasicDto[]>([]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,23 +37,36 @@ function CreateTestModal({ isOpen, onClose, onConfirm }: CreateTestModalProps) {
         // Submit data
         onConfirm({
             testName: testName.trim(),
-            testType
+            testTypeId
         });
 
         // Reset form
         setTestName('');
-        setTestType('Reading');
+        setTestTypeId(1);
         setErrors({});
     };
 
     const handleCancel = () => {
         setTestName('');
-        setTestType('Reading');
+        setTestTypeId(1);
         setErrors({});
         onClose();
     };
 
+    const fetchData = async () => {
+        let data = await getAllTypeSkills();
+        console.log(data);
+        setTypeSkills(data);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+
     if (!isOpen) return null;
+
+
 
     return (
         <div
@@ -103,11 +120,14 @@ function CreateTestModal({ isOpen, onClose, onConfirm }: CreateTestModalProps) {
                                 <select
                                     id="testType"
                                     className="form-select"
-                                    value={testType}
-                                    onChange={(e) => setTestType(e.target.value as 'Reading' | 'Listening')}
+                                    value={testTypeId}
+                                    onChange={(e) => setTestTypeId(Number(e.target.value))}
                                 >
-                                    <option value="Reading">Reading</option>
-                                    <option value="Listening">Listening</option>
+                                    {typeSkills.map((type) => (
+                                        <option key={type.id} value={type.id}>
+                                            {type.typeName}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>

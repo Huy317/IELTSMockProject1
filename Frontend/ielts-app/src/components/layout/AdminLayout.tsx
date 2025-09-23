@@ -8,7 +8,7 @@ function AdminDashboardLayout() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { logout, user } = useAuth();
 
-    const handleCreateTest = (testData: { testName: string; testType: 'Reading' | 'Listening' }) => {
+    const handleCreateTest = (testData: { testName: string; testTypeId: number }) => {
         console.log('Creating test:', testData);
         // Here you would typically call an API to create the test
         // For now, we'll just log it and close the modal
