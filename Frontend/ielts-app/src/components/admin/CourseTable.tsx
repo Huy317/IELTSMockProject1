@@ -1,23 +1,15 @@
 //import React from "react";
-import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { confirmToast } from "../layout/confirmToast";
-import { getTests } from "../../services/testService";
 import { deleteTest } from "../../services/testService";
 import type { Test } from "../../types/Test";
 
-function CourseTable() {
-  const [tests, setTests] = useState<Test[]>([]);
+interface CourseTableProps {
+  tests: Test[];
+  onTestsChange: () => Promise<void>;
+}
 
-  useEffect(() => {
-    loadTests();
-  }, []);
-
-  async function loadTests() {
-    const data = await getTests();
-    setTests(data);
-  }
-
+function CourseTable({ tests, onTestsChange }: CourseTableProps) {
   async function handleDelete(id: number) {
     console.log("handleDelete called with id:", id);
     confirmToast(
@@ -26,7 +18,7 @@ function CourseTable() {
         console.log("Confirm button clicked, deleting test with id:", id);
         try {
           await deleteTest(id);
-          await loadTests();
+          await onTestsChange();
           toast.success("Course deleted successfully!");
         } catch (err) {
           console.error("Delete failed", err);
