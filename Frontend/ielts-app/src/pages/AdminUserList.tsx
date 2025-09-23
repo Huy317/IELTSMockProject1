@@ -33,10 +33,6 @@ function AdminUserList() {
             {/* Page title */}
             <div className="page-title d-flex align-items-center justify-content-between">
                 <h5 className="fw-bold">Students</h5>
-                {/* <div className="d-flex align-items-center list-icons">
-                    <a href="student-list.html" className="active me-2"><i className="isax isax-task"></i></a>
-                    <a href="students.html"><i className="isax isax-element-3"></i></a>
-                </div> */}
             </div>
             
             {/* Search bar */}
@@ -50,7 +46,6 @@ function AdminUserList() {
                     </div>
                 </div>
             </div>
-                
             
             <UserTable users={currentUsers} onUsersChange={loadUsers} />
             
@@ -61,10 +56,6 @@ function AdminUserList() {
                 onPageChange={handlePageChange}
             />
         </>
-
-
-
-
     );
 }
 

@@ -50,5 +50,14 @@ namespace IELTS_PRACTICE.Controllers
             await _testSubmissionService.DeleteTestSubmission(id);
             return NoContent();
         }
+
+        [HttpGet("getrecentlysubmit")]
+        public async Task<IActionResult> GetRecentlySubmissionById(int studentId) { 
+            var result = await _testSubmissionService.ViewRecentlySubmission(studentId);
+            if (result == null) { 
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }

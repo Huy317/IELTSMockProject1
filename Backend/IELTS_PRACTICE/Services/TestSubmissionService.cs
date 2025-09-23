@@ -2,6 +2,7 @@
 using IELTS_PRACTICE.DTOs.Responses;
 using IELTS_PRACTICE.DTOs.Resquests;
 using IELTS_PRACTICE.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace IELTS_PRACTICE.Services
 {
@@ -63,6 +64,25 @@ namespace IELTS_PRACTICE.Services
             var test = await _context.TestSubmissions.FindAsync(id);
             _context.TestSubmissions.Remove(test);
             _context.SaveChanges();
+        }
+
+        public async Task<List<ViewSubmissionDTO>> ViewRecentlySubmission(int id)
+        {
+            var result = (from u in _context.Users
+                          where u.Id == id
+                          join ts in _context.TestSubmissions on u.Id equals ts.UserId
+                          join t in _context.Tests on ts.TestId equals t.Id
+                          join ins in _context.Users on t.CreatedBy equals ins.Id
+                          select new ViewSubmissionDTO
+                          {
+                              Id = ts.Id,
+                              TestName = t.TestName,
+                              InstructorName = ins.FullName,
+                              Score = ts.Score,
+                              TypeName = t.TypeSkill.TypeName,
+                          }).ToList();
+
+            return result;
         }
     }
 }
