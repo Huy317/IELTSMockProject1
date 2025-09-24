@@ -3,17 +3,54 @@ import { useState } from 'react';
 import '../../assets/css/custom.css';
 import CreateTestModal from '../utils/CreateTestModal';
 import { useAuth } from '../../contexts/AuthContext';
+import { createTest } from '../../services/testService';
+import type { TestToCreate } from '../../types/Test';
+import { getUserId } from '../../services/authService';
 
 function AdminDashboardLayout() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCreatingTest, setIsCreatingTest] = useState(false);
     const { logout, user } = useAuth();
 
-    const handleCreateTest = (testData: { testName: string; testTypeId: number }) => {
-        console.log('Creating test:', testData);
-        // Here you would typically call an API to create the test
-        // For now, we'll just log it and close the modal
-        setIsModalOpen(false);
-        // You can add additional logic here like showing a success message
+
+    async function createNewTest(test: TestToCreate) {
+        setIsCreatingTest(true);
+        try {
+            const newTest = await createTest(test);
+            alert('Test created successfully!');
+            return { success: true, data: newTest };
+        } catch (error) {
+            alert('Failed to create test. Please try again.');
+            return { success: false };
+        } finally {
+            setIsCreatingTest(false);
+        }
+    }
+
+
+    const handleCreateTest = async (testData: { testName: string; testTypeId: number }) => {
+    
+        if (isCreatingTest) return;
+
+        let newTest : TestToCreate = {
+            testName: testData.testName,
+            typeId: testData.testTypeId,
+            createdBy: Number(getUserId()) || 0,
+            createdAt: new Date().toISOString(),
+            resource: '',
+            isActive: false,
+        }
+
+        console.log("Creating test:", newTest);
+
+        const result = await createNewTest(newTest);
+        
+        if (result.success) {
+            setIsModalOpen(false);
+
+            // TODO: navigate to edit page
+            console.log("New test created: ", result.data);
+        }
     };
 
     const handleOpenModal = () => {
