@@ -9,6 +9,17 @@ interface CourseTableProps {
   onTestsChange: () => Promise<void>;
 }
 
+const formatDate = (isoLike: string | Date | undefined): string => {
+        if (!isoLike) return "-";
+        try {
+            const d = typeof isoLike === "string" ? new Date(isoLike) : isoLike;
+            if (Number.isNaN(d.getTime())) return String(isoLike);
+            return d.toLocaleString();
+        } catch {
+            return String(isoLike);
+        }
+    };
+
 function CourseTable({ tests, onTestsChange }: CourseTableProps) {
   async function handleDelete(id: number) {
     console.log("handleDelete called with id:", id);
@@ -54,7 +65,7 @@ function CourseTable({ tests, onTestsChange }: CourseTableProps) {
           </td>
           {/* <td>{row.attempted}</td> */}
           {/* <td>{test.createdBy}</td> */}
-          <td>{test.createdAt}</td>
+          <td>{formatDate(test.createdAt)}</td>
           <td>{test.resource}</td>
           <td>
             <span className="badge badge-sm bg-success d-inline-flex align-items-center me-1">

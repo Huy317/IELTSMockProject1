@@ -25,16 +25,10 @@ export async function getTestById(id: string | number): Promise<TestWithAuthorNa
   return res.data;
 }
 
-// export async function getFilteredTests(filters : {
-//   skillName? : string;
-//   instructorName? : string;
-// }) : Promise<Test[]> {
-//   const params = new URLSearchParams();
-//   if(filters.skillName) params.append("skillName", filters.skillName);
-//   if(filters.instructorName) params.append("instructorName", filters.instructorName);
-//   const res = await client.get<Test[]>(`/Test/filter?${params.toString()}`);
-//   return res.data;
-// }
+export async function getRecentlyTestByAdminId(id: string | number) : Promise<TestWithAuthorName[]> {
+  const res = await client.get<TestWithAuthorName[]>(`/Test/recentlycreatedtestbyid?id=${id}`);
+  return res.data;
+}
 
 export async function getFilteredTests(filters : {
   skillName? : string[];

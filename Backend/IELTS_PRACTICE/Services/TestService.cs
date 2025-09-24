@@ -179,5 +179,26 @@ namespace IELTS_PRACTICE.Services
                           .Take(5)
                           .ToListAsync();
         }
+
+        public async Task<List<TestDTO>> GetTestByAdminId(int id) {
+            var tests = await (from t in _context.Tests
+                               join u in _context.Users on t.CreatedBy equals u.Id
+                               where u.Id == id
+                               select new TestDTO
+                               {
+                                   Id = t.Id,
+                                   TestName = t.TestName,
+                                   CreatedBy = t.CreatedBy,
+                                   CreatedAt = t.CreatedAt,
+                                   Resource = t.Resource,
+                                   IsActive = t.IsActive,
+                                   InstructorName = u.FullName,
+                                   TypeName = t.TypeSkill.TypeName,
+                                   SubmissionCount = t.TestSubmissions.Count(),
+                               })
+                               .OrderByDescending(x => x.CreatedAt)
+                               .ToListAsync();
+            return tests;
+        }
     }
 }
