@@ -101,7 +101,7 @@ function AdminDashboardLayout() {
                                                 `d-inline-flex align-items-center ${isActive ? 'active' : ''}`
                                             }
                                         >
-                                            <i className="isax isax-teacher5 me-2"></i>Courses
+                                            <i className="isax isax-teacher5 me-2"></i>Tests
                                         </NavLink>
                                     </li>
                                     {/* <li>
