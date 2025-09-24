@@ -15,7 +15,7 @@ export async function createTypeSkill(dto : CreateTypeSkillDto) : Promise<TypeSk
     return res.data;
 }
 
-export async function updateTypeSkill(id: string | number) : Promise<TypeSkillBasicDto> {
-    const res = await client.put<TypeSkillBasicDto>(`/TypeSkill/${id}`);
+export async function updateTypeSkill(id: string | number, dto: CreateTypeSkillDto) : Promise<TypeSkillBasicDto> {
+    const res = await client.put<TypeSkillBasicDto>(`/TypeSkill/${id}`, dto);
     return res.data;
 }

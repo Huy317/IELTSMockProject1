@@ -90,5 +90,11 @@ namespace IELTS_PRACTICE.Controllers
             var result = await _testService.GetTop5PopularTests();
             return Ok(result);
         }
+
+        [HttpGet("recentlycreatedtestbyid")]
+        public async Task<ActionResult<IEnumerable<TestDTO>>> GetRecentlyCreatedTestByAdminId(int id)
+        {
+            return await _testService.GetTestByAdminId(id);
+        }
     }
 }

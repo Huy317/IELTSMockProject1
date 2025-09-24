@@ -16,7 +16,7 @@ function ReadingTestPage() {
           <QuestionReading />
         </div>
       </div>
-      <Pagination/>
+      {/* <Pagination/> */}
     </div>
   );
 }
