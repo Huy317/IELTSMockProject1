@@ -1,4 +1,4 @@
-import type { Test, TestWithAuthorName } from "../types/Test";
+import type { Test, TestWithAuthorName, TestToCreate } from "../types/Test";
 import { client } from "./authService";
 
 export async function getTests(): Promise<TestWithAuthorName[]> {
@@ -8,6 +8,11 @@ export async function getTests(): Promise<TestWithAuthorName[]> {
 
 export async function getPopularTests(): Promise<TestWithAuthorName[]> {
   const res = await client.get<TestWithAuthorName[]>("/Test/populartest");
+  return res.data;
+}
+
+export async function createTest(test: TestToCreate): Promise<TestWithAuthorName> {
+  const res = await client.post<TestWithAuthorName>("/Test", test);
   return res.data;
 }
 
