@@ -110,5 +110,46 @@ namespace IELTS_PRACTICE.Controllers
             var result = await _userService.GetLowestScore(id);
             return Ok(result);
         }
+
+        [HttpGet("gettestcreatedbyadmin")]
+        public async Task<IActionResult> GetTotalTestsCreadtedByAdmin(int id) {
+            var result = await _userService.GetTotalTestsCreadtedByAdmin(id);
+            return Ok(result);
+        }
+
+        [HttpGet("getsubmissionsbyadmintest")]
+        public async Task<IActionResult> GetTotalSubmissionsByAdminTest(int id)
+        {
+            var result = await _userService.GetTotalSubmissionsByAdminTest(id);
+            return Ok(result);
+        }
+
+        [HttpGet("getstudentsbyadmintest")]
+        public async Task<IActionResult> GetTotalStudentsByAdminTest(int id)
+        {
+            var result = await _userService.GetTotalStudentsByAdminTest(id);
+            return Ok(result);
+        }
+
+        [HttpGet("gettotaltests")]
+        public async Task<IActionResult> GetTotalTests()
+        {
+            var result = await _userService.GetTotalTest();
+            return Ok(result);
+        }
+
+        [HttpGet("gettotalactivetests")]
+        public async Task<IActionResult> GetTotalActiveTests()
+        {
+            var result = await _userService.GetTotalActiveTest();
+            return Ok(result);
+        }
+
+        [HttpGet("gettotalinactivetests")]
+        public async Task<IActionResult> GetTotalInactiveTests()
+        {
+            var result = await _userService.GetTotalInactiveTest();
+            return Ok(result);
+        }
     }
 }

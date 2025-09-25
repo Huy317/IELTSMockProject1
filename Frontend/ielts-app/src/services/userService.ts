@@ -56,6 +56,7 @@ export async function getUserById(id: string | number): Promise<User> {
   return res.data;
 }
 
+//for student dashboard
 export async function getTotalSubmission(id: string | number) : Promise<number> {
   const res = await client.get<number>(`/Users/gettotalsubmission?id=${id}`);
   return res.data;
@@ -73,6 +74,37 @@ export async function getHighestScore(id: string | number) : Promise<number> {
 
 export async function getLowestScore(id: string | number) : Promise<number> {
   const res = await client.get<number>(`/Users/getlowestscore?id=${id}`);
+  return res.data;
+}
+
+//for admin dashboard
+export async function getTotalTestsByAdminId(id: string | number) : Promise<number> {
+  const res = await client.get<number>(`Users/gettestcreatedbyadmin?id=${id}`);
+  return res.data;
+}
+
+export async function getTotalSubmissionsByAdminId(id: string | number) : Promise<number> {
+  const res = await client.get<number>(`Users/getsubmissionsbyadmintest?id=${id}`);
+  return res.data;
+}
+
+export async function getTotalStudentsByAdminId(id: string | number) : Promise<number> {
+  const res = await client.get<number>(`Users/getstudentsbyadmintest?id=${id}`);
+  return res.data;
+}
+
+export async function getTotalTest() : Promise<number> {
+  const res = await client.get<number>(`Users/gettotaltests`);
+  return res.data;
+}
+
+export async function getTotalActiveTest() : Promise<number> {
+  const res = await client.get<number>(`Users/gettotalactivetests`);
+  return res.data;
+}
+
+export async function getTotalInactiveTest() : Promise<number> {
+  const res = await client.get<number>(`Users/gettotalinactivetests`);
   return res.data;
 }
 
