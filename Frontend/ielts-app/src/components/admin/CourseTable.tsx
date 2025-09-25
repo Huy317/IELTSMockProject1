@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { confirmToast } from "../layout/confirmToast";
 import { deleteTest } from "../../services/testService";
 import type { Test } from "../../types/Test";
+import { useNavigate } from "react-router-dom";
 
 interface CourseTableProps {
   tests: Test[];
@@ -43,6 +44,12 @@ function CourseTable({ tests, onTestsChange }: CourseTableProps) {
     );
   }
 
+  let navigate = useNavigate();
+
+  function handleEdit(id: number) {
+    navigate(`/edit-test/${id}`);
+  }
+
   return (
     <>
       {tests.map((test, idx) => (
@@ -75,7 +82,7 @@ function CourseTable({ tests, onTestsChange }: CourseTableProps) {
           </td>
           <td>
             <div className="d-flex align-items-center">
-              <a href="#" className="d-inline-flex fs-14 me-1 action-icon">
+              <a href="#" className="d-inline-flex fs-14 me-1 action-icon" onClick={() => handleEdit(test.id)}>
                 <i className="isax isax-edit-2"></i>
               </a>
               <a onClick={() => handleDelete(test.id)} href="#" className="d-inline-flex fs-14 action-icon">

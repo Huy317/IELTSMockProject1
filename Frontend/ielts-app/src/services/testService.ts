@@ -1,4 +1,4 @@
-import type { Test, TestWithAuthorName, TestToCreate } from "../types/Test";
+import type { Test, TestWithAuthorName, TestToCreate, TestToUpdate } from "../types/Test";
 import { client } from "./authService";
 
 export async function getTests(): Promise<TestWithAuthorName[]> {
@@ -56,5 +56,10 @@ export async function getFilteredTests(filters : {
   }
   
   const res = await client.get<TestWithAuthorName[]>(`/Test/filter?${params.toString()}`);
+  return res.data;
+}
+
+export async function updateTest(id: string | number, data: TestToUpdate): Promise<TestWithAuthorName> {
+  const res = await client.put<TestWithAuthorName>(`/Test/${id}`, data);
   return res.data;
 }

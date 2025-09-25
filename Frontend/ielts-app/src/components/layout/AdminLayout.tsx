@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import '../../assets/css/custom.css';
 import CreateTestModal from '../utils/CreateTestModal';
@@ -12,44 +12,47 @@ function AdminDashboardLayout() {
     const [isCreatingTest, setIsCreatingTest] = useState(false);
     const { logout, user } = useAuth();
 
+    let navigate = useNavigate();
 
-    async function createNewTest(test: TestToCreate) {
-        setIsCreatingTest(true);
-        try {
-            const newTest = await createTest(test);
-            alert('Test created successfully!');
-            return { success: true, data: newTest };
-        } catch (error) {
-            alert('Failed to create test. Please try again.');
-            return { success: false };
-        } finally {
-            setIsCreatingTest(false);
+    const handleCreateTest = async (testData: { testName: string; testTypeId: number }): Promise<void> => {
+        // Prevent multiple simultaneous requests
+        if (isCreatingTest) {
+            console.warn("Test creation already in progress");
+            return;
         }
-    }
 
-
-    const handleCreateTest = async (testData: { testName: string; testTypeId: number }) => {
-    
-        if (isCreatingTest) return;
-
-        let newTest : TestToCreate = {
+        const newTest: TestToCreate = {
             testName: testData.testName,
             typeId: testData.testTypeId,
             createdBy: Number(getUserId()) || 0,
             createdAt: new Date().toISOString(),
             resource: '',
             isActive: false,
-        }
+        };
 
         console.log("Creating test:", newTest);
 
-        const result = await createNewTest(newTest);
-        
-        if (result.success) {
+        setIsCreatingTest(true);
+        try {
+            const created = await createTest(newTest);
+
+            // Success: close modal and navigate
             setIsModalOpen(false);
 
-            // TODO: navigate to edit page
-            console.log("New test created: ", result.data);
+            // Show success message
+            alert('Test created successfully!');
+
+            // Navigate to edit page
+            navigate(`/edit-test/${created.id}`);
+
+            console.log("New test created successfully:", created);
+        } catch (error) {
+            // Handle errors
+            console.error("Failed to create test:", error);
+            const errorMessage = error instanceof Error ? error.message : 'Failed to create test. Please try again.';
+            alert(errorMessage);
+        } finally {
+            setIsCreatingTest(false);
         }
     };
 

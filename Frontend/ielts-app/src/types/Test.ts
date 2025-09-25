@@ -23,8 +23,15 @@ export interface TestWithAuthorName {
   createdBy: number;
   createdAt: string;
   resource: string;
-  isActive: string;
+  isActive: boolean;
   instructorName: string;
   typeName: string;
   submissionCount: number;
+}
+
+export interface TestToUpdate {
+  testName : string,
+  createdBy : number, // TODO: delete later
+  resource : string,
+  isActive : boolean
 }

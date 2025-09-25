@@ -86,6 +86,7 @@ namespace IELTS_PRACTICE.Services
             _context.SaveChanges();
             return new TestDTO
             {
+                Id = newTest.Id,
                 TestName = newTest.TestName,
                 CreatedBy = newTest.CreatedBy,
                 CreatedAt = newTest.CreatedAt,
