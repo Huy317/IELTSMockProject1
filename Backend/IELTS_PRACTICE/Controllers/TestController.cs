@@ -38,8 +38,8 @@ namespace IELTS_PRACTICE.Controllers
         [HttpPost]
         public async Task<ActionResult<TestDTO>> CreateTest(CreateTestDTO rq)
         {
-            await _testService.CreateTest(rq);
-            return Ok();
+            var test = await _testService.CreateTest(rq);
+            return Ok(test);
         }
 
         [HttpPut("{id}")]
