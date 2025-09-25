@@ -3,15 +3,29 @@ import CourseTable from "../components/admin/CourseTable";
 import Pagination from "../components/utils/Pagination";
 import { getTests } from "../services/testService";
 import type { Test } from "../types/Test";
+import { getTotalActiveTest, getTotalInactiveTest, getTotalTest } from "../services/userService";
 
 function AdminCourse() {
   const [tests, setTests] = useState<Test[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 5; // Default items per page
+  const [totalTests, setTotalTests] = useState<number>(0);
+  const [activeTests, setActiveTests] = useState<number>(0);
+  const [inactiveTests, setInactiveTests] = useState<number>(0);
 
   useEffect(() => {
     loadTests();
+    const fetchData = async () => {
+      const data1 = await getTotalTest();
+      const data2 = await getTotalActiveTest();
+      const data3 = await getTotalInactiveTest();
+      setTotalTests(data1);
+      setActiveTests(data2);
+      setInactiveTests(data3);
+    }
+
+    fetchData();
   }, []);
 
   async function loadTests() {
@@ -45,24 +59,24 @@ function AdminCourse() {
         <div className="col-lg-4 col-md-6">
           <div className="card bg-success">
             <div className="card-body">
-              <h6 className="fw-medium mb-1 text-white">Active Tests</h6>
-              <h4 className="fw-bold text-white">45</h4>
+              <h6 className="fw-medium mb-1 text-white">Total Tests</h6>
+              <h4 className="fw-bold text-white">{totalTests}</h4>
             </div>
           </div>
         </div>
         <div className="col-lg-4 col-md-6">
           <div className="card bg-secondary">
             <div className="card-body">
-              <h6 className="fw-medium mb-1 text-white">Pending Tests</h6>
-              <h4 className="fw-bold text-white">21</h4>
+              <h6 className="fw-medium mb-1 text-white">Total Active Tests</h6>
+              <h4 className="fw-bold text-white">{activeTests}</h4>
             </div>
           </div>
         </div>
         <div className="col-lg-4 col-md-6">
           <div className="card bg-info">
             <div className="card-body">
-              <h6 className="fw-medium mb-1 text-white">Incoming Tests</h6>
-              <h4 className="fw-bold text-white">15</h4>
+              <h6 className="fw-medium mb-1 text-white">Total Inactive Tests</h6>
+              <h4 className="fw-bold text-white">{inactiveTests}</h4>
             </div>
           </div>
         </div>

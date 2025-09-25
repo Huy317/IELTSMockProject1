@@ -190,5 +190,44 @@ namespace IELTS_PRACTICE.Services
             }
             return rounded;
         }
+
+        //for admin dashboard
+        public async Task<int> GetTotalTestsCreadtedByAdmin(int id) {
+            return await _context.Tests
+                .Where(x => x.CreatedBy == id)
+                .CountAsync();
+        }
+
+        public async Task<int> GetTotalSubmissionsByAdminTest(int id) { 
+            return await _context.TestSubmissions
+                .Where(x => x.Test.CreatedBy == id)
+                .CountAsync();
+        }
+
+        public async Task<int> GetTotalStudentsByAdminTest(int id) { 
+            return await _context.TestSubmissions
+                .Where(x => x.Test.CreatedBy == id)
+                .Select(x => x.UserId)
+                .Distinct()
+                .CountAsync();
+        }
+
+        //for admin total tests list
+        public async Task<int> GetTotalTest() { 
+            return await _context.Tests.CountAsync();
+        }
+
+        public async Task<int> GetTotalActiveTest() { 
+            return await _context.Tests
+                .Where(x => x.IsActive == true)
+                .CountAsync();
+        }
+
+        public async Task<int> GetTotalInactiveTest()
+        {
+            return await _context.Tests
+                .Where(x => x.IsActive == false)
+                .CountAsync();
+        }
     }
 }

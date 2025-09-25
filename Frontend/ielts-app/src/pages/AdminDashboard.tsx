@@ -5,15 +5,31 @@ import { getRecentlyTestByAdminId, getTests } from "../services/testService";
 import CourseTable from "../components/admin/CourseTable";
 import Pagination from "../components/utils/Pagination";
 import { useAuth } from "../contexts/AuthContext";
+import { getTotalStudentsByAdminId, getTotalSubmissionsByAdminId, getTotalTestsByAdminId } from "../services/userService";
 
 function AdminDashboard() {
   const [tests, setTests] = useState<Test[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Default items per page
   const {user} = useAuth();
+  const [totalCreatedTests, setTotalCreatedTests] = useState<number>(0);
+  const [totalSubmissions, setTotalSubmissions] = useState<number>(0);
+  const [totalStudents, setTotalStudents] = useState<number>(0);
 
   useEffect(() => {
     loadTests();
+    const fetchData = async () => {
+      if(user) {
+        const data1 = await getTotalTestsByAdminId(user.id);
+        const data2 = await getTotalSubmissionsByAdminId(user.id);
+        const data3 = await getTotalStudentsByAdminId(user.id);
+        setTotalCreatedTests(data1);
+        setTotalSubmissions(data2);
+        setTotalStudents(data3);
+      }
+    }
+
+    fetchData();
   }, []);
 
   async function loadTests() {
@@ -44,8 +60,8 @@ function AdminDashboard() {
                   <img src="/assets/img/icon/graduation.svg" alt="" />
                 </span>
                 <div>
-                  <span className="d-block">Created Tests</span>
-                  <h4 className="fs-24 mt-1">12</h4>
+                  <span className="d-block">Total Tests</span>
+                  <h4 className="fs-24 mt-1">{totalCreatedTests}</h4>
                 </div>
               </div>
             </div>
@@ -59,8 +75,8 @@ function AdminDashboard() {
                   <img src="/assets/img/icon/book.svg" alt="" />
                 </span>
                 <div>
-                  <span className="d-block">Active Tests</span>
-                  <h4 className="fs-24 mt-1">08</h4>
+                  <span className="d-block">Total Submissions</span>
+                  <h4 className="fs-24 mt-1">{totalSubmissions}</h4>
                 </div>
               </div>
             </div>
@@ -74,8 +90,8 @@ function AdminDashboard() {
                   <img src="/assets/img/icon/bookmark.svg" alt="" />
                 </span>
                 <div>
-                  <span className="d-block">Attempted Students</span>
-                  <h4 className="fs-24 mt-1">06</h4>
+                  <span className="d-block">Total Students</span>
+                  <h4 className="fs-24 mt-1">{totalStudents}</h4>
                 </div>
               </div>
             </div>
