@@ -42,7 +42,7 @@ namespace IELTS_PRACTICE.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<TestDTO>> UpdateTest(int id, UpdateTestDTO rq)
         {
             var currentTest = await _testService.GetTestById(id);
