@@ -1,27 +1,43 @@
 
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import MultipleChoiceModal from './question_modal/MultipleChoiceModal';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import type { TestToUpdate, TestWithAuthorName } from '../../types/Test';
 import { getTestById, updateTest } from '../../services/testService';
 
 function EditReadingTest() {
     const { id } = useParams<{ id: string }>();
-    let navigate = useNavigate();
 
+
+    // --- TEST METADATA HANDLING --- 
     const [test, setTest] = useState<TestWithAuthorName | null>(null);
     const [changed, setChanged] = useState(false);
 
     const fetchTest = async () => {
         if (!id) return;
-        try {
-            const data = await getTestById(id);
+        const loadPromise = getTestById(id).then((data) => {
             setTest(data);
-        } catch (e) {
-            alert("Failed to load test details.");
-            //navigate("/admin/dashboard");
-        }
+            return data;
+        });
+        
+        toast.promise(loadPromise, {
+            pending: 'Loading test...',
+            success: 'Test loaded',
+            error: 'Failed to load test details.',
+        });
+
     }
+
+    // useEffect being called twice is cuz of StrictMode in main.tsx
+    // should not cause issues in production though
+    useEffect(() => {
+        fetchTest();
+    }, []);
+    // --------------------------------------------------------------
+
+
+
 
 
     // Question types mapping table
@@ -91,11 +107,11 @@ function EditReadingTest() {
     function handleSaveMetadata() {
         if (!test) return;
         if (!changed) {
-            alert("No changes to save.");
+            toast.info('No changes to save.');
             return;
         }
 
-        let updatedDataToSend : TestToUpdate = {
+        let updatedDataToSend: TestToUpdate = {
             testName: test.testName,
             createdBy: test.createdBy,
             resource: test.resource,
@@ -103,20 +119,19 @@ function EditReadingTest() {
         }
         console.log("Saving metadata changes:", updatedDataToSend);
 
-        updateTest(test.id, updatedDataToSend)
-            .then(() => {
-                setChanged(false);
-                alert("Metadata updated successfully.");
-            })
-            .catch((error) => {
-                console.error("Failed to update test metadata:", error);
-                alert("Failed to update metadata.");
-            });
+        const savePromise = updateTest(test.id, updatedDataToSend).then(() => {
+            setChanged(false);
+        });
+
+        toast.promise(savePromise, {
+            pending: 'Saving metadata...',
+            success: 'Metadata updated successfully.',
+            error: 'Failed to update metadata.',
+        });
     }
 
-    useEffect(() => {
-        fetchTest();
-    }, [id]);
+
+
 
 
 
