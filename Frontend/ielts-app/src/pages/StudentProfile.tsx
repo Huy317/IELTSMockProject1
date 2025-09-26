@@ -1,6 +1,7 @@
 import InforCard from "../components/admin/InforCard";
 import { useLocation, useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { NavLink } from "react-router-dom";
 
 function StudentProfile() {
   // Use the userId from URL params, or fallback to a default
@@ -15,23 +16,23 @@ function StudentProfile() {
 
   const isOwn = !userId;
   const isAdminView = !!userId;
-  
+
   return (
     <div className="col-lg-9">
       <div className="page-title d-flex align-items-center justify-content-between">
         <h5 className="fw-bold">My Profile</h5>
-        <a href="#" className="edit-profile-icon"><i className="isax isax-edit-2"></i></a>
+        <NavLink to="/student/settings" className="edit-profile-icon">
+          <i className="isax isax-edit-2"></i>
+        </NavLink>
       </div>
       {/* <InforCard userId={studentUserId} /> */}
 
       {isAuthenticated && user && isAdminView ? (
         <InforCard userId={studentUserId} />
+      ) : isOwn && user ? (
+        <InforCard userId={user.id} />
       ) : (
-        isOwn && user ? (
-          <InforCard userId={user.id} />
-        ) : (
-          <p>Please log in to view your profile.</p>
-        )
+        <p>Please log in to view your profile.</p>
       )}
     </div>
   );

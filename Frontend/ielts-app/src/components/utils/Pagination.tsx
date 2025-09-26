@@ -70,27 +70,28 @@ function Pagination({
 				<ul className="pagination lms-page justify-content-center justify-content-md-end mt-2 mt-md-0">
 					{/* Previous button */}
 					<li className={`page-item prev ${currentPage === 1 ? 'disabled' : ''}`}>
-						<a 
+						<button 
 							className="page-link" 
-							href="javascript:void(0)" 
+							type="button"
 							tabIndex={currentPage === 1 ? -1 : 0}
+							disabled={currentPage === 1}
 							onClick={() => handlePageClick(currentPage - 1)}
 						>
 							<i className="fas fa-angle-left"></i>
-						</a>
+						</button>
 					</li>
 
 					{/* First page if not visible */}
 					{visiblePages[0] > 1 && (
 						<>
 							<li className="page-item">
-								<a 
+								<button 
 									className="page-link" 
-									href="javascript:void(0)"
+									type="button"
 									onClick={() => handlePageClick(1)}
 								>
 									1
-								</a>
+								</button>
 							</li>
 							{visiblePages[0] > 2 && (
 								<li className="page-item disabled">
@@ -106,13 +107,13 @@ function Pagination({
 							key={page}
 							className={`page-item ${page === currentPage ? 'active' : ''}`}
 						>
-							<a 
+							<button 
 								className="page-link" 
-								href="javascript:void(0)"
+								type="button"
 								onClick={() => handlePageClick(page)}
 							>
 								{page}
-							</a>
+							</button>
 						</li>
 					))}
 
@@ -125,27 +126,28 @@ function Pagination({
 								</li>
 							)}
 							<li className="page-item">
-								<a 
+								<button 
 									className="page-link" 
-									href="javascript:void(0)"
+									type="button"
 									onClick={() => handlePageClick(totalPages)}
 								>
 									{totalPages}
-								</a>
+								</button>
 							</li>
 						</>
 					)}
 
 					{/* Next button */}
 					<li className={`page-item next ${currentPage === totalPages ? 'disabled' : ''}`}>
-						<a 
+						<button 
 							className="page-link" 
-							href="javascript:void(0)"
+							type="button"
 							tabIndex={currentPage === totalPages ? -1 : 0}
+							disabled={currentPage === totalPages}
 							onClick={() => handlePageClick(currentPage + 1)}
 						>
 							<i className="fas fa-angle-right"></i>
-						</a>
+						</button>
 					</li>
 				</ul>
 			</div>
