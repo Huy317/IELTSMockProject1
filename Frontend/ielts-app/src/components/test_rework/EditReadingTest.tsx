@@ -20,7 +20,7 @@ function EditReadingTest() {
             setTest(data);
             return data;
         });
-        
+
         toast.promise(loadPromise, {
             pending: 'Loading test...',
             success: 'Test loaded',
@@ -50,9 +50,7 @@ function EditReadingTest() {
     const [paragraphTexts, setParagraphTexts] = useState<string[]>(['', '', '']);
     const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(['MultipleChoice', 'MultipleChoice', 'MultipleChoice']);
 
-    // Modal state management
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentParagraphIndex, setCurrentParagraphIndex] = useState<number | null>(null);
+   
     // Handle paragraph text changes
     const handleParagraphChange = (paragraphIndex: number, value: string) => {
         const newParagraphTexts = [...paragraphTexts];
@@ -67,6 +65,9 @@ function EditReadingTest() {
         setSelectedQuestionTypes(newSelectedQuestionTypes);
     };
 
+     // Modal state management
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentParagraphIndex, setCurrentParagraphIndex] = useState<number | null>(null);
     // Modal handler functions
     const handleOpenModal = (paragraphIndex: number) => {
         setCurrentParagraphIndex(paragraphIndex);
