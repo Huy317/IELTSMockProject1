@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import CourseTable from "../components/admin/CourseTable";
 import Pagination from "../components/utils/Pagination";
 import { getTests } from "../services/testService";
-import type { Test } from "../types/Test";
+import type { Test, TestWithAuthorName } from "../types/Test";
 import { getTotalActiveTest, getTotalInactiveTest, getTotalTest } from "../services/userService";
 
 function AdminCourse() {
-  const [tests, setTests] = useState<Test[]>([]);
+  const [tests, setTests] = useState<TestWithAuthorName[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 5; // Default items per page
