@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import '../../assets/css/custom.css';
 import CreateTestModal from '../utils/CreateTestModal';
 import { useAuth } from '../../contexts/AuthContext';
@@ -40,7 +41,7 @@ function AdminDashboardLayout() {
             setIsModalOpen(false);
 
             // Show success message
-            alert('Test created successfully!');
+            toast.success('Test created successfully!');
 
             // Navigate to edit page
             navigate(`/edit-test/${created.id}`);
@@ -50,7 +51,7 @@ function AdminDashboardLayout() {
             // Handle errors
             console.error("Failed to create test:", error);
             const errorMessage = error instanceof Error ? error.message : 'Failed to create test. Please try again.';
-            alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsCreatingTest(false);
         }
