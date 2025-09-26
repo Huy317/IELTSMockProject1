@@ -36,12 +36,12 @@ function StudentLayout() {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-md-6">
+                        {/* <div className="col-md-6">
                             <div className="d-flex align-items-center flex-wrap gap-3 justify-content-md-end">
                                 <NavLink to="/admin/add-course" className="btn btn-white rounded-pill">Become an Instructor</NavLink>
                                 <NavLink to="/student-dashboard" className="btn btn-secondary rounded-pill">Instructor Dashboard</NavLink>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <div className="row">

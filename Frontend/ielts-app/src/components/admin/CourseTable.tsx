@@ -2,11 +2,11 @@
 import { toast } from "react-toastify";
 import { confirmToast } from "../layout/confirmToast";
 import { deleteTest } from "../../services/testService";
-import type { Test } from "../../types/Test";
+import type { Test, TestWithAuthorName } from "../../types/Test";
 import { useNavigate } from "react-router-dom";
 
 interface CourseTableProps {
-  tests: Test[];
+  tests: TestWithAuthorName[];
   onTestsChange: () => Promise<void>;
 }
 

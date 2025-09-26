@@ -102,7 +102,7 @@ function AdminDashboardLayout() {
                                 >
                                     Add New Test
                                 </button>
-                                <NavLink to="/student-dashboard" className="btn btn-secondary rounded-pill">Student Dashboard</NavLink>
+                                {/* <NavLink to="/student-dashboard" className="btn btn-secondary rounded-pill">Student Dashboard</NavLink> */}
                             </div>
                         </div>
                     </div>

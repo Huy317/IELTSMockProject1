@@ -1,6 +1,6 @@
 import React, { use, useEffect, useState } from "react";
 import DashboardTable from "../components/admin/DashboardTable";
-import type { Test } from "../types/Test";
+import type { Test, TestWithAuthorName } from "../types/Test";
 import { getRecentlyTestByAdminId, getTests } from "../services/testService";
 import CourseTable from "../components/admin/CourseTable";
 import Pagination from "../components/utils/Pagination";
@@ -8,7 +8,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { getTotalStudentsByAdminId, getTotalSubmissionsByAdminId, getTotalTestsByAdminId } from "../services/userService";
 
 function AdminDashboard() {
-  const [tests, setTests] = useState<Test[]>([]);
+  const [tests, setTests] = useState<TestWithAuthorName[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Default items per page
   const {user} = useAuth();
