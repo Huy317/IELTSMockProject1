@@ -48,11 +48,28 @@ namespace IELTS_PRACTICE.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<QuestionDTO> getQuestionByTestId(int id)
+        {
+            return await _context.Questions
+                .Where(x => x.TestId == id)
+                .Select(x => new QuestionDTO
+                {
+                    Id = x.Id,
+                    QuestionType = x.QuestionType,
+                    Content = x.Content,
+                    Choices = x.Choices,
+                    Explanation = x.Explanation,
+                    TestId = x.TestId,
+                    Order = x.Order,
+
+                }).FirstOrDefaultAsync();
+        }
+
         public async Task<QuestionDTO> CreateQuestion(CreateQuestionDTO rq) {
             if (rq.ParentId == 0) {
                 var content = new Question
                 {
-                    QuestionType = "",
+                    QuestionType = "Paragraph",
                     Content = rq.Content,
                     CorrectAnswer = "",
                     Choices = "",
