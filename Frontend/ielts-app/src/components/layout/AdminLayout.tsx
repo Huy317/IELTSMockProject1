@@ -15,6 +15,18 @@ function AdminDashboardLayout() {
 
     let navigate = useNavigate();
 
+    const createInitialQuestions = async (testId: number) => {
+        const questions = [
+            {questionType: 'Paragraph', content: 'This is a sample paragraph 1.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 100},
+            {questionType: 'Paragraph', content: 'This is a sample paragraph 2.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 200},
+            {questionType: 'Paragraph', content: 'This is a sample paragraph 3.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 300},
+        ]
+        for (const q of questions) {
+            
+        }
+    }
+
+
     const handleCreateTest = async (testData: { testName: string; testTypeId: number }): Promise<void> => {
         // Prevent multiple simultaneous requests
         if (isCreatingTest) {

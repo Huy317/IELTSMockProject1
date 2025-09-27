@@ -32,6 +32,17 @@ namespace IELTS_PRACTICE.Controllers
             return Ok(question);
         }
 
+        [HttpGet("bytestid")]
+        public async Task<ActionResult<QuestionDTO>> GetQuestionByTestId(int id)
+        {
+            var question = await _questionService.getQuestionByTestId(id);
+            if (question == null)
+            {
+                return NotFound();
+            }
+            return Ok(question);
+        }
+
         [HttpPost]
         public async Task<ActionResult<QuestionDTO>> CreateQuestion(CreateQuestionDTO rq)
         {
