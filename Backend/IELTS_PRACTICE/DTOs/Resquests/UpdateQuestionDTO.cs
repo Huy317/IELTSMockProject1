@@ -8,6 +8,8 @@
         public string? Choices { get; set; }
         public string? Explanation { get; set; }
         public string? Link { get; set; }
+        public int ParentId { get; set; }
 
+        public int Order { get; set; }
     }
 }
