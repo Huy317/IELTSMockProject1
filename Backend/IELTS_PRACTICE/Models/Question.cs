@@ -12,6 +12,7 @@
         //public int TypeId { get; set; }
         public int TestId { get; set; }
         public string Link { get; set; }
+        public int Order { get; set; }
 
         //Navigation
         //public TypeSkill TypeSkill { get; set; }

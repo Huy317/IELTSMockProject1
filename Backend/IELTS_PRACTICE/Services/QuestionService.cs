@@ -25,6 +25,8 @@ namespace IELTS_PRACTICE.Services
                     CorrectAnswer = x.CorrectAnswer,
                     Choices = x.Choices,
                     Explanation = x.Explanation,
+                    TestId = x.TestId,
+                    Order = x.Order,
                 }).ToList();
         }
 
@@ -40,6 +42,8 @@ namespace IELTS_PRACTICE.Services
                     CorrectAnswer = x.CorrectAnswer,
                     Choices = x.Choices,
                     Explanation = x.Explanation,
+                    TestId = x.TestId,
+                    Order = x.Order,
                 })
                 .FirstOrDefaultAsync();
         }
@@ -48,8 +52,16 @@ namespace IELTS_PRACTICE.Services
             if (rq.ParentId == 0) {
                 var content = new Question
                 {
+                    QuestionType = "",
                     Content = rq.Content,
-                    ParentId = rq.ParentId
+                    CorrectAnswer = "",
+                    Choices = "",
+                    Explanation = "",
+                    ParentId = rq.ParentId,
+                    //TypeId = rq.TypeId,
+                    TestId = rq.TestId,
+                    Link = "",
+                    Order = rq.Order,
                 };
                 _context.Questions.Add(content);
                 _context.SaveChanges();
@@ -57,6 +69,7 @@ namespace IELTS_PRACTICE.Services
                 {
                     Id = content.Id,
                     Content = rq.Content,
+                    TestId= rq.TestId,
                 };
             }
 
@@ -71,6 +84,7 @@ namespace IELTS_PRACTICE.Services
                 //TypeId = rq.TypeId,
                 TestId = rq.TestId,
                 Link = rq.Link,
+                Order = rq.Order,
             };
             _context.Questions.Add(question);
             _context.SaveChanges();
@@ -82,6 +96,8 @@ namespace IELTS_PRACTICE.Services
                 CorrectAnswer = question.CorrectAnswer,
                 Choices= question.Choices,
                 Explanation = question.Explanation,
+                TestId = question.TestId,
+                Order = question.Order,
             };
         }
 
@@ -99,6 +115,8 @@ namespace IELTS_PRACTICE.Services
             question.Choices = rq.Choices;
             question.Explanation = rq.Explanation;
             question.Link = rq.Link;
+            question.Order = rq.Order;
+            question.ParentId = rq.ParentId;
 
             _context.Questions.Update(question);
             await _context.SaveChangesAsync();
@@ -109,6 +127,8 @@ namespace IELTS_PRACTICE.Services
                 CorrectAnswer = question.CorrectAnswer,
                 Choices = question.Choices,
                 Explanation = question.Explanation,
+                TestId = question.TestId,
+                Order = question.Order,
             };
         }
 
