@@ -19,9 +19,9 @@ function AdminDashboardLayout() {
     const createInitialParagraphs = async (testId: number) => {
         console.log("Creating initial paragraphs for testId:", testId);
         const questions = [
-            {questionType: 'Paragraph', content: 'This is a sample paragraph 1.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 100},
-            {questionType: 'Paragraph', content: 'This is a sample paragraph 2.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 200},
-            {questionType: 'Paragraph', content: 'This is a sample paragraph 3.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 300},
+            { questionType: 'Paragraph', content: 'This is a sample paragraph 1.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 100 },
+            { questionType: 'Paragraph', content: 'This is a sample paragraph 2.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 200 },
+            { questionType: 'Paragraph', content: 'This is a sample paragraph 3.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 300 },
         ]
         for (const q of questions) {
             // Should call createParagraph from questionService not createQuestion
@@ -38,8 +38,13 @@ function AdminDashboardLayout() {
         }
     }
 
+    interface TestData {
+        testName: string;
+        testTypeId: number;
+        typeName: string;
+    }
 
-    const handleCreateTest = async (testData: { testName: string; testTypeId: number }): Promise<void> => {
+    const handleCreateTest = async (testData: TestData): Promise<void> => {
         // Prevent multiple simultaneous requests
         if (isCreatingTest) {
             console.warn("Test creation already in progress");
@@ -56,7 +61,7 @@ function AdminDashboardLayout() {
         };
 
         setIsCreatingTest(true);
-        
+
         try {
             // Step 1: Create the test with toast feedback
             const created = await toast.promise(
@@ -69,7 +74,7 @@ function AdminDashboardLayout() {
             );
 
             // Step 2: Create initial paragraphs if it's a Reading test (typeId === 1)
-            if (created && created.id && testData.testTypeId === 1) {
+            if (created && created.id && testData.typeName == 'Reading') {
                 await toast.promise(
                     createInitialParagraphs(created.id),
                     {
@@ -132,7 +137,7 @@ function AdminDashboardLayout() {
                         </div>
                         <div className="col-md-6">
                             <div className="d-flex align-items-center flex-wrap gap-3 justify-content-md-end">
-                                <button 
+                                <button
                                     onClick={handleOpenModal}
                                     className="btn btn-white rounded-pill"
                                 >
@@ -334,7 +339,7 @@ function AdminDashboardLayout() {
                     </div>
                 </div>
             </div>
-            
+
             {/* Create Test Modal */}
             <CreateTestModal
                 isOpen={isModalOpen}

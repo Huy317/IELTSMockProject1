@@ -11,6 +11,7 @@ interface CreateTestModalProps {
 interface TestData {
     testName: string;
     testTypeId: number;
+    typeName: string;
 }
 
 function CreateTestModal({ isOpen, onClose, onConfirm }: CreateTestModalProps) {
@@ -37,7 +38,8 @@ function CreateTestModal({ isOpen, onClose, onConfirm }: CreateTestModalProps) {
         // Submit data
         onConfirm({
             testName: testName.trim(),
-            testTypeId
+            testTypeId,
+            typeName: typeSkills.find(ts => ts.id === testTypeId)?.typeName || ''
         });
 
         // Reset form
