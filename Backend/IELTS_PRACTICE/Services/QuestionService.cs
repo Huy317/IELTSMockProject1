@@ -33,7 +33,25 @@ namespace IELTS_PRACTICE.Services
         public async Task<QuestionDTO> GetQuestionById(int id)
         {
             return await _context.Questions
-                .Where(x => x.ParentId != 0 && x.Id == id) //parentId == 0 is content
+                .Where(x => x.ParentId != 0 && x.Id == id) //parentId == 0 is content NEED TO DELETE THE PARENT ID THING HERE, NO USE AND IT'S CONFUSING
+                .Select(x => new QuestionDTO
+                {
+                    Id = x.Id,
+                    QuestionType = x.QuestionType,
+                    Content = x.Content,
+                    CorrectAnswer = x.CorrectAnswer,
+                    Choices = x.Choices,
+                    Explanation = x.Explanation,
+                    TestId = x.TestId,
+                    Order = x.Order,
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<QuestionDTO> GetQuestionOrParagraphById(int id)
+        {
+            return await _context.Questions
+                .Where(x => x.Id == id)
                 .Select(x => new QuestionDTO
                 {
                     Id = x.Id,
@@ -58,6 +76,7 @@ namespace IELTS_PRACTICE.Services
                     QuestionType = x.QuestionType,
                     Content = x.Content,
                     Choices = x.Choices,
+                    CorrectAnswer = x.CorrectAnswer,
                     Explanation = x.Explanation,
                     TestId = x.TestId,
                     Order = x.Order,

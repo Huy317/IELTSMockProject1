@@ -59,3 +59,16 @@ export interface QuestionPutReturn {
     testId: number;
     order: number;
 }
+
+export interface QuestionFullDetail {
+    id: number;
+    questionType: string;
+    content: string;
+    correctAnswer: string;
+    choices: string;
+    explanation: string;
+    testId: number;
+    order: number;
+    parentId: number;
+    link: string;
+}

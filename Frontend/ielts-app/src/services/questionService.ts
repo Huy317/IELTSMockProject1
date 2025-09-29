@@ -1,4 +1,4 @@
-import type { QuestionGetReturn, QuestionParagraphReturn, QuestionPostReturn, QuestionToCreate, QuestionToUpdate } from "../types/Question";
+import type { QuestionFullDetail, QuestionGetReturn, QuestionParagraphReturn, QuestionPostReturn, QuestionToCreate, QuestionToUpdate } from "../types/Question";
 import { client } from "./authService";
 
 export async function createParagraph(question : QuestionToCreate): Promise<QuestionParagraphReturn> {
@@ -27,6 +27,11 @@ export async function deleteQuestion(id: number): Promise<void> {
 
 export async function updateQuestion(id: number, question: QuestionToUpdate): Promise<QuestionPostReturn> {
     const response = await client.put(`/Question/${id}`, question);
+    return response.data;
+}
+
+export async function getAllQuestionsAndParagraphsWithTestId(testId: number): Promise<QuestionFullDetail[]> {
+    const response = await client.get(`/Question/allquestionsbyid?id=${testId}`);
     return response.data;
 }
 
