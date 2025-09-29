@@ -13,7 +13,7 @@ import {
   updateQuestion,
 } from "../../services/questionService";
 import FillInTheBlankModal from "./question_modal/FillInTheBlankModal";
-import TFNGModal from "./question_modal/TFNGModal";
+import SingleChoiceModal from "./question_modal/SingleChoiceModal";
 
 function EditReadingTest() {
   const { id } = useParams<{ id: string }>();
@@ -70,7 +70,7 @@ function EditReadingTest() {
   const questionTypes = {
     FillInTheBlank: "Fill In The Blank",
     MultipleChoice: "Multiple Choice",
-    TFNG: "True/False/Not Given",
+    SingleChoice: "Single Choice",
   };
 
   // --- PARAGRAPHS HANDLING ---
@@ -534,8 +534,8 @@ function EditReadingTest() {
             />
           )}
 
-          {selectedQuestionTypes[currentParagraphIndex] === "TFNG" && (
-            <TFNGModal
+          {selectedQuestionTypes[currentParagraphIndex] === "SingleChoice" && (
+            <SingleChoiceModal
               isOpen={isModalOpen}
               onClose={handleCloseModal}
               onSubmit={handleModalSubmit}
