@@ -37,7 +37,7 @@ function EditReadingTest() {
     // --------------------------------------------------------------
 
 
-
+    
 
 
     // Question types mapping table
@@ -49,7 +49,7 @@ function EditReadingTest() {
     // Handling state for paragraph texts and question types
     const [paragraphTexts, setParagraphTexts] = useState<string[]>(['', '', '']);
     const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(['MultipleChoice', 'MultipleChoice', 'MultipleChoice']);
-
+    
    
     // Handle paragraph text changes
     const handleParagraphChange = (paragraphIndex: number, value: string) => {
@@ -326,7 +326,14 @@ function EditReadingTest() {
                                         <div className="col-md-6">
                                             <button
                                                 className="btn btn-success w-100"
-                                                onClick={() => handleAddQuestion(index, selectedQuestionTypes[index])}
+                                                onClick={() => {
+                                                    // const otherData = {
+                                                    //     parentId: 0,
+                                                    //     testId: test ? test.id : 0,
+                                                    //     order: 0
+                                                    // };
+                                                    handleAddQuestion(index, selectedQuestionTypes[index])
+                                                }}
                                             >
                                                 <i className="bi bi-plus me-1"></i>
                                                 Add Question
@@ -363,6 +370,7 @@ function EditReadingTest() {
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
                 onSubmit={handleModalSubmit}
+                otherData={{ parentId: 0, testId: test ? test.id : 0, order: 0 }}
             />
         </div>
     );
