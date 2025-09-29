@@ -7,6 +7,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { createTest } from '../../services/testService';
 import type { TestToCreate } from '../../types/Test';
 import { getUserId } from '../../services/authService';
+import { createParagraph } from '../../services/questionService';
 
 function AdminDashboardLayout() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,14 +16,25 @@ function AdminDashboardLayout() {
 
     let navigate = useNavigate();
 
-    const createInitialQuestions = async (testId: number) => {
+    const createInitialParagraphs = async (testId: number) => {
+        console.log("Creating initial paragraphs for testId:", testId);
         const questions = [
             {questionType: 'Paragraph', content: 'This is a sample paragraph 1.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 100},
             {questionType: 'Paragraph', content: 'This is a sample paragraph 2.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 200},
             {questionType: 'Paragraph', content: 'This is a sample paragraph 3.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 300},
         ]
         for (const q of questions) {
-            
+            // Should call createParagraph from questionService not createQuestion
+            await toast.promise(
+                createParagraph(q),
+                {
+                    pending: `Creating ${q.content.substring(0, 30)}...`,
+                    success: `Created paragraph successfully!`,
+                    error: 'Failed to create paragraph'
+                }
+            ).then(() => {
+                console.log(`Paragraph created: ${q}`);
+            });
         }
     }
 
@@ -43,27 +55,38 @@ function AdminDashboardLayout() {
             isActive: false,
         };
 
-        console.log("Creating test:", newTest);
-
         setIsCreatingTest(true);
+        
         try {
-            const created = await createTest(newTest);
+            // Step 1: Create the test with toast feedback
+            const created = await toast.promise(
+                createTest(newTest),
+                {
+                    pending: 'Creating test...',
+                    success: 'Test created successfully!',
+                    error: 'Failed to create test'
+                }
+            );
 
-            // Success: close modal and navigate
+            // Step 2: Create initial paragraphs if it's a Reading test (typeId === 1)
+            if (created && created.id && testData.testTypeId === 1) {
+                await toast.promise(
+                    createInitialParagraphs(created.id),
+                    {
+                        pending: 'Creating initial paragraphs...',
+                        success: 'Initial paragraphs created successfully!',
+                        error: 'Failed to create initial paragraphs'
+                    }
+                );
+            }
+
+            // Step 3: Success - close modal and navigate
             setIsModalOpen(false);
-
-            // Show success message
-            toast.success('Test created successfully!');
-
-            // Navigate to edit page
             navigate(`/edit-test/${created.id}`);
 
-            console.log("New test created successfully:", created);
         } catch (error) {
-            // Handle errors
-            console.error("Failed to create test:", error);
-            const errorMessage = error instanceof Error ? error.message : 'Failed to create test. Please try again.';
-            toast.error(errorMessage);
+            // Handle any errors from either step
+            console.error("Error in test creation process:", error);
         } finally {
             setIsCreatingTest(false);
         }

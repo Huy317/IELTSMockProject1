@@ -48,11 +48,11 @@ namespace IELTS_PRACTICE.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<QuestionDTO> getQuestionByTestId(int id)
+        public async Task<List<QuestionFullDetailDTO>> getQuestionByTestId(int id)
         {
-            return await _context.Questions
+            return _context.Questions
                 .Where(x => x.TestId == id)
-                .Select(x => new QuestionDTO
+                .Select(x => new QuestionFullDetailDTO
                 {
                     Id = x.Id,
                     QuestionType = x.QuestionType,
@@ -61,8 +61,29 @@ namespace IELTS_PRACTICE.Services
                     Explanation = x.Explanation,
                     TestId = x.TestId,
                     Order = x.Order,
+                    ParentId = x.ParentId,
+                    Link = x.Link,
 
-                }).FirstOrDefaultAsync();
+                }).ToList();
+        }
+
+        public async Task<List<QuestionFullDetailDTO>> getAllQuestionsAndParagraphByTestId(int id)
+        {
+            return _context.Questions
+                .Where(x => x.TestId == id)
+                .Select(x => new QuestionFullDetailDTO
+                {
+                    Id = x.Id,
+                    QuestionType = x.QuestionType,
+                    Content = x.Content,
+                    CorrectAnswer = x.CorrectAnswer,
+                    Choices = x.Choices,
+                    Explanation = x.Explanation,
+                    TestId = x.TestId,
+                    ParentId = x.ParentId,
+                    Order = x.Order,
+                    Link = x.Link,
+                }).ToList();
         }
 
         public async Task<QuestionDTO> CreateQuestion(CreateQuestionDTO rq) {

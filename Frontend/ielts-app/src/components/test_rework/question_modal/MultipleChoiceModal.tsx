@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import type { QuestionToCreate } from '../../../types/Question';
 
 interface Choice {
     id: number;
@@ -7,13 +8,21 @@ interface Choice {
     isCorrect: boolean;
 }
 
+interface OtherData {
+    parentId: number;
+    testId: number;
+    order: number;
+}
+
 interface MultipleChoiceModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (data: any) => void;
+    otherData?: OtherData;
 }
 
-function MultipleChoiceModal({ isOpen, onClose, onSubmit }: MultipleChoiceModalProps) {
+
+function MultipleChoiceModal({ isOpen, onClose, onSubmit, otherData }: MultipleChoiceModalProps) {
     const [questionContent, setQuestionContent] = useState('');
     const [choices, setChoices] = useState<Choice[]>([
         { id: 1, text: '', isCorrect: false },
@@ -50,12 +59,30 @@ function MultipleChoiceModal({ isOpen, onClose, onSubmit }: MultipleChoiceModalP
         setChoices(choices.filter(choice => choice.id !== id));
     };
 
+    function formatChoicesToString(choices : Choice[]): string {
+        return choices.map(choice => choice.text).join('|');
+    }
+    function formatCorrectAnswersToString(choices : Choice[]): string {
+        return choices.filter(c => c.isCorrect).map(c => c.text).join('|');
+    }
+
     const handleSubmit = () => {
-        const data = {
-            questionContent,
-            choices,
-            explanation
+        if (!otherData) return;
+
+        const data : QuestionToCreate = {
+            questionType: 'MultipleChoice',
+            content: questionContent,
+            choices: formatChoicesToString(choices),
+            correctAnswer: formatCorrectAnswersToString(choices),
+            explanation: explanation,
+            parentId: otherData.parentId,
+            testId: otherData.testId,
+            order: otherData.order,
+            link: "",
         };
+
+        console.log(data);
+
         onSubmit(data);
     };
 
