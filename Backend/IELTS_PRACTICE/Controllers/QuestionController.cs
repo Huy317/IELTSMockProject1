@@ -42,6 +42,16 @@ namespace IELTS_PRACTICE.Controllers
             }
             return Ok(question);
         }
+        [HttpGet("allquestionsbyid")]
+        public async Task<ActionResult<QuestionFullDetailDTO>> GetAllQuestionByTestId(int id)
+        {
+            var questions = await _questionService.getAllQuestionsAndParagraphByTestId(id);
+            if (questions == null)
+            {
+                return NotFound();
+            }
+            return Ok(questions);
+        }
 
         [HttpPost]
         public async Task<ActionResult<QuestionDTO>> CreateQuestion(CreateQuestionDTO rq)
@@ -50,10 +60,10 @@ namespace IELTS_PRACTICE.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<QuestionDTO>> UpdateQuestion(int id, UpdateQuestionDTO rq)
         {
-            var current = await _questionService.GetQuestionById(id);
+            var current = await _questionService.GetQuestionOrParagraphById(id);
             if (current == null) { 
                 return NotFound();
             }

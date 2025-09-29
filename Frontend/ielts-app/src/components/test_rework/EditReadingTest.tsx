@@ -1,10 +1,11 @@
-
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import MultipleChoiceModal from './question_modal/MultipleChoiceModal';
 import { useParams } from 'react-router-dom';
 import type { TestToUpdate, TestWithAuthorName } from '../../types/Test';
 import { getTestById, updateTest } from '../../services/testService';
+import type { QuestionFullDetail, QuestionToUpdate } from '../../types/Question';
+import { getAllQuestionsAndParagraphsWithTestId, updateQuestion } from '../../services/questionService';
 
 function EditReadingTest() {
     const { id } = useParams<{ id: string }>();
@@ -26,18 +27,40 @@ function EditReadingTest() {
             success: 'Test loaded',
             error: 'Failed to load test details.',
         });
-
     }
+    // --------------------------------------------------------------
+    // --- QUESTIONS LIST HANDLING ---
+    const [questions, setQuestions] = useState<QuestionFullDetail[]>([]);
+
+    const fetchQuestions = async () => {
+        if (!id) return;
+        // Fetch questions logic here
+        const loadPromise = getAllQuestionsAndParagraphsWithTestId(parseInt(id)).then((data) => {
+            setQuestions(data);
+            console.log("Fetched questions:", data);
+
+            // Call mapParagraphs with the actual data, not the state
+            mapParagraphs(data);
+            return data;
+        });
+        toast.promise(loadPromise, {
+            pending: 'Loading questions...',
+            success: 'Questions loaded',
+            error: 'Failed to load questions.',
+        });
+    }
+
+
 
     // useEffect being called twice is cuz of StrictMode in main.tsx
     // should not cause issues in production though
     useEffect(() => {
-        fetchTest();
+        fetchTest().then(fetchQuestions);
     }, []);
     // --------------------------------------------------------------
 
 
-    
+
 
 
     // Question types mapping table
@@ -46,17 +69,76 @@ function EditReadingTest() {
         "MultipleChoice": "Multiple Choice"
     };
 
+
+    // --- PARAGRAPHS HANDLING ---
     // Handling state for paragraph texts and question types
     const [paragraphTexts, setParagraphTexts] = useState<string[]>(['', '', '']);
     const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(['MultipleChoice', 'MultipleChoice', 'MultipleChoice']);
-    
-   
-    // Handle paragraph text changes
+    const [paragraphChange, setParagraphChange] = useState<boolean[]>([false, false, false]);
+
     const handleParagraphChange = (paragraphIndex: number, value: string) => {
         const newParagraphTexts = [...paragraphTexts];
         newParagraphTexts[paragraphIndex] = value;
+        setParagraphChange(prev => {
+            const newChange = [...prev];
+            newChange[paragraphIndex] = true;
+            return newChange;
+        });
         setParagraphTexts(newParagraphTexts);
     };
+
+    const handleSaveParagraph = (paragraphIndex: number) => {
+        if (!paragraphChange[paragraphIndex]) {
+            toast.info('No changes to save for this paragraph.');
+            return;
+        }
+
+        const paragraphToUpdate = questions.find(
+            q => q.questionType === "Paragraph" && q.parentId === 0 && Math.floor(q.order / 100) - 1 === paragraphIndex
+        );
+
+        if (!paragraphToUpdate) {
+            toast.error('Paragraph not found.');
+            return;
+        }
+
+        const {id, ...rest} = paragraphToUpdate;
+
+        // Use the updated content from the textarea, not the original content
+        const updatedParagraph: QuestionToUpdate = {
+            ...rest, // Spread existing properties
+            content: paragraphTexts[paragraphIndex]
+        };
+        console.log("Updating paragraph:", updatedParagraph);
+        console.log("With ID:", paragraphToUpdate.id);
+        const updatePromise = updateQuestion(id, updatedParagraph)
+            .then((data) => {
+                // Only update local state if server response contains updated data
+                // If paragraphTexts is source of truth, you might not need this
+                // if (data && data.content) {
+                //     setQuestions(prev => prev.map(q => 
+                //         q.id === paragraphToUpdate.id ? { ...q, content: data.content } : q
+                //     ));
+                // }
+                
+                // Reset change flag
+                setParagraphChange(prev => {
+                    const newChange = [...prev];
+                    newChange[paragraphIndex] = false;
+                    return newChange;
+                });
+                
+                return data;
+            });
+
+        toast.promise(updatePromise, {
+            pending: 'Saving paragraph...',
+            success: 'Paragraph saved successfully.',
+            error: 'Failed to save paragraph.',
+        });
+    };
+
+    // --------------------------------------------------------------
 
     // Handle question type selection changes
     const handleQuestionTypeChange = (paragraphIndex: number, value: string) => {
@@ -65,7 +147,7 @@ function EditReadingTest() {
         setSelectedQuestionTypes(newSelectedQuestionTypes);
     };
 
-     // Modal state management
+    // Modal state management
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentParagraphIndex, setCurrentParagraphIndex] = useState<number | null>(null);
     // Modal handler functions
@@ -96,10 +178,7 @@ function EditReadingTest() {
         }
     };
 
-    // Placeholder function to handle save paragraph button clicks
-    const handleSaveParagraph = (paragraphIndex: number) => {
-        console.log(`Saving paragraph ${paragraphIndex + 1}:`, paragraphTexts[paragraphIndex]);
-    };
+
 
 
 
@@ -132,7 +211,28 @@ function EditReadingTest() {
     }
 
 
+    // --------------------------------------------------------------
+    // --- HELPER FUNCTIONS ---
 
+    function mapParagraphs(questionsData: QuestionFullDetail[] = questions) {
+        // go through questions, find .questionType === 'Paragraph', order 100,200,300 / 100 to get index of paragraphs
+        let paragraphs = questionsData.filter(q => q.questionType === 'Paragraph' && q.parentId === 0);
+
+        // update the paragraphs into paragraphTexts state
+        // go through paragraphs, set paragraphText[0] to paragraphs order 100, paragraphText[1] to order 200, paragraphText[2] to order 300
+        let newParagraphTexts = [...paragraphTexts];
+        paragraphs.forEach(p => {
+            let index = Math.floor(p.order / 100) - 1;
+            if (index >= 0 && index < newParagraphTexts.length) {
+                newParagraphTexts[index] = p.content || '';
+            }
+        });
+        setParagraphTexts(newParagraphTexts);
+
+        return paragraphs;
+    }
+
+    // --------------------------------------------------------------
 
 
 
@@ -327,11 +427,6 @@ function EditReadingTest() {
                                             <button
                                                 className="btn btn-success w-100"
                                                 onClick={() => {
-                                                    // const otherData = {
-                                                    //     parentId: 0,
-                                                    //     testId: test ? test.id : 0,
-                                                    //     order: 0
-                                                    // };
                                                     handleAddQuestion(index, selectedQuestionTypes[index])
                                                 }}
                                             >
