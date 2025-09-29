@@ -14,6 +14,8 @@ import {
 } from "../../services/questionService";
 import FillInTheBlankModal from "./question_modal/FillInTheBlankModal";
 import SingleChoiceModal from "./question_modal/SingleChoiceModal";
+import { Matching } from "../test/question_form_creator";
+import MatchingModal from "./question_modal/MatchingModal";
 
 function EditReadingTest() {
   const { id } = useParams<{ id: string }>();
@@ -71,6 +73,7 @@ function EditReadingTest() {
     FillInTheBlank: "Fill In The Blank",
     MultipleChoice: "Multiple Choice",
     SingleChoice: "Single Choice",
+    Matching: "Matching"
   };
 
   // --- PARAGRAPHS HANDLING ---
@@ -536,6 +539,19 @@ function EditReadingTest() {
 
           {selectedQuestionTypes[currentParagraphIndex] === "SingleChoice" && (
             <SingleChoiceModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onSubmit={handleModalSubmit}
+              otherData={{
+                parentId: 0,
+                testId: test ? test.id : 0,
+                order: 0, // You might want to calculate this based on existing questions
+              }}
+            />
+          )}
+
+          {selectedQuestionTypes[currentParagraphIndex] === "Matching" && (
+            <MatchingModal
               isOpen={isModalOpen}
               onClose={handleCloseModal}
               onSubmit={handleModalSubmit}
