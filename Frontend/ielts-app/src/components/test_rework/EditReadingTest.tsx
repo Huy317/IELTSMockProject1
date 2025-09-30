@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import type { TestToUpdate, TestWithAuthorName } from "../../types/Test";
 import { getTestById, updateTest } from "../../services/testService";
 import type {
+  Question,
   QuestionFullDetail,
   QuestionToUpdate,
 } from "../../types/Question";
@@ -14,11 +15,56 @@ import {
 } from "../../services/questionService";
 import FillInTheBlankModal from "./question_modal/FillInTheBlankModal";
 import SingleChoiceModal from "./question_modal/SingleChoiceModal";
-import { Matching } from "../test/question_form_creator";
 import MatchingModal from "./question_modal/MatchingModal";
 
 function EditReadingTest() {
   const { id } = useParams<{ id: string }>();
+
+  // Question types mapping table
+  const questionTypes = {
+    FillInTheBlank: "Fill In The Blank",
+    MultipleChoice: "Multiple Choice",
+    SingleChoice: "Single Choice",
+    Matching: "Matching"
+  };
+
+
+  // --------------------------------------------------------------
+  // --- OTHER DATA HANDLER ---
+  // To keep track of the next order number for each parentId
+  const [orderCounters, setOrderCounters] = useState<Record<number, number>>();
+  
+  const [currentParentId, setCurrentParentId] = useState<number>(0);
+  const [currentOrder, setCurrentOrder] = useState<number>(0);
+
+  function initializeCounters(questions: QuestionFullDetail[] | undefined) {
+    if (!questions) return;
+
+    const counters: Record<number, number> = {};
+    questions.forEach((q) => {
+      if (!counters[q.parentId]) {
+        counters[q.parentId] = q.order;
+      } else {
+        counters[q.parentId] = Math.max(counters[q.parentId], q.order);
+      }
+    });
+    setOrderCounters(counters);
+    //console.log("Initialized order counters:", counters);
+  }
+
+  // Get the next order number for a given parentId
+  function getNextOrder(parentId: number): number {
+    if (!orderCounters) return 1;
+    const next = (orderCounters[parentId] || 0) + 1;
+    return next;
+  }
+  // Increment the order counter for a given parentId
+  function incrementOrderCounter(parentId: number) {
+    setOrderCounters((prev) => {
+      if (!prev) return { [parentId]: 1 };
+      return { ...prev, [parentId]: (prev[parentId] || 0) + 1 };
+    });
+  }
 
   // --- TEST METADATA HANDLING ---
   const [test, setTest] = useState<TestWithAuthorName | null>(null);
@@ -44,51 +90,35 @@ function EditReadingTest() {
   const fetchQuestions = async () => {
     if (!id) return;
     // Fetch questions logic here
-    const loadPromise = getAllQuestionsAndParagraphsWithTestId(
-      parseInt(id)
-    ).then((data) => {
-      setQuestions(data);
-      console.log("Fetched questions:", data);
+    const loadPromise = getAllQuestionsAndParagraphsWithTestId(parseInt(id)).then((data) => {
 
-      // Call mapParagraphs with the actual data, not the state
+      setQuestions(data);
       mapParagraphs(data);
       return data;
+
     });
-    toast.promise(loadPromise, {
+    const result = await toast.promise(loadPromise, {
       pending: "Loading questions...",
       success: "Questions loaded",
       error: "Failed to load questions.",
     });
+    //console.log("Result after fetch:", result);
+    return result;
   };
 
   // useEffect being called twice is cuz of StrictMode in main.tsx
   // should not cause issues in production though
   useEffect(() => {
-    fetchTest().then(fetchQuestions);
+    fetchTest().then(fetchQuestions).then(initializeCounters);
   }, []);
   // --------------------------------------------------------------
 
-  // Question types mapping table
-  const questionTypes = {
-    FillInTheBlank: "Fill In The Blank",
-    MultipleChoice: "Multiple Choice",
-    SingleChoice: "Single Choice",
-    Matching: "Matching"
-  };
 
   // --- PARAGRAPHS HANDLING ---
   // Handling state for paragraph texts and question types
   const [paragraphTexts, setParagraphTexts] = useState<string[]>(["", "", ""]);
-  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>([
-    "MultipleChoice",
-    "MultipleChoice",
-    "MultipleChoice",
-  ]);
-  const [paragraphChange, setParagraphChange] = useState<boolean[]>([
-    false,
-    false,
-    false,
-  ]);
+  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(["MultipleChoice", "MultipleChoice", "MultipleChoice"]);
+  const [paragraphChange, setParagraphChange] = useState<boolean[]>([false, false, false]);
 
   const handleParagraphChange = (paragraphIndex: number, value: string) => {
     const newParagraphTexts = [...paragraphTexts];
@@ -111,7 +141,7 @@ function EditReadingTest() {
       (q) =>
         q.questionType === "Paragraph" &&
         q.parentId === 0 &&
-        Math.floor(q.order / 100) - 1 === paragraphIndex
+        q.order - 1 === paragraphIndex
     );
 
     if (!paragraphToUpdate) {
@@ -126,17 +156,9 @@ function EditReadingTest() {
       ...rest, // Spread existing properties
       content: paragraphTexts[paragraphIndex],
     };
-    console.log("Updating paragraph:", updatedParagraph);
-    console.log("With ID:", paragraphToUpdate.id);
+    //console.log("Updating paragraph:", updatedParagraph);
+    //console.log("With ID:", paragraphToUpdate.id);
     const updatePromise = updateQuestion(id, updatedParagraph).then((data) => {
-      // Only update local state if server response contains updated data
-      // If paragraphTexts is source of truth, you might not need this
-      // if (data && data.content) {
-      //     setQuestions(prev => prev.map(q =>
-      //         q.id === paragraphToUpdate.id ? { ...q, content: data.content } : q
-      //     ));
-      // }
-
       // Reset change flag
       setParagraphChange((prev) => {
         const newChange = [...prev];
@@ -155,7 +177,7 @@ function EditReadingTest() {
   };
 
   // --------------------------------------------------------------
-
+  // --- QUESTIONS MODAL HANDLING ---
   // Handle question type selection changes
   const handleQuestionTypeChange = (paragraphIndex: number, value: string) => {
     const newSelectedQuestionTypes = [...selectedQuestionTypes];
@@ -163,14 +185,36 @@ function EditReadingTest() {
     setSelectedQuestionTypes(newSelectedQuestionTypes);
   };
 
-  // Modal state management
+  // Placeholder function to handle add question button clicks
+  const handleAddQuestion = (paragraphIndex: number, questionType: string) => {
+    handleOpenModal(paragraphIndex);
+  };
+
+  // --------------------------------------------------------------
+
+
+
+  // ----------------------
+  // --- MODAL HANDLING ---
+  // ----------------------
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentParagraphIndex, setCurrentParagraphIndex] = useState<
-    number | null
-  >(null);
+  const [currentParagraphIndex, setCurrentParagraphIndex] = useState<number | null>(null);
   // Modal handler functions
   const handleOpenModal = (paragraphIndex: number) => {
     setCurrentParagraphIndex(paragraphIndex);
+
+    let selectedParagraph = questions.find(
+      (q) => q.questionType === "Paragraph" && q.parentId === 0 && q.order - 1 === paragraphIndex
+    );
+
+    //console.log("Selected paragraph for modal:", selectedParagraph);
+    if (selectedParagraph) {
+      setCurrentParentId(selectedParagraph.id);
+      setCurrentOrder(getNextOrder(selectedParagraph.id));
+    }
+
+
     setIsModalOpen(true);
   };
 
@@ -179,29 +223,21 @@ function EditReadingTest() {
     setCurrentParagraphIndex(null);
   };
 
-  const handleModalSubmit = (data: any) => {
-    console.log(
-      "Question data submitted:",
-      data,
-      "for paragraph:",
-      currentParagraphIndex
-    );
-    // Placeholder function for now
+  // This is called after question modal submit successfully
+  const handleModalSubmit = (data: Question) => {
+    console.log("Question data submitted:", data, "for paragraph:", currentParagraphIndex);
+    let paragraphId = data.parentId;
+    if (!paragraphId) return;
+
+    // Increment the order counter for this parentId
+    incrementOrderCounter(paragraphId);
     handleCloseModal();
   };
-  // --------------------------------------------------------------
 
-  // Placeholder function to handle add question button clicks
-  const handleAddQuestion = (paragraphIndex: number, questionType: string) => {
-    // if (questionType === 'MultipleChoice') {
-    //     handleOpenModal(paragraphIndex);
-    // } else {
-    //     console.log(`Adding ${questionType} question for paragraph ${paragraphIndex + 1}`);
-    // }
-    handleOpenModal(paragraphIndex);
-  };
 
-  // Saving metadata
+
+  // --------------------------------------------------------------  
+  // --- META DATA SAVE HANDLING ---
   function handleSaveMetadata() {
     if (!test) return;
     if (!changed) {
@@ -241,7 +277,7 @@ function EditReadingTest() {
     // go through paragraphs, set paragraphText[0] to paragraphs order 100, paragraphText[1] to order 200, paragraphText[2] to order 300
     let newParagraphTexts = [...paragraphTexts];
     paragraphs.forEach((p) => {
-      let index = Math.floor(p.order / 100) - 1;
+      let index = p.order - 1;
       if (index >= 0 && index < newParagraphTexts.length) {
         newParagraphTexts[index] = p.content || "";
       }
@@ -251,7 +287,8 @@ function EditReadingTest() {
     return paragraphs;
   }
 
-  // --------------------------------------------------------------
+
+
 
   return (
     <div className="container py-4">
@@ -511,31 +548,31 @@ function EditReadingTest() {
         <>
           {selectedQuestionTypes[currentParagraphIndex] ===
             "MultipleChoice" && (
-            <MultipleChoiceModal
-              isOpen={isModalOpen}
-              onClose={handleCloseModal}
-              onSubmit={handleModalSubmit}
-              otherData={{
-                parentId: 0,
-                testId: test ? test.id : 0,
-                order: 0, // You might want to calculate this based on existing questions
-              }}
-            />
-          )}
+              <MultipleChoiceModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSubmit={handleModalSubmit}
+                otherData={{
+                  parentId: currentParentId,
+                  testId: test ? test.id : 0,
+                  order: currentOrder,
+                }}
+              />
+            )}
 
           {selectedQuestionTypes[currentParagraphIndex] ===
             "FillInTheBlank" && (
-            <FillInTheBlankModal
-              isOpen={isModalOpen}
-              onClose={handleCloseModal}
-              onSubmit={handleModalSubmit}
-              otherData={{
-                parentId: 0,
-                testId: test ? test.id : 0,
-                order: 0, // You might want to calculate this based on existing questions
-              }}
-            />
-          )}
+              <FillInTheBlankModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSubmit={handleModalSubmit}
+                otherData={{
+                  parentId:  currentParentId,
+                  testId: test ? test.id : 0,
+                  order: currentOrder,
+                }}
+              />
+            )}
 
           {selectedQuestionTypes[currentParagraphIndex] === "SingleChoice" && (
             <SingleChoiceModal
@@ -543,9 +580,9 @@ function EditReadingTest() {
               onClose={handleCloseModal}
               onSubmit={handleModalSubmit}
               otherData={{
-                parentId: 0,
+                parentId: currentParentId,
                 testId: test ? test.id : 0,
-                order: 0, // You might want to calculate this based on existing questions
+                order: currentOrder,
               }}
             />
           )}
@@ -556,9 +593,9 @@ function EditReadingTest() {
               onClose={handleCloseModal}
               onSubmit={handleModalSubmit}
               otherData={{
-                parentId: 0,
+                parentId: currentParentId,
                 testId: test ? test.id : 0,
-                order: 0, // You might want to calculate this based on existing questions
+                order: currentOrder,
               }}
             />
           )}

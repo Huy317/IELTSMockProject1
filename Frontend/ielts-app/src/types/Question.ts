@@ -1,3 +1,17 @@
+// same as Full Detail
+export interface Question {
+    id: number;
+    questionType: string;
+    content: string;
+    correctAnswer: string;
+    choices: string;
+    explanation: string;
+    parentId: number;
+    testId: number;
+    order: number;
+    link: string;
+}
+
 export interface QuestionGetReturn {
     id: number;
     questionType: string;
@@ -27,6 +41,7 @@ export interface QuestionToCreate {
     order: number;
 }
 
+// Should be the same as Question
 export interface QuestionPostReturn {
     id: number;
     questionType: string;
@@ -34,8 +49,10 @@ export interface QuestionPostReturn {
     correctAnswer: string;
     choices: string;
     explanation: string;
+    parentId: number;
     testId: number;
     order: number;
+    link: string;
 }
 
 export interface QuestionToUpdate {
@@ -60,6 +77,7 @@ export interface QuestionPutReturn {
     order: number;
 }
 
+// Same as Question, has all fields
 export interface QuestionFullDetail {
     id: number;
     questionType: string;
