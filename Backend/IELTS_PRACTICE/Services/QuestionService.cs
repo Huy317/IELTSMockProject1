@@ -105,7 +105,7 @@ namespace IELTS_PRACTICE.Services
                 }).ToList();
         }
 
-        public async Task<QuestionDTO> CreateQuestion(CreateQuestionDTO rq) {
+        public async Task<QuestionFullDetailDTO> CreateQuestion(CreateQuestionDTO rq) {
             if (rq.ParentId == 0) {
                 var content = new Question
                 {
@@ -122,11 +122,12 @@ namespace IELTS_PRACTICE.Services
                 };
                 _context.Questions.Add(content);
                 _context.SaveChanges();
-                return new QuestionDTO
+                return new QuestionFullDetailDTO
                 {
                     Id = content.Id,
                     Content = rq.Content,
                     TestId= rq.TestId,
+                   
                 };
             }
 
@@ -145,7 +146,7 @@ namespace IELTS_PRACTICE.Services
             };
             _context.Questions.Add(question);
             _context.SaveChanges();
-            return new QuestionDTO
+            return new QuestionFullDetailDTO
             {
                 Id = question.Id,
                 QuestionType = question.QuestionType,
@@ -154,7 +155,9 @@ namespace IELTS_PRACTICE.Services
                 Choices= question.Choices,
                 Explanation = question.Explanation,
                 TestId = question.TestId,
+                ParentId = question.ParentId,
                 Order = question.Order,
+                Link = question.Link,
             };
         }
 

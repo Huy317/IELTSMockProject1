@@ -19,9 +19,11 @@ function AdminDashboardLayout() {
     const createInitialParagraphs = async (testId: number) => {
         console.log("Creating initial paragraphs for testId:", testId);
         const questions = [
-            { questionType: 'Paragraph', content: 'This is a sample paragraph 1.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 100 },
-            { questionType: 'Paragraph', content: 'This is a sample paragraph 2.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 200 },
-            { questionType: 'Paragraph', content: 'This is a sample paragraph 3.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 300 },
+            { questionType: 'Paragraph', content: 'This is a sample paragraph 1.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 1 },
+            { questionType: 'Paragraph', content: 'This is a sample paragraph 2.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 2 },
+            { questionType: 'Paragraph', content: 'This is a sample paragraph 3.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 3
+
+             },
         ]
         for (const q of questions) {
             // Should call createParagraph from questionService not createQuestion

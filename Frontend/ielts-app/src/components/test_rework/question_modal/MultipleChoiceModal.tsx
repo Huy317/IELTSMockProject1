@@ -1,6 +1,7 @@
-
 import { useState } from 'react';
 import type { QuestionToCreate } from '../../../types/Question';
+import { toast } from 'react-toastify';
+import { createQuestion } from '../../../services/questionService';
 
 interface Choice {
     id: number;
@@ -21,6 +22,67 @@ interface MultipleChoiceModalProps {
     otherData?: OtherData;
 }
 
+// Move ChoiceItem outside of MultipleChoiceModal to avoid redefinition on each render
+function ChoiceItem({ 
+    choice, 
+    index, 
+    onTextChange, 
+    onCorrectChange, 
+    onDelete, 
+    canDelete 
+}: { 
+    choice: Choice; 
+    index: number; 
+    onTextChange: (id: number, text: string) => void;
+    onCorrectChange: (id: number, isCorrect: boolean) => void;
+    onDelete: (id: number) => void;
+    canDelete: boolean;
+}) {
+    return (
+        <div className="border rounded p-3 mb-3 bg-light">
+            <div className="row align-items-center">
+                <div className="col-9">
+                    <div className="input-group mb-2">
+                        <div className="input-group-text me-2">
+                            <input
+                                className="form-check-input mt-0"
+                                type="checkbox"
+                                id={`correct-${choice.id}`}
+                                checked={choice.isCorrect}
+                                onChange={(e) => onCorrectChange(choice.id, e.target.checked)}
+                                title="Mark as correct answer"
+                                style={{ 
+                                    cursor: 'pointer', 
+                                    width: '20px',
+                                    height: '20px',
+                                    border: '1px solid #f34444ff',
+                                }}
+                            />
+                        </div>
+                        <input
+                            type="text"
+                            className="form-control "
+                            value={choice.text}
+                            onChange={(e) => onTextChange(choice.id, e.target.value)}
+                            placeholder={`Enter choice ${index + 1}`}
+                        />
+                    </div>
+                </div>
+                <div className="col-3 text-center">
+                    <button
+                        type="button"
+                        className="btn btn-outline-danger btn-md rounded-3"
+                        onClick={() => onDelete(choice.id)}
+                        disabled={!canDelete}
+                        title="Delete choice"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 function MultipleChoiceModal({ isOpen, onClose, onSubmit, otherData }: MultipleChoiceModalProps) {
     const [questionContent, setQuestionContent] = useState('');
@@ -30,6 +92,7 @@ function MultipleChoiceModal({ isOpen, onClose, onSubmit, otherData }: MultipleC
     ]);
     const [explanation, setExplanation] = useState('');
     const [nextChoiceId, setNextChoiceId] = useState(3);
+
 
     const handleAddChoice = () => {
         const newChoice: Choice = {
@@ -66,8 +129,28 @@ function MultipleChoiceModal({ isOpen, onClose, onSubmit, otherData }: MultipleC
         return choices.filter(c => c.isCorrect).map(c => c.text).join('|');
     }
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    
+
+
     const handleSubmit = () => {
         if (!otherData) return;
+
+        if (!questionContent.trim()) {
+            toast.error('Question content is required');
+            return;
+        }
+        if (choices.some(c => !c.text.trim())) {
+            toast.error('All choices must have text');
+            return;
+        }
+        if (!choices.some(c => c.isCorrect)) {
+            toast.error('At least one choice must be marked as correct');
+            return;
+        }
+
+        if (isSubmitting) return; // Prevent multiple submissions
 
         const data : QuestionToCreate = {
             questionType: 'MultipleChoice',
@@ -82,60 +165,34 @@ function MultipleChoiceModal({ isOpen, onClose, onSubmit, otherData }: MultipleC
         };
 
         console.log(data);
+        
+        setIsSubmitting(true);
 
-        onSubmit(data);
+        // Call API to create question
+        toast.promise(
+            createQuestion(data),
+            {
+                pending: 'Creating question...',
+                success: 'Question created successfully!',
+                error: 'Failed to create question'
+            }
+        ).then((res) => {
+            onClose();
+
+            // Remember to call this
+            onSubmit(res);
+            
+        }).catch(() => {
+            // Error is already handled by toast.promise
+        }).finally(() => {
+            setIsSubmitting(false);
+        });
+
+
+        
     };
 
     if (!isOpen) return null;
-
-    function ChoiceItem({ choice, index }: { choice: Choice; index: number }) {
-        return (
-            <div key={choice.id} className="border rounded p-3 mb-3 bg-light">
-                <div className="row align-items-center">
-                    <div className="col-9">
-                        <div className="input-group mb-2">
-                            <div className="input-group-text me-2">
-                                <input
-                                    className="form-check-input mt-0"
-                                    type="checkbox"
-                                    id={`correct-${choice.id}`}
-                                    checked={choice.isCorrect}
-                                    onChange={(e) => handleChoiceCorrectChange(choice.id, e.target.checked)}
-                                    title="Mark as correct answer"
-                                    style={{ 
-                                        cursor: 'pointer', 
-                                        width: '20px',
-                                        height: '20px',
-                                        border: '1px solid #f34444ff',
-                                    }}
-                                />
-                            </div>
-                            <input
-                                type="text"
-                                className="form-control "
-                                value={choice.text}
-                                onChange={(e) => handleChoiceTextChange(choice.id, e.target.value)}
-                                placeholder={`Enter choice ${index + 1}`}
-                            />
-                        </div>
-                    </div>
-                    <div className="col-3 text-center">
-                        <button
-                            type="button"
-                            className="btn btn-outline-danger btn-md rounded-3"
-                            onClick={() => handleDeleteChoice(choice.id)}
-                            disabled={choices.length <= 2}
-                            title="Delete choice"
-                        >
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-        )
-
-    }
-
 
     return (
         <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
@@ -173,7 +230,15 @@ function MultipleChoiceModal({ isOpen, onClose, onSubmit, otherData }: MultipleC
 
                             {/* Render all choices */}
                             {choices.map((choice, index) => (
-                                <ChoiceItem key={choice.id} choice={choice} index={index} />
+                                <ChoiceItem 
+                                    key={choice.id} 
+                                    choice={choice} 
+                                    index={index}
+                                    onTextChange={handleChoiceTextChange}
+                                    onCorrectChange={handleChoiceCorrectChange}
+                                    onDelete={handleDeleteChoice}
+                                    canDelete={choices.length > 2}
+                                />
                             ))}
 
                             {/* Add Choice Button */}

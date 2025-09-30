@@ -1,4 +1,4 @@
-import type { QuestionFullDetail, QuestionGetReturn, QuestionParagraphReturn, QuestionPostReturn, QuestionToCreate, QuestionToUpdate } from "../types/Question";
+import type { Question, QuestionFullDetail, QuestionGetReturn, QuestionParagraphReturn, QuestionPostReturn, QuestionToCreate, QuestionToUpdate } from "../types/Question";
 import { client } from "./authService";
 
 export async function createParagraph(question : QuestionToCreate): Promise<QuestionParagraphReturn> {
@@ -6,12 +6,12 @@ export async function createParagraph(question : QuestionToCreate): Promise<Ques
     return response.data;
 }
 
-export async function createQuestion(question : QuestionToCreate): Promise<QuestionPostReturn> {
+export async function createQuestion(question : QuestionToCreate): Promise<Question> {
     const response = await client.post('/Question', question);
     return response.data;
 }
 
-export async function getAllQuestionsWithTestId(testId: number): Promise<QuestionPostReturn[]> {
+export async function getAllQuestionsWithTestId(testId: number): Promise<Question[]> {
     const response = await client.get(`/Question/bytestid?id=${testId}`);
     return response.data;
 }
