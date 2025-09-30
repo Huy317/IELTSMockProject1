@@ -94,6 +94,7 @@ function EditReadingTest() {
 
       setQuestions(data);
       mapParagraphs(data);
+      console.log("Fetched questions:", data);
       return data;
 
     });
@@ -156,6 +157,7 @@ function EditReadingTest() {
       ...rest, // Spread existing properties
       content: paragraphTexts[paragraphIndex],
     };
+
     //console.log("Updating paragraph:", updatedParagraph);
     //console.log("With ID:", paragraphToUpdate.id);
     const updatePromise = updateQuestion(id, updatedParagraph).then((data) => {
