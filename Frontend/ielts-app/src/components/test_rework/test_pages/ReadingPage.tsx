@@ -266,6 +266,52 @@ function ReadingPage() {
   );
   const totalParagraphs = paragraphs.length;
 
+  // Calculate global question numbers
+  // may be not necessary, it is possible to render sequence of questions directly
+  const getGlobalQuestionNumber = (questionId: number) => {
+    // Sort all questions by paragraph and order
+    const sortedQuestions = [...questions].sort((a, b) => {
+      if (a.paragraphNumber !== b.paragraphNumber) {
+        return a.paragraphNumber - b.paragraphNumber;
+      }
+      return a.order - b.order;
+    });
+    
+    const index = sortedQuestions.findIndex(q => q.id === questionId);
+    return index + 1;
+  };
+
+  // Navigate to specific question and paragraph
+  const navigateToQuestion = (questionId: number) => {
+    const question = questions.find(q => q.id === questionId);
+    if (question && question.paragraphNumber !== currentParagraphNumber) {
+      setCurrentParagraphNumber(question.paragraphNumber);
+    }
+    
+    // Scroll to the question after a brief delay to ensure the paragraph has rendered
+    setTimeout(() => {
+      const questionElement = document.getElementById(`question-${questionId}`);
+      if (questionElement) {
+        questionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  };
+
+  // Get all questions with global numbering
+  const getAllQuestionsWithGlobalNumbers = () => {
+    return [...questions]
+      .sort((a, b) => {
+        if (a.paragraphNumber !== b.paragraphNumber) {
+          return a.paragraphNumber - b.paragraphNumber;
+        }
+        return a.order - b.order;
+      })
+      .map((question, index) => ({
+        ...question,
+        globalNumber: index + 1
+      }));
+  };
+
   // Submit test
   const handleSubmitTest = () => {
     console.log("Submitting test with answers:", userAnswers);
@@ -510,31 +556,14 @@ function ReadingPage() {
               <h4 className="mb-0">{test?.testName}</h4>
             </div>
             <div className="col-md-4 text-center">
-              <span 
-                className="badge bg-light text-dark fw-bold" 
-                style={{
-                  fontSize: "1.2rem",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "0.5rem",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                  letterSpacing: "0.05rem"
-                }}
-              >
+              <span className="badge bg-light text-dark fw-bold fs-5 px-4 py-2 rounded-pill shadow-sm">
                 Paragraph {currentParagraphNumber} of {totalParagraphs}
               </span>
             </div>
             <div className="col-md-4 text-end">
               <div className="timer d-flex align-items-center justify-content-end">
-                <i className="bi bi-clock me-2" style={{ fontSize: "1.5rem" }}></i>
-                <span 
-                  className="fw-bold" 
-                  style={{ 
-                    fontSize: "1.8rem", 
-                    fontFamily: "monospace",
-                    letterSpacing: "0.1rem",
-                    textShadow: "0 1px 2px rgba(0,0,0,0.3)"
-                  }}
-                >
+                <i className="bi bi-clock me-2 fs-4"></i>
+                <span className="fw-bold fs-2 font-monospace text-white">
                   {formatTime(timeRemaining)}
                 </span>
               </div>
@@ -543,14 +572,11 @@ function ReadingPage() {
         </div>
       </div>
 
-      <div className="container-fluid">
-        <div className="row">
+      <div className="container-fluid" style={{ height: "calc(100vh - 100px)" }}>
+        <div className="row h-100">
           {/* Reading Passage (Left Side) - Only Current Paragraph */}
-          <div className="col-lg-6 col-md-12">
-            <div
-              className="reading-passages p-3"
-              style={{ height: "calc(100vh - 100px)", overflowY: "auto" }}
-            >
+          <div className="col-lg-6 col-md-12 h-100">
+            <div className="reading-passages p-3 h-100 overflow-auto">
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5 className="mb-0">Reading Passage</h5>
                 {/* Paragraph Navigation */}
@@ -591,109 +617,143 @@ function ReadingPage() {
             </div>
           </div>
 
-          {/* Questions Panel (Right Side) - All Current Paragraph Questions */}
-          <div
-            className="col-lg-6 col-md-12"
-            key={`paragraph-${currentParagraphNumber}`}
-          >
-            <div
-              className="questions-panel p-3"
-              style={{ height: "calc(100vh - 100px)", overflowY: "auto" }}
-            >
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="mb-0">
-                  Questions for Paragraph {currentParagraphNumber}
-                </h5>
+          {/* Right Side - Split into Questions (4) and Indicators (2) */}
+          <div className="col-lg-6 col-md-12 h-100">
+            <div className="row h-100">
+              {/* Questions Panel (4/6 of right side) */}
+              <div className="col-8">
+                <div
+                  className="questions-panel p-3 h-100 d-flex flex-column"
+                  key={`paragraph-${currentParagraphNumber}`}
+                >
+                  {/* Fixed Header */}
+                  <div className="mb-3">
+                    <h5 className="mb-0">
+                      Questions for Paragraph {currentParagraphNumber}
+                    </h5>
+                  </div>
 
-                {/* Question Sequence Indicators */}
-                <div className="question-sequence">
-                  <div className="d-flex flex-wrap gap-2">
-                    {currentParagraphQuestions.map((question, index) => (
-                      <span
+                  {/* Scrollable Questions Content */}
+                  <div className="all-questions flex-grow-1 overflow-auto pe-2"
+                    key={`questions-${currentParagraphNumber}`}
+                  >
+                    {currentParagraphQuestions.map((question) => (
+                      <div
                         key={question.id}
-                        className={`badge ${
-                          userAnswers[question.id]
-                            ? "bg-success"
-                            : "bg-outline-secondary"
-                        }`}
-                        style={{
-                          backgroundColor: userAnswers[question.id]
-                            ? "#198754"
-                            : "#6c757d",
-                          color: "white",
-                          padding: "0.5rem",
-                          borderRadius: "50%",
-                          minWidth: "30px",
-                          height: "30px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
+                        id={`question-${question.id}`}
+                        className="question-item mb-4 p-3 border rounded"
                       >
-                        {index + 1}
-                      </span>
+                        <div className="question-header mb-3">
+                          <div className="d-flex justify-content-between align-items-center">
+                            <h6 className="mb-0">Question {getGlobalQuestionNumber(question.id)}</h6>
+                            <span className="badge bg-secondary">
+                              {question.questionType}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="question-content">
+                          {renderQuestion(question)}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* All Questions for Current Paragraph */}
-              <div
-                className="all-questions"
-                key={`questions-${currentParagraphNumber}`}
-              >
-                {currentParagraphQuestions.map((question, index) => (
-                  <div
-                    key={question.id}
-                    className="question-item mb-4 p-3 border rounded"
-                  >
-                    <div className="question-header mb-3">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <h6 className="mb-0">Question {index + 1}</h6>
-                        <span className="badge bg-secondary">
-                          {question.questionType}
+              {/* Question Indicators Panel (2/6 of right side) */}
+              <div className="col-4">
+                <div className="indicators-panel p-3 h-100 bg-light border-start overflow-auto">
+                  <div className="mb-3">
+                    <h6 className="mb-2 text-center">Progress</h6>
+                    <div className="text-center mb-3">
+                      <span className="badge bg-primary">
+                        Passage {currentParagraphNumber}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* All Question Indicators Grid */}
+                  <div className="mb-4">
+                    <p className="small fw-bold mb-2">All Questions:</p>
+                    <div className="d-flex flex-wrap gap-2 overflow-auto" style={{ maxHeight: "200px" }}>
+                      {getAllQuestionsWithGlobalNumbers().map((question) => (
+                        <span
+                          key={question.id}
+                          className={`badge fw-bold user-select-none ${
+                            userAnswers[question.id]
+                              ? "bg-primary text-white"
+                              : "bg-white text-dark border"
+                          }`}
+                          style={{
+                            minWidth: "32px",
+                            height: "32px",
+                            cursor: "pointer"
+                          }}
+                          onClick={() => navigateToQuestion(question.id)}
+                          title={`Question ${question.globalNumber} (Passage ${question.paragraphNumber})`}
+                        >
+                          {question.globalNumber}
                         </span>
-                      </div>
-                    </div>
-
-                    <div className="question-content">
-                      {renderQuestion(question)}
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
 
-              {/* Bottom Navigation - Only Paragraph Navigation */}
-              <div className="paragraph-controls mt-4 pt-3 border-top">
-                <div className="row">
-                  <div className="col-6">
+                  {/* All Passages Overview */}
+                  <div className="mb-4">
+                    <p className="small fw-bold mb-2">Passages:</p>
+                    <div className="d-flex flex-column gap-3">
+                      {[1, 2, 3].map((passageNum) => {
+                        const passageQuestions = getAllQuestionsWithGlobalNumbers().filter(q => q.paragraphNumber === passageNum);
+                        return (
+                          <div key={passageNum} className="passage-section">
+                            <div 
+                              className={`passage-header p-2 rounded mb-2 ${
+                                passageNum === currentParagraphNumber 
+                                  ? 'bg-primary text-white' 
+                                  : 'bg-light border'
+                              }`}
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => setCurrentParagraphNumber(passageNum)}
+                            >
+                              <span className="fw-bold">Passage {passageNum}</span>
+                            </div>
+                            <div className="d-flex flex-wrap gap-2 ps-2">
+                              {passageQuestions.map((question) => (
+                                <span
+                                  key={question.id}
+                                  className={`badge fw-bold user-select-none ${
+                                    userAnswers[question.id]
+                                      ? "bg-primary text-white"
+                                      : "bg-white text-dark border"
+                                  }`}
+                                  style={{
+                                    minWidth: "32px",
+                                    height: "32px",
+                                    cursor: "pointer"
+                                  }}
+                                  onClick={() => navigateToQuestion(question.id)}
+                                  title={`Question ${question.globalNumber}`}
+                                >
+                                  {question.globalNumber}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Submit Test Button */}
+                  <div className="mt-auto pt-3">
                     <button
-                      className="btn btn-outline-secondary w-100"
-                      onClick={goToPreviousParagraph}
-                      disabled={currentParagraphNumber === 1}
+                      className="btn btn-success w-100 fw-bold py-3"
+                      onClick={handleSubmitTest}
                     >
-                      <i className="bi bi-arrow-left me-2"></i>
-                      Previous Paragraph
+                      <i className="bi bi-check-circle me-2"></i>
+                      Submit Test
                     </button>
-                  </div>
-                  <div className="col-6">
-                    {currentParagraphNumber === totalParagraphs ? (
-                      <button
-                        className="btn btn-success w-100"
-                        onClick={handleSubmitTest}
-                      >
-                        Submit Test
-                        <i className="bi bi-check-circle ms-2"></i>
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-primary w-100"
-                        onClick={goToNextParagraph}
-                      >
-                        Next Paragraph
-                        <i className="bi bi-arrow-right ms-2"></i>
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>
