@@ -1,0 +1,205 @@
+import type { Question } from "../../../types/Question";
+
+interface QuestionDisplayProps {
+  question: Question;
+  questionNumber?: number;
+  onEdit?: (question: Question) => void;
+  onDelete?: (questionId: number) => void;
+  showActions?: boolean;
+}
+
+function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActions = true }: QuestionDisplayProps) {
+  
+  // Question types mapping
+  const questionTypeLabels: Record<string, string> = {
+    FillInTheBlank: "Fill In The Blank",
+    MultipleChoice: "Multiple Choice",
+    SingleChoice: "Single Choice",
+    Matching: "Matching",
+    Paragraph: "Paragraph"
+  };
+
+  // Get question type display label
+  const getQuestionTypeLabel = (type: string): string => {
+    return questionTypeLabels[type] || type;
+  };
+
+  // Get question type badge color
+  const getQuestionTypeBadgeClass = (type: string): string => {
+    const badgeClasses: Record<string, string> = {
+      FillInTheBlank: "bg-primary",
+      MultipleChoice: "bg-success",
+      SingleChoice: "bg-info",
+      Matching: "bg-warning text-dark",
+      Paragraph: "bg-secondary"
+    };
+    return badgeClasses[type] || "bg-dark";
+  };
+
+  // Parse choices if they exist (assuming JSON format)
+  const parseChoices = (choices: string): string[] => {
+    if (!choices) return [];
+    try {
+      return JSON.parse(choices);
+    } catch {
+      // If not JSON, try splitting by common delimiters
+      return choices.split(/[,|;]/).map(choice => choice.trim()).filter(Boolean);
+    }
+  };
+
+  // Truncate long text for display
+  const truncateText = (text: string, maxLength: number = 100): string => {
+    if (!text) return "";
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+  };
+
+  // Handle edit click
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit(question);
+    }
+  };
+
+  // Handle delete click
+  const handleDelete = () => {
+    if (onDelete && window.confirm("Are you sure you want to delete this question?")) {
+      onDelete(question.id);
+    }
+  };
+
+  const choices = parseChoices(question.choices);
+
+  return (
+    <div className="card mb-3 shadow-sm">
+      <div className="card-body">
+        <div className="row align-items-start">
+          {/* Question Number */}
+          <div className="col-auto">
+            <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                 style={{ width: "40px", height: "40px", fontSize: "14px", fontWeight: "bold" }}>
+              {questionNumber || question.order}
+            </div>
+          </div>
+
+          {/* Question Content */}
+          <div className="col">
+            <div className="row">
+              {/* Question Type and Content */}
+              <div className="col-lg-8">
+                <div className="d-flex align-items-center mb-2">
+                  <span className={`badge ${getQuestionTypeBadgeClass(question.questionType)} me-2`}>
+                    {getQuestionTypeLabel(question.questionType)}
+                  </span>
+                  <small className="text-muted">ID: {question.id}</small>
+                </div>
+                
+                <h6 className="mb-2 fw-semibold">
+                  Question Content:
+                </h6>
+                <p className="mb-2 text-dark">
+                  {truncateText(question.content, 150)}
+                </p>
+
+                {/* Choices (if available) */}
+                {choices.length > 0 && (
+                  <div className="mb-2">
+                    <small className="text-muted fw-semibold">Choices:</small>
+                    <div className="mt-1">
+                      {choices.slice(0, 3).map((choice, index) => (
+                        <span key={index} className="badge bg-light text-dark me-1 mb-1">
+                          {String.fromCharCode(65 + index)}. {truncateText(choice, 30)}
+                        </span>
+                      ))}
+                      {choices.length > 3 && (
+                        <span className="badge bg-light text-muted">
+                          +{choices.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Correct Answer */}
+                {question.correctAnswer && (
+                  <div className="mb-2">
+                    <small className="text-success fw-semibold">
+                      <i className="bi bi-check-circle me-1"></i>
+                      Correct Answer: 
+                    </small>
+                    <span className="ms-1 text-success">
+                      {truncateText(question.correctAnswer, 50)}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Question Details */}
+              <div className="col-lg-4">
+                <div className="text-end text-lg-start">
+                  {/* Question Metadata */}
+                  <div className="mb-2">
+                    <small className="text-muted d-block">
+                      <i className="bi bi-hash me-1"></i>
+                      Order: {question.order}
+                    </small>
+                    <small className="text-muted d-block">
+                      <i className="bi bi-folder me-1"></i>
+                      Parent ID: {question.parentId}
+                    </small>
+                    {question.link && (
+                      <small className="text-muted d-block">
+                        <i className="bi bi-link-45deg me-1"></i>
+                        <a href={question.link} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
+                          View Link
+                        </a>
+                      </small>
+                    )}
+                  </div>
+
+                  {/* Explanation Preview */}
+                  {question.explanation && (
+                    <div className="mb-2">
+                      <small className="text-info fw-semibold">
+                        <i className="bi bi-info-circle me-1"></i>
+                        Has Explanation
+                      </small>
+                      <div className="mt-1">
+                        <small className="text-muted">
+                          {truncateText(question.explanation, 60)}
+                        </small>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  {showActions && (
+                    <div className="mt-3">
+                      <div className="btn-group btn-group-lg">
+                        <button 
+                          className="btn btn-outline-primary"
+                          onClick={handleEdit}
+                          title="Edit Question"
+                        >
+                          <i className="bi bi-pencil"></i>
+                        </button>
+                        <button 
+                          className="btn btn-outline-danger"
+                          onClick={handleDelete}
+                          title="Delete Question"
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default QuestionDisplay;

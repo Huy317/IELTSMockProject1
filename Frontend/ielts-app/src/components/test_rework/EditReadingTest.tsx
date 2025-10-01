@@ -16,6 +16,7 @@ import {
 import FillInTheBlankModal from "./question_modal/FillInTheBlankModal";
 import SingleChoiceModal from "./question_modal/SingleChoiceModal";
 import MatchingModal from "./question_modal/MatchingModal";
+import QuestionDisplay from "./question_display/QuestionDisplay";
 
 function EditReadingTest() {
   const { id } = useParams<{ id: string }>();
@@ -65,6 +66,9 @@ function EditReadingTest() {
       return { ...prev, [parentId]: (prev[parentId] || 0) + 1 };
     });
   }
+  // --------------------------------------------------------------
+
+
 
   // --- TEST METADATA HANDLING ---
   const [test, setTest] = useState<TestWithAuthorName | null>(null);
@@ -233,6 +237,16 @@ function EditReadingTest() {
 
     // Increment the order counter for this parentId
     incrementOrderCounter(paragraphId);
+
+    // Add the new question to the questions state
+    setQuestions((prevQuestions) => [...prevQuestions, data as QuestionFullDetail]);
+
+    // Also add to paragraphsQuestions state
+    if (currentParagraphIndex === null) return;
+    paragraphsQuestions[currentParagraphIndex || 0].push(data as QuestionFullDetail);
+    setParagraphsQuestions([...paragraphsQuestions]);
+
+
     handleCloseModal();
   };
 
@@ -265,6 +279,34 @@ function EditReadingTest() {
       error: "Failed to update metadata.",
     });
   }
+  // --------------------------------------------------------------
+
+  // const [onlyQuestions, setOnlyQuestions] = useState<QuestionFullDetail[]>([]);
+  const [paragraphsQuestions, setParagraphsQuestions] = useState<QuestionFullDetail[][]>([[], [], []]);
+
+  useEffect(() => {
+    // Filter out only questions (exclude paragraphs)
+    const onlyQuestions = questions.filter((q) => q.questionType !== "Paragraph");
+    // setOnlyQuestions(onlyQuestions);
+
+    // Map questions to their respective paragraphs based on parentId
+    const paraQuestions: QuestionFullDetail[][] = [[], [], []];
+    onlyQuestions.forEach((q) => {
+      // Find the index of the paragraph this question belongs to
+      const paraIndex = questions.findIndex(
+        (p) => p.questionType === "Paragraph" && p.id === q.parentId
+      );
+      if (paraIndex !== -1 && paraIndex < 3) {
+        paraQuestions[paraIndex].push(q);
+      }
+    });
+    setParagraphsQuestions(paraQuestions);
+
+  }, [questions]);
+
+
+
+
 
   // --------------------------------------------------------------
   // --- HELPER FUNCTIONS ---
@@ -468,6 +510,20 @@ function EditReadingTest() {
                     </button>
                   </div>
                 </div>
+
+                  {/* Question Display List */}
+                <div className="border-top pt-3">
+                    {/* <QuestionDisplay question={questions[5]} /> */}
+                    {/* map paragraphsQuestions[index] to QuestionDisplay */}
+                    {paragraphsQuestions[index].map((q, qIndex) => (
+                      <QuestionDisplay
+                        question={q}
+                        key={q.id}
+                        questionNumber={qIndex + 1} 
+                      />
+                    ))}
+                </div>
+
 
                 {/* Add Question Section */}
                 <div className="border-top pt-3">
