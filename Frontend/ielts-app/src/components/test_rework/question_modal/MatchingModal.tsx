@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import type { QuestionToCreate } from '../../../types/Question';
+import { useState } from "react";
+import type { QuestionToCreate } from "../../../types/Question";
+import { toast } from "react-toastify";
+import { createQuestion } from "../../../services/questionService";
 
 interface OtherData {
     parentId: number;
@@ -14,38 +16,45 @@ interface MatchingModalProps {
     otherData?: OtherData;
 }
 
-function MatchingModal({ isOpen, onClose, onSubmit, otherData }: MatchingModalProps) {
-    const [listOfOptions, setListOfOptions] = useState('');
-    const [questionContent, setQuestionContent] = useState('');
-    const [correctAnswer, setCorrectAnswer] = useState('');
-    const [explanation, setExplanation] = useState('');
+function MatchingModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    otherData,
+}: MatchingModalProps) {
+    const [listOfOptions, setListOfOptions] = useState("");
+    const [questionContent, setQuestionContent] = useState("");
+    const [correctAnswer, setCorrectAnswer] = useState("");
+    const [explanation, setExplanation] = useState("");
 
     const validateForm = () => {
         if (!listOfOptions.trim()) {
-            alert('List of options is required');
+            alert("List of options is required");
             return false;
         }
 
         if (!questionContent.trim()) {
-            alert('Question content is required');
+            alert("Question content is required");
             return false;
         }
 
         if (!correctAnswer.trim()) {
-            alert('Correct answer is required');
+            alert("Correct answer is required");
             return false;
         }
 
         return true;
     };
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const handleSubmit = () => {
         if (!otherData) return;
 
         if (!validateForm()) return;
 
+        if (isSubmitting) return;
         const data: QuestionToCreate = {
-            questionType: 'Matching',
+            questionType: "Matching",
             content: questionContent,
             choices: listOfOptions,
             correctAnswer: correctAnswer,
@@ -53,18 +62,45 @@ function MatchingModal({ isOpen, onClose, onSubmit, otherData }: MatchingModalPr
             parentId: otherData.parentId,
             testId: otherData.testId,
             order: otherData.order,
-            link: '',
+            link: "",
         };
 
         console.log(data);
 
-        onSubmit(data);
+        setIsSubmitting(true);
+        console.log(data);
+
+        setIsSubmitting(true);
+
+        // Call API to create question
+        toast
+            .promise(createQuestion(data), {
+                pending: "Creating question...",
+                success: "Question created successfully!",
+                error: "Failed to create question",
+            })
+            .then((res) => {
+                onClose();
+
+                // Remember to call this
+                onSubmit(res);
+            })
+            .catch(() => {
+                // Error is already handled by toast.promise
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+            className="modal show d-block"
+            tabIndex={-1}
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
             <div className="modal-dialog modal-lg modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -91,7 +127,8 @@ function MatchingModal({ isOpen, onClose, onSubmit, otherData }: MatchingModalPr
                                 placeholder="Paste or type your list of options here:&#10;A. Option 1&#10;B. Option 2&#10;i. Option 1&#10;ii. Option 2"
                             ></textarea>
                             <small className="form-text text-muted">
-                                Paste your list of options here. Each option should be on a new line.
+                                Paste your list of options here. Each option should be on a new
+                                line.
                             </small>
                         </div>
 
