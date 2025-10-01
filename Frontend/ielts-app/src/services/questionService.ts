@@ -25,7 +25,7 @@ export async function deleteQuestion(id: number): Promise<void> {
     await client.delete(`/Question/${id}`);
 }
 
-export async function updateQuestion(id: number, question: QuestionToUpdate): Promise<QuestionPostReturn> {
+export async function updateQuestion(id: number, question: QuestionToUpdate): Promise<Question> {
     const response = await client.put(`/Question/${id}`, question);
     return response.data;
 }

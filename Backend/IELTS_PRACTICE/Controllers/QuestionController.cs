@@ -68,8 +68,8 @@ namespace IELTS_PRACTICE.Controllers
             if (current == null) { 
                 return NotFound();
             }
-            await _questionService.UpdateQuestion(id, rq);
-            return Ok();
+            var updated = await _questionService.UpdateQuestion(id, rq);
+            return Ok(updated);
         }
 
         [HttpDelete("{id}")]
