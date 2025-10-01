@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import type { QuestionToCreate } from '../../../types/Question';
+import { useState } from "react";
+import type { QuestionToCreate } from "../../../types/Question";
+import { toast } from "react-toastify";
+import { createQuestion } from "../../../services/questionService";
 
 interface OtherData {
     parentId: number;
@@ -14,56 +16,83 @@ interface FillInTheBlankModalProps {
     otherData?: OtherData;
 }
 
-function FillInTheBlankModal({ isOpen, onClose, onSubmit, otherData }: FillInTheBlankModalProps) {
-    const [questionContent, setQuestionContent] = useState('');
-    const [correctAnswer, setCorrectAnswer] = useState('');
-    const [explanation, setExplanation] = useState('');
+function FillInTheBlankModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    otherData,
+}: FillInTheBlankModalProps) {
+    const [questionContent, setQuestionContent] = useState("");
+    const [correctAnswer, setCorrectAnswer] = useState("");
+    const [explanation, setExplanation] = useState("");
 
     const validateForm = () => {
         if (!questionContent.trim()) {
-            alert('Question content is required');
+            alert("Question content is required");
             return false;
         }
 
-        if (!questionContent.includes('_')) {
-            alert('Question content must contain at least one blank (underscore) to indicate where users should fill in answers');
+        if (!questionContent.includes("_")) {
+            alert(
+                "Question content must contain at least one blank (underscore) to indicate where users should fill in answers"
+            );
             return false;
         }
 
         if (!correctAnswer.trim()) {
-            alert('Correct answer is required');
+            alert("Correct answer is required");
             return false;
         }
 
         return true;
     };
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleSubmit = () => {
         if (!otherData) return;
-
         if (!validateForm()) return;
-
+        if (isSubmitting) return;
         const data: QuestionToCreate = {
-            questionType: 'FormCompletion',
+            questionType: "FormCompletion",
             content: questionContent,
-            choices: '', // Leave blank as specified
+            choices: "", // Leave blank as specified
             correctAnswer: correctAnswer,
             explanation: explanation,
             parentId: otherData.parentId,
             testId: otherData.testId,
             order: otherData.order,
-            link: '',
+            link: "",
         };
-
         console.log(data);
-
-        onSubmit(data);
+        setIsSubmitting(true);
+        toast
+            .promise(createQuestion(data), {
+                pending: "Creating question...",
+                success: "Question created successfully!",
+                error: "Failed to create question",
+            })
+            .then((res) => {
+                onClose();
+                // Remember to call this
+                onSubmit(res);
+            })
+            .catch(() => {
+                // Error is already handled by toast.promise
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+            className="modal show d-block"
+            tabIndex={-1}
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
             <div className="modal-dialog modal-lg modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -90,7 +119,8 @@ function FillInTheBlankModal({ isOpen, onClose, onSubmit, otherData }: FillInThe
                                 placeholder="The capital of France is _______"
                             ></textarea>
                             <small className="form-text text-muted">
-                                Tip: Use underscores (___) to mark where students should type their answers
+                                Tip: Use underscores (___) to mark where students should type
+                                their answers
                             </small>
                         </div>
 

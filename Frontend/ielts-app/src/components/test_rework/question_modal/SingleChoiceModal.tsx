@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { QuestionToCreate } from "../../../types/Question";
+import { toast } from "react-toastify";
+import { createQuestion } from "../../../services/questionService";
 
 interface Choice {
   id: number;
@@ -94,10 +96,13 @@ function SingleChoiceModal({
     return true;
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = () => {
     if (!otherData) return;
 
     if (!validateForm()) return;
+
+    if (isSubmitting) return;
 
     const data: QuestionToCreate = {
       questionType: "SingleChoice",
@@ -111,7 +116,29 @@ function SingleChoiceModal({
       link: "",
     };
 
-    onSubmit(data);
+    console.log(data);
+
+    setIsSubmitting(true);
+
+    // Call API to create question
+    toast
+      .promise(createQuestion(data), {
+        pending: "Creating question...",
+        success: "Question created successfully!",
+        error: "Failed to create question",
+      })
+      .then((res) => {
+        onClose();
+
+        // Remember to call this
+        onSubmit(res);
+      })
+      .catch(() => {
+        // Error is already handled by toast.promise
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   if (!isOpen) return null;

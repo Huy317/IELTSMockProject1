@@ -1,128 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import type { QuestionFullDetail } from "../../../types/Question";
 import type { TestWithAuthorName } from "../../../types/Test";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
 import { getTestById } from "../../../services/testService";
-import { set } from "react-hook-form";
-
-const actualquestions: QuestionData[] = [
-  //question
-  {
-    id: 3,
-    questionType: "SingleChoice",
-    content: "Select your answer",
-    choices: "choice1|choice2|choice3|choice4",
-    correctAnswer: "choice2",
-    explanation: "",
-    order: 101,
-    parentId: 3,
-    link: "",
-    paragraphNumber: 1,
-  },
-  {
-    id: 4,
-    questionType: "MultipleChoice",
-    content: "Select your multiple answer",
-    choices: "choice1|choice2|choice3|choice4",
-    correctAnswer: "choice2|choice3",
-    explanation: "",
-    order: 102,
-    parentId: 3,
-    link: "",
-    paragraphNumber: 1,
-  },
-  {
-    id: 5,
-    questionType: "FormCompletion",
-    content: "There are ____ people in your house",
-    choices: "",
-    correctAnswer: "three",
-    explanation: "",
-    order: 201,
-    parentId: 1,
-    link: "",
-    paragraphNumber: 2,
-  },
-  {
-    id: 6,
-    questionType: "FormCompletion",
-    content: "There are ____ people in your house (Question 2)",
-    choices: "",
-    correctAnswer: "three",
-    explanation: "",
-    order: 202,
-    parentId: 1,
-    link: "",
-    paragraphNumber: 2,
-  },
-  {
-    id: 7,
-    questionType: "Matching",
-    content: "Paragraph A:",
-    choices: "The list of headings:\nA. The blue\nB. The red\nC. The green\nD. The yellow",
-    correctAnswer: "the blue",
-    explanation: "",
-    order: 301,
-    parentId: 2,
-    link: "",
-    paragraphNumber: 3,
-  },
-  {
-    id: 8,
-    questionType: "Matching",
-    content: "Paragraph B:",
-    choices: "The list of headings:\nA. The blue\nB. The red\nC. The green\nD. The yellow",
-    correctAnswer: "the red",
-    explanation: "",
-    order: 302,
-    parentId: 2,
-    link: "",
-    paragraphNumber: 3,
-  },
-];
-
-const actualparagraph: ParagraphData[] = [
-  {
-    id: 3,
-    //content: "This is a longlong paragraph 1.",
-    content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at ex quam. Suspendisse auctor consequat mollis. Phasellus vulputate, nisl sed placerat vehicula, erat ante sodales augue, sed faucibus odio libero vitae nisl. Nam finibus neque est, in volutpat nunc lacinia at. Proin consectetur purus ut lectus porttitor aliquet. Mauris finibus velit a dignissim molestie. Ut ac ligula ex. Sed aliquam justo vitae neque bibendum lobortis. Mauris sit amet felis nisi. Donec faucibus lectus et eleifend finibus. Integer eros nulla, venenatis at tincidunt in, commodo in ante. Vivamus a nisi tincidunt, lobortis arcu eu, aliquam lacus.
-
-Nullam auctor sollicitudin turpis, ac ullamcorper nulla laoreet ut. Donec facilisis tempor purus, molestie feugiat ipsum egestas quis. Duis maximus magna ac hendrerit tempus. Suspendisse potenti. Suspendisse pretium fringilla metus sit amet rhoncus. Nulla scelerisque tortor eget hendrerit rutrum. Proin sed sagittis mi. Duis in tellus posuere tellus feugiat venenatis. Aliquam iaculis nisi eu metus pellentesque, non elementum arcu dictum. Fusce sem augue, condimentum id egestas vitae, tincidunt et massa.
-
-Sed rhoncus nisi sit amet congue fermentum. Vestibulum placerat, dolor nec sollicitudin convallis, tortor urna consectetur lorem, fermentum vulputate lorem nunc sed felis. Nunc id eros viverra, tempus massa nec, sagittis ipsum. Maecenas nisi sapien, ultricies sit amet elementum sit amet, varius non metus. Etiam interdum tempor blandit. Nunc leo purus, accumsan eget mattis ac, ullamcorper eu metus. Vestibulum sit amet faucibus quam, non mattis neque. Vivamus eu urna nisl. Etiam nec molestie est. Sed pellentesque molestie sodales. Morbi vel risus urna. Morbi venenatis felis eros, maximus molestie velit ullamcorper in. Nulla non varius lacus.
-
-Proin pharetra lacinia lacinia. Proin viverra interdum enim eu elementum. Aenean et mauris id diam vehicula gravida id eget purus. Pellentesque a orci id ipsum dapibus gravida. Nullam mattis lacinia dolor, eu egestas tellus fermentum quis. Duis rutrum nulla lacus, ut ornare orci luctus ut. Vestibulum et neque porttitor, porta quam cursus, lacinia odio. Maecenas laoreet massa in turpis luctus, et facilisis ante consectetur. Morbi rutrum tellus dignissim mauris semper, eget bibendum eros placerat. Nulla sed est facilisis, finibus dolor et, vulputate massa. Proin in ante sagittis, rutrum elit vel, suscipit neque. Nulla eleifend odio enim, at luctus enim pulvinar at. Duis nec auctor leo, a dignissim eros. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-
-Curabitur id elit vel sapien pellentesque vehicula consectetur non dui. Maecenas dictum, sapien eu lobortis fermentum, urna nisi convallis ante, vitae scelerisque eros elit a mauris. Nam aliquam egestas nisi id vestibulum. Aliquam faucibus ante sed finibus accumsan. Vestibulum aliquet nisi metus, vel consectetur ex cursus a. Interdum et malesuada fames ac ante ipsum primis in faucibus. Integer ultrices, sapien a pharetra feugiat, tellus nisi placerat elit, vel molestie mauris mi at massa. Suspendisse blandit vulputate orci, et tincidunt mauris rhoncus fringilla. Phasellus nec odio nec ligula vestibulum rutrum in eget augue. Maecenas ac maximus est, in mollis magna. Aliquam eget sapien dui.`,
-    order: 100,
-    paragraphNumber: 1,
-  },
-  {
-    id: 1,
-    content: "This is a longlong paragraph 2",
-    order: 200,
-    paragraphNumber: 2,
-  },
-  {
-    id: 2,
-    content: "This is a longlong paragraph 3",
-    order: 300,
-    paragraphNumber: 3,
-  },
-];
-
-const currentTest: TestWithAuthorName = {
-  id: 0,
-  testName: "IELTS Reading Test 1",
-  createdBy: 1,
-  createdAt: "2023-10-01T00:00:00Z",
-  resource: "cambridge",
-  isActive: true,
-  instructorName: "AdminName",
-  typeName: "Reading",
-  submissionCount: 10,
-};
 
 interface ParagraphData {
   id: number;
@@ -145,7 +25,7 @@ interface QuestionData {
 }
 
 function ReadingPage() {
-  const { testId } = useParams<{ testId: string }>();
+  const { id: testId } = useParams<{ id: string }>();
 
   // State management
   const [test, setTest] = useState<TestWithAuthorName | null>(null);
@@ -158,67 +38,72 @@ function ReadingPage() {
   const [loading, setLoading] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState(60 * 60); // 60 minutes in seconds
 
-  // Fetch test data
-  // useEffect(() => {
-  //     const fetchTestData = async () => {
-  //         if (!testId) return;
-
-  //         try {
-  //             // Fetch test info and questions
-  //             const [testData, allQuestionsData] = await Promise.all([
-  //                 getTestById(testId),
-  //                 getAllQuestionsAndParagraphsWithTestId(parseInt(testId))
-  //             ]);
-
-  //             setTest(testData);
-
-  //             // Separate paragraphs and questions based on ParentId
-  //             const paragraphsData = allQuestionsData
-  //                 .filter(q => q.parentId === 0) // ParentId = 0 means it's a paragraph
-  //                 .map(p => ({
-  //                     id: p.id,
-  //                     content: p.content,
-  //                     order: p.order,
-  //                     paragraphNumber: Math.floor(p.order / 100)
-  //                 }))
-  //                 .sort((a, b) => a.order - b.order);
-
-  //             const actualQuestions = allQuestionsData
-  //                 .filter(q => q.parentId !== 0) // ParentId != 0 means it's a normal question
-  //                 .map(q => ({
-  //                     id: q.id,
-  //                     questionType: q.questionType,
-  //                     content: q.content,
-  //                     choices: q.choices || '',
-  //                     correctAnswer: q.correctAnswer,
-  //                     explanation: q.explanation,
-  //                     order: q.order,
-  //                     parentId: q.parentId,
-  //                     link: q.link || '',
-  //                     paragraphNumber: Math.floor(q.order / 100) // Questions belong to paragraph by order range
-  //                 }))
-  //                 .sort((a, b) => a.order - b.order);
-
-  //             setParagraphs(paragraphsData);
-  //             setQuestions(actualQuestions);
-  //             setLoading(false);
-  //         } catch (error) {
-  //             console.error('Error fetching test data:', error);
-  //             setLoading(false);
-  //         }
-  //     };
-
-  //     fetchTestData();
-  // }, [testId]);
-
-  // This is for hard code testing UI only
+  //Fetch test data
   useEffect(() => {
-    // Set hardcoded data
-    setTest(currentTest);
-    setParagraphs(actualparagraph);
-    setQuestions(actualquestions);
-    setLoading(false);
-  }, []); // Empty dependency array - runs only once on mount
+    const fetchTestData = async () => {
+      if (!testId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        // Fetch test info and questions
+        const [testData, allQuestionsData] = await Promise.all([
+          getTestById(testId),
+          getAllQuestionsAndParagraphsWithTestId(parseInt(testId)),
+        ]);
+
+        setTest(testData);
+
+        // Separate paragraphs and questions based on ParentId
+        const paragraphsData = allQuestionsData
+          .filter((q) => q.parentId === 0) // ParentId = 0 means it's a paragraph
+          .map((p) => ({
+            id: p.id,
+            content: p.content,
+            order: p.order,
+            paragraphNumber: p.order, //maybe this is not necessary, just use ORDER
+          }))
+          .sort((a, b) => a.order - b.order);
+
+        //specific sequence of paragraphs
+        const paragraphMap = new Map(
+          paragraphsData.map((p) => [p.id, p.order])
+        );
+
+        const actualQuestions = allQuestionsData
+          .filter((q) => q.parentId !== 0) // ParentId != 0 means it's a normal question
+          .map((q) => ({
+            id: q.id,
+            questionType: q.questionType,
+            content: q.content,
+            choices: q.choices || "",
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+            order: q.order,
+            parentId: q.parentId,
+            link: q.link || "",
+            paragraphNumber: paragraphMap.get(q.parentId) || 1,
+          }))
+          .sort((a, b) => {
+            if (a.paragraphNumber !== b.paragraphNumber) {
+              return a.paragraphNumber - b.paragraphNumber;
+            }
+            return a.order - b.order;
+          });
+
+        setParagraphs(paragraphsData);
+        setQuestions(actualQuestions);
+        setLoading(false);
+
+      } catch (error) {
+        setLoading(false);
+        console.log("Error fetching test data:", error);
+      }
+    };
+
+    fetchTestData();
+  }, [testId]);
 
   // Timer effect
   useEffect(() => {
@@ -276,23 +161,23 @@ function ReadingPage() {
       }
       return a.order - b.order;
     });
-    
-    const index = sortedQuestions.findIndex(q => q.id === questionId);
+
+    const index = sortedQuestions.findIndex((q) => q.id === questionId);
     return index + 1;
   };
 
   // Navigate to specific question and paragraph
   const navigateToQuestion = (questionId: number) => {
-    const question = questions.find(q => q.id === questionId);
+    const question = questions.find((q) => q.id === questionId);
     if (question && question.paragraphNumber !== currentParagraphNumber) {
       setCurrentParagraphNumber(question.paragraphNumber);
     }
-    
+
     // Scroll to the question after a brief delay to ensure the paragraph has rendered
     setTimeout(() => {
       const questionElement = document.getElementById(`question-${questionId}`);
       if (questionElement) {
-        questionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        questionElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }, 100);
   };
@@ -308,7 +193,7 @@ function ReadingPage() {
       })
       .map((question, index) => ({
         ...question,
-        globalNumber: index + 1
+        globalNumber: index + 1,
       }));
   };
 
@@ -553,17 +438,21 @@ function ReadingPage() {
         <div className="container-fluid">
           <div className="row align-items-center">
             <div className="col-md-4">
-              <h4 className="mb-0">{test?.testName}</h4>
+              <span className="badge bg-light text-dark fw-bold fs-20 px-4 py-2 rounded-pill shadow-sm">
+                {test?.testName}
+              </span>
             </div>
             <div className="col-md-4 text-center">
-              <span className="badge bg-light text-dark fw-bold fs-5 px-4 py-2 rounded-pill shadow-sm">
+              <span className="badge bg-light text-dark fw-bold fs-20 px-4 py-2 rounded-pill shadow-sm">
                 Paragraph {currentParagraphNumber} of {totalParagraphs}
               </span>
             </div>
             <div className="col-md-4 text-end">
               <div className="timer d-flex align-items-center justify-content-end">
-                <i className="bi bi-clock me-2 fs-4"></i>
-                <span className="fw-bold fs-2 font-monospace text-white">
+                {/* <span className="fw-bold fs-2 font-monospace text-white">
+                  {formatTime(timeRemaining)}
+                </span> */}
+                <span className="badge bg-light text-dark fw-bold fs-20 px-4 py-2 rounded-pill shadow-sm">
                   {formatTime(timeRemaining)}
                 </span>
               </div>
@@ -572,7 +461,10 @@ function ReadingPage() {
         </div>
       </div>
 
-      <div className="container-fluid" style={{ height: "calc(100vh - 100px)" }}>
+      <div
+        className="container-fluid"
+        style={{ height: "calc(100vh - 100px)" }}
+      >
         <div className="row h-100">
           {/* Reading Passage (Left Side) - Only Current Paragraph */}
           <div className="col-lg-6 col-md-12 h-100">
@@ -621,48 +513,46 @@ function ReadingPage() {
           <div className="col-lg-6 col-md-12 h-100">
             <div className="row h-100">
               {/* Questions Panel (4/6 of right side) */}
-              <div className="col-8">
+              <div className="col-8 h-100">
                 <div
-                  className="questions-panel p-3 h-100 d-flex flex-column"
+                  className="questions-panel p-3 h-100 overflow-auto"
                   key={`paragraph-${currentParagraphNumber}`}
                 >
-                  {/* Fixed Header */}
-                  <div className="mb-3">
+                  {/* Header */}
+                  <div className="d-flex justify-content-between align-items-center mb-3">
                     <h5 className="mb-0">
                       Questions for Paragraph {currentParagraphNumber}
                     </h5>
                   </div>
 
-                  {/* Scrollable Questions Content */}
-                  <div className="all-questions flex-grow-1 overflow-auto pe-2"
-                    key={`questions-${currentParagraphNumber}`}
-                  >
-                    {currentParagraphQuestions.map((question) => (
-                      <div
-                        key={question.id}
-                        id={`question-${question.id}`}
-                        className="question-item mb-4 p-3 border rounded"
-                      >
-                        <div className="question-header mb-3">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <h6 className="mb-0">Question {getGlobalQuestionNumber(question.id)}</h6>
-                            <span className="badge bg-secondary">
-                              {question.questionType}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="question-content">
-                          {renderQuestion(question)}
+                  {/* Questions Content */}
+                  {currentParagraphQuestions.map((question) => (
+                    <div
+                      key={question.id}
+                      id={`question-${question.id}`}
+                      className="question-item mb-4 p-3 border rounded"
+                    >
+                      <div className="question-header mb-3">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h6 className="mb-0">
+                            Question {getGlobalQuestionNumber(question.id)}
+                          </h6>
+                          <span className="badge bg-secondary">
+                            {question.questionType}
+                          </span>
                         </div>
                       </div>
-                    ))}
-                  </div>
+
+                      <div className="question-content">
+                        {renderQuestion(question)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               {/* Question Indicators Panel (2/6 of right side) */}
-              <div className="col-4">
+              <div className="col-4 h-100">
                 <div className="indicators-panel p-3 h-100 bg-light border-start overflow-auto">
                   <div className="mb-3">
                     <h6 className="mb-2 text-center">Progress</h6>
@@ -676,7 +566,10 @@ function ReadingPage() {
                   {/* All Question Indicators Grid */}
                   <div className="mb-4">
                     <p className="small fw-bold mb-2">All Questions:</p>
-                    <div className="d-flex flex-wrap gap-2 overflow-auto" style={{ maxHeight: "200px" }}>
+                    <div
+                      className="d-flex flex-wrap gap-2 overflow-auto"
+                      style={{ maxHeight: "200px" }}
+                    >
                       {getAllQuestionsWithGlobalNumbers().map((question) => (
                         <span
                           key={question.id}
@@ -688,7 +581,7 @@ function ReadingPage() {
                           style={{
                             minWidth: "32px",
                             height: "32px",
-                            cursor: "pointer"
+                            cursor: "pointer",
                           }}
                           onClick={() => navigateToQuestion(question.id)}
                           title={`Question ${question.globalNumber} (Passage ${question.paragraphNumber})`}
@@ -704,19 +597,26 @@ function ReadingPage() {
                     <p className="small fw-bold mb-2">Passages:</p>
                     <div className="d-flex flex-column gap-3">
                       {[1, 2, 3].map((passageNum) => {
-                        const passageQuestions = getAllQuestionsWithGlobalNumbers().filter(q => q.paragraphNumber === passageNum);
+                        const passageQuestions =
+                          getAllQuestionsWithGlobalNumbers().filter(
+                            (q) => q.paragraphNumber === passageNum
+                          );
                         return (
                           <div key={passageNum} className="passage-section">
-                            <div 
+                            <div
                               className={`passage-header p-2 rounded mb-2 ${
-                                passageNum === currentParagraphNumber 
-                                  ? 'bg-primary text-white' 
-                                  : 'bg-light border'
+                                passageNum === currentParagraphNumber
+                                  ? "bg-primary text-white"
+                                  : "bg-light border"
                               }`}
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => setCurrentParagraphNumber(passageNum)}
+                              style={{ cursor: "pointer" }}
+                              onClick={() =>
+                                setCurrentParagraphNumber(passageNum)
+                              }
                             >
-                              <span className="fw-bold">Passage {passageNum}</span>
+                              <span className="fw-bold">
+                                Passage {passageNum}
+                              </span>
                             </div>
                             <div className="d-flex flex-wrap gap-2 ps-2">
                               {passageQuestions.map((question) => (
@@ -730,9 +630,11 @@ function ReadingPage() {
                                   style={{
                                     minWidth: "32px",
                                     height: "32px",
-                                    cursor: "pointer"
+                                    cursor: "pointer",
                                   }}
-                                  onClick={() => navigateToQuestion(question.id)}
+                                  onClick={() =>
+                                    navigateToQuestion(question.id)
+                                  }
                                   title={`Question ${question.globalNumber}`}
                                 >
                                   {question.globalNumber}
