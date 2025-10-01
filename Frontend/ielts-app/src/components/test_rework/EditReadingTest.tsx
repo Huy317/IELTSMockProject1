@@ -17,6 +17,7 @@ import FillInTheBlankModal from "./question_modal/FillInTheBlankModal";
 import SingleChoiceModal from "./question_modal/SingleChoiceModal";
 import MatchingModal from "./question_modal/MatchingModal";
 import QuestionDisplay from "./question_display/QuestionDisplay";
+import MultipleChoiceUpdateModal from "./question_update_modal/MultipleChoiceUpdate";
 
 function EditReadingTest() {
   const { id } = useParams<{ id: string }>();
@@ -249,8 +250,43 @@ function EditReadingTest() {
 
     handleCloseModal();
   };
+  // --------------------------------------------------------------
+  // --- UPDATE MODAL HANDLING --- 
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [currentEditQuestion, setCurrentEditQuestion] = useState<Question | null>(null);
 
+  function handleOpenUpdateModal(question: Question) {
+    setCurrentEditQuestion(question);
+    setIsUpdateModalOpen(true);
+  }
 
+  function handleCloseUpdateModal() {
+    setIsUpdateModalOpen(false);
+    setCurrentEditQuestion(null);
+  }
+
+  function handleUpdateModalSubmit(updatedQuestion: Question) {
+    console.log("Question updated:", updatedQuestion);
+    
+    // Update the question in the questions state
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion as QuestionFullDetail : q))
+    );
+    
+    
+    // update in paragraphsQuestions state
+    // but not needed since questions also updates it
+
+    // setParagraphsQuestions((prevParaQuestions) => {
+    //   return prevParaQuestions.map((paraQs) =>
+    //     paraQs.map((q) => (q.id === updatedQuestion.id ? updatedQuestion as QuestionFullDetail : q))
+    //   );
+    // });
+    //console.log("Updated paragraphsQuestions state:", paragraphsQuestions);
+
+    // Close the modal
+    handleCloseUpdateModal();
+  }
 
   // --------------------------------------------------------------  
   // --- META DATA SAVE HANDLING ---
@@ -281,13 +317,16 @@ function EditReadingTest() {
   }
   // --------------------------------------------------------------
 
+  // --- QUESTIONS DISPLAY HANDLING ---
   // const [onlyQuestions, setOnlyQuestions] = useState<QuestionFullDetail[]>([]);
   const [paragraphsQuestions, setParagraphsQuestions] = useState<QuestionFullDetail[][]>([[], [], []]);
 
   useEffect(() => {
+    //console.log("useEffect triggered for questions update:", questions.length);
+    
     // Filter out only questions (exclude paragraphs)
     const onlyQuestions = questions.filter((q) => q.questionType !== "Paragraph");
-    // setOnlyQuestions(onlyQuestions);
+    //console.log("Only questions:", onlyQuestions);
 
     // Map questions to their respective paragraphs based on parentId
     const paraQuestions: QuestionFullDetail[][] = [[], [], []];
@@ -300,10 +339,28 @@ function EditReadingTest() {
         paraQuestions[paraIndex].push(q);
       }
     });
+    
+    console.log("Setting paragraphsQuestions:", paraQuestions);
     setParagraphsQuestions(paraQuestions);
 
   }, [questions]);
 
+  
+
+  function onDeleteQuestion(deletedQuestionId: number) {
+    // Remove the question from the questions state
+    setQuestions((prevQuestions) =>
+      prevQuestions.filter((q) => q.id !== deletedQuestionId)
+    );
+    // Also remove from paragraphsQuestions state
+    setParagraphsQuestions((prevParaQuestions) => {
+      return prevParaQuestions.map((paraQs) =>
+        paraQs.filter((q) => q.id !== deletedQuestionId)
+      );
+    });
+  }
+
+  // --------------------------------------------------------------
 
 
 
@@ -520,6 +577,8 @@ function EditReadingTest() {
                         question={q}
                         key={q.id}
                         questionNumber={qIndex + 1} 
+                        onEdit={handleOpenUpdateModal}
+                        onDelete={onDeleteQuestion}
                       />
                     ))}
                 </div>
@@ -659,6 +718,17 @@ function EditReadingTest() {
           )}
         </>
       )}
+
+      {/* Update Question Modal */}
+      {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'MultipleChoice' && (
+        <MultipleChoiceUpdateModal
+          isOpen={isUpdateModalOpen}
+          onClose={handleCloseUpdateModal}
+          onSubmit={handleUpdateModalSubmit}
+          question={currentEditQuestion}
+        />
+      )}
+
     </div>
   );
 }

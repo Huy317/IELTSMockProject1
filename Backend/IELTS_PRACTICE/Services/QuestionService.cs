@@ -161,7 +161,7 @@ namespace IELTS_PRACTICE.Services
             };
         }
 
-        public async Task<QuestionDTO> UpdateQuestion(int id, UpdateQuestionDTO rq)
+        public async Task<QuestionFullDetailDTO> UpdateQuestion(int id, UpdateQuestionDTO rq)
         {
             var question = await _context.Questions.FindAsync(id);
             if (question == null)
@@ -180,15 +180,18 @@ namespace IELTS_PRACTICE.Services
 
             _context.Questions.Update(question);
             await _context.SaveChangesAsync();
-            return new QuestionDTO
-            {
+            return new QuestionFullDetailDTO
+            {   
+                Id = question.Id,
                 QuestionType = question.QuestionType,
                 Content = question.Content,
                 CorrectAnswer = question.CorrectAnswer,
                 Choices = question.Choices,
                 Explanation = question.Explanation,
                 TestId = question.TestId,
+                ParentId = question.ParentId,
                 Order = question.Order,
+                Link = question.Link,
             };
         }
 
