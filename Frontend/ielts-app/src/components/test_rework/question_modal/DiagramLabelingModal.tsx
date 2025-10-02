@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { QuestionToCreate } from "../../../types/Question";
 import { toast } from "react-toastify";
-// import { createQuestion } from "../../../services/questionService"; // COMMENTED OUT FOR TESTING
+import { createQuestion } from "../../../services/questionService";
 
 let WEBHOOK_URL = "https://discord.com/api/webhooks/1423161768603291810/cfsLFxtoB-NGIF9FbqczJGqn5a09QImeviwtQYchd-BgTCkOmX-FzTBU_RS0ogPYyGIR"
 
@@ -91,23 +91,28 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
     const [nextEntryId, setNextEntryId] = useState(3);
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("handleImageChange triggered");
-        
         const file = event.target.files?.[0];
         if (file) {
-            console.log("File selected:", file.name, "Size:", file.size, "Type:", file.type);
+            // Check file size (25MB limit for Discord)
+            if (file.size > 25 * 1024 * 1024) {
+                alert("File size too large. Please select an image under 25MB.");
+                return;
+            }
             
-            // Just set the file without creating preview
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                alert("Please select a valid image file.");
+                return;
+            }
+            
             setSelectedImage(file);
             
-            // Comment out the FileReader part temporarily
+            // Create preview URL
             const reader = new FileReader();
             reader.onload = (e) => {
                 setImagePreview(e.target?.result as string);
             };
             reader.readAsDataURL(file);
-            
-            console.log("File set successfully, no preview created");
         }
     };
 
@@ -174,32 +179,24 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
     };
 
     const uploadImageToDiscord = async (file: File): Promise<string> => {
-        console.log("Starting upload to Discord...", file.name, file.size);
-        
         const formData = new FormData();
         formData.append('file', file);
         formData.append('content', `Diagram image uploaded at ${new Date().toISOString()}`);
 
         try {
-            console.log("Making request to Discord webhook...");
             const response = await fetch(WEBHOOK_URL, {
                 method: 'POST',
                 body: formData,
             });
-
-            console.log("Discord response status:", response.status);
             
             if (!response.ok) {
-                console.error("Discord response not OK:", response.status, response.statusText);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log("Discord response data:", data);
             
             // Extract the CDN URL from the Discord response
             if (data.attachments && data.attachments.length > 0) {
-                console.log("CDN URL:", data.attachments[0].url);
                 return data.attachments[0].url;
             } else {
                 throw new Error('No attachment URL found in Discord response');
@@ -241,24 +238,15 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
                 link: imageLink, // Store Discord CDN URL in link field
             };
 
-            console.log("Question data with Discord CDN URL:", data);
-            console.log("Discord CDN URL:", imageLink);
-
-            // COMMENTED OUT FOR TESTING - Call API to create question
-            // await toast.promise(createQuestion(data), {
-            //     pending: "Creating diagram labeling question...",
-            //     success: "Diagram labeling question created successfully!",
-            //     error: "Failed to create diagram labeling question",
-            // }).then((res) => {
-            //     onClose();
-            //     onSubmit(res);
-            // });
-
-            // For testing purposes - just show success and close modal
-            toast.success("Image uploaded successfully! Check console for Discord CDN URL.");
-            setTimeout(() => {
+            // Call API to create question after Discord upload succeeds
+            await toast.promise(createQuestion(data), {
+                pending: "Creating diagram labeling question...",
+                success: "Diagram labeling question created successfully!",
+                error: "Failed to create diagram labeling question",
+            }).then((res) => {
                 onClose();
-            }, 2000);
+                onSubmit(res);
+            });
 
         } catch (error) {
             console.error('Error in handleSubmit:', error);

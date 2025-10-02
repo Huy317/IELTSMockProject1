@@ -17,7 +17,8 @@ function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActio
         MultipleChoice: "Multiple Choice",
         SingleChoice: "Single Choice",
         Matching: "Matching",
-        Paragraph: "Paragraph"
+        Paragraph: "Paragraph",
+        DiagramLabeling : "Diagram Labeling",
     };
 
     // Get question type display label
@@ -46,6 +47,20 @@ function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActio
             // If not JSON, try splitting by common delimiters
             return choices.split(/[,|;]/).map(choice => choice.trim()).filter(Boolean);
         }
+    };
+
+    // Check if a URL is an image
+    const isImageUrl = (url: string): boolean => {
+        if (!url) return false;
+        
+        // Check for common image extensions
+        const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp|svg)(\?.*)?$/i;
+        if (imageExtensions.test(url)) return true;
+        
+        // Check for Discord CDN URLs (they're always images if they contain attachments)
+        if (url.includes('cdn.discordapp.com') && url.includes('attachments')) return true;
+        
+        return false;
     };
 
     // Truncate long text for display
@@ -107,6 +122,45 @@ function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActio
                                     {truncateText(question.content, 150)}
                                 </p>
 
+                                {/* Image Preview (if link is an image) */}
+                                {question.link && isImageUrl(question.link) && (
+                                    <div className="mb-3">
+                                        <small className="text-muted fw-semibold d-block mb-2">
+                                            <i className="bi bi-image me-1"></i>
+                                            Diagram Image:
+                                        </small>
+                                        <div className="border rounded p-2 bg-light">
+                                            <img
+                                                src={question.link}
+                                                alt="Question diagram"
+                                                className="img-fluid rounded"
+                                                style={{ 
+                                                    maxHeight: "200px", 
+                                                    maxWidth: "100%",
+                                                    objectFit: "contain"
+                                                }}
+                                                onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    target.style.display = 'none';
+                                                    const parent = target.parentElement;
+                                                    if (parent) {
+                                                        parent.innerHTML = `
+                                                            <div class="text-center text-muted p-3">
+                                                                <i class="bi bi-image-fill fs-2 d-block mb-2"></i>
+                                                                <small>Failed to load image</small>
+                                                                <br>
+                                                                <a href="${question.link}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                                                    <small>View Original Link</small>
+                                                                </a>
+                                                            </div>
+                                                        `;
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Choices (if available) */}
                                 {choices.length > 0 && (
                                     <div className="mb-2">
@@ -139,7 +193,7 @@ function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActio
                                     </div>
                                 )}
                             </div>
-
+                            
                             {/* Question Details */}
                             <div className="col-lg-4">
                                 <div className="text-end text-lg-start">
