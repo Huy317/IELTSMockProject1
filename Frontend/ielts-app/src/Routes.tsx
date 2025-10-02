@@ -32,6 +32,8 @@ import { AdminTypeSkill } from "./pages/AdminTypeSkill";
 
 import EditReadingTest from "./components/test_rework/EditReadingTest";
 
+import NewListeningTestPage from "./components/test_rework/test_pages/NewListeningTestPage";
+
 
 const router = createBrowserRouter([
   {
@@ -183,6 +185,10 @@ const router = createBrowserRouter([
   {
     path: "unauthorized",
     element: <div>Unauthorized Access</div>,
+  },
+  {
+    path: "new-listening-test",
+    element: <NewListeningTestPage />,
   },
 
 ]);

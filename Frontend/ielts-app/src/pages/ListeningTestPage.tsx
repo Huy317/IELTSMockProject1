@@ -11,7 +11,7 @@ function ListeningTestPage() {
           <QuestionReading />
         </div>
       </div>
-      <Pagination/>
+      {/* <Pagination/> */}
     </div>
   );
 }

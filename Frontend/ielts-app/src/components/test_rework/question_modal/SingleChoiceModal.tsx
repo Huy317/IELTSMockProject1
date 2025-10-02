@@ -22,6 +22,70 @@ interface SingleChoiceModalProps {
   otherData?: OtherData;
 }
 
+// ChoiceItem component - MUST be defined outside to prevent re-renders and focus loss
+interface ChoiceItemProps {
+  choice: Choice;
+  index: number;
+  onTextChange: (id: number, text: string) => void;
+  onCorrectChange: (id: number) => void;
+  onDelete: (id: number) => void;
+  canDelete: boolean;
+}
+
+function ChoiceItem({
+  choice,
+  index,
+  onTextChange,
+  onCorrectChange,
+  onDelete,
+  canDelete,
+}: ChoiceItemProps) {
+  return (
+    <div className="border rounded p-3 mb-3 bg-light">
+      <div className="row align-items-center">
+        <div className="col-9">
+          <div className="input-group mb-2">
+            <div className="input-group-text me-2">
+              <input
+                className="form-check-input mt-0"
+                type="radio"
+                id={`correct-${choice.id}`}
+                name="correctChoice"
+                checked={choice.isCorrect}
+                onChange={() => onCorrectChange(choice.id)}
+                title="Mark as correct answer"
+                style={{
+                  cursor: "pointer",
+                  width: "20px",
+                  height: "20px",
+                }}
+              />
+            </div>
+            <input
+              type="text"
+              className="form-control"
+              value={choice.text}
+              onChange={(e) => onTextChange(choice.id, e.target.value)}
+              placeholder={`Enter choice ${index + 1}`}
+            />
+          </div>
+        </div>
+        <div className="col-3 text-center">
+          <button
+            type="button"
+            className="btn btn-outline-danger btn-md rounded-3"
+            onClick={() => onDelete(choice.id)}
+            disabled={!canDelete}
+            title="Delete choice"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SingleChoiceModal({
   isOpen,
   onClose,
@@ -143,55 +207,6 @@ function SingleChoiceModal({
 
   if (!isOpen) return null;
 
-  function ChoiceItem({ choice, index }: { choice: Choice; index: number }) {
-    return (
-      <div key={choice.id} className="border rounded p-3 mb-3 bg-light">
-        <div className="row align-items-center">
-          <div className="col-9">
-            <div className="input-group mb-2">
-              <div className="input-group-text me-2">
-                <input
-                  className="form-check-input mt-0"
-                  type="radio"
-                  id={`correct-${choice.id}`}
-                  name="correctChoice"
-                  checked={choice.isCorrect}
-                  onChange={() => handleChoiceCorrectChange(choice.id)}
-                  title="Mark as correct answer"
-                  style={{
-                    cursor: "pointer",
-                    width: "20px",
-                    height: "20px",
-                  }}
-                />
-              </div>
-              <input
-                type="text"
-                className="form-control"
-                value={choice.text}
-                onChange={(e) =>
-                  handleChoiceTextChange(choice.id, e.target.value)
-                }
-                placeholder={`Enter choice ${index + 1}`}
-              />
-            </div>
-          </div>
-          <div className="col-3 text-center">
-            <button
-              type="button"
-              className="btn btn-outline-danger btn-md rounded-3"
-              onClick={() => handleDeleteChoice(choice.id)}
-              disabled={choices.length <= 2}
-              title="Delete choice"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div
       className="modal show d-block"
@@ -234,7 +249,15 @@ function SingleChoiceModal({
 
               {/* Render all choices */}
               {choices.map((choice, index) => (
-                <ChoiceItem key={choice.id} choice={choice} index={index} />
+                <ChoiceItem
+                  key={choice.id}
+                  choice={choice}
+                  index={index}
+                  onTextChange={handleChoiceTextChange}
+                  onCorrectChange={handleChoiceCorrectChange}
+                  onDelete={handleDeleteChoice}
+                  canDelete={choices.length > 2}
+                />
               ))}
 
               {/* Add Choice Button */}
