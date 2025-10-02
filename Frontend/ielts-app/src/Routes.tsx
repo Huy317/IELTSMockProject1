@@ -33,6 +33,7 @@ import { AdminTypeSkill } from "./pages/AdminTypeSkill";
 import EditReadingTest from "./components/test_rework/EditReadingTest";
 
 import NewListeningTestPage from "./components/test_rework/test_pages/NewListeningTestPage";
+import ReadingPage from "./components/test_rework/test_pages/ReadingPage";
 
 
 const router = createBrowserRouter([
@@ -190,7 +191,10 @@ const router = createBrowserRouter([
     path: "new-listening-test",
     element: <NewListeningTestPage />,
   },
-
+  {
+    path: "reading-test/:id",
+    element: <ReadingPage/>
+  }
 ]);
 
 export default function Routes() {
