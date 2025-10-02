@@ -18,6 +18,9 @@ import SingleChoiceModal from "./question_modal/SingleChoiceModal";
 import MatchingModal from "./question_modal/MatchingModal";
 import QuestionDisplay from "./question_display/QuestionDisplay";
 import MultipleChoiceUpdateModal from "./question_update_modal/MultipleChoiceUpdate";
+import FillInTheBlankUpdateModal from "./question_update_modal/FillInTheBlankUpdate";
+import MatchingUpdate from "./question_update_modal/MatchingUpdate";
+import SingleChoiceUpdateModal from "./question_update_modal/SingleChoiceUpdate";
 
 function EditReadingTest() {
   const { id } = useParams<{ id: string }>();
@@ -660,7 +663,7 @@ function EditReadingTest() {
                 onSubmit={handleModalSubmit}
                 otherData={{ parentId: 0, testId: test ? test.id : 0, order: 0 }}
             /> */}
-      {/* Conditional Modal Rendering */}
+      {/* Conditional Modal Rendering. USE FOR OPEN CREATE QUESTION MODALS */}
       {isModalOpen && currentParagraphIndex !== null && (
         <>
           {selectedQuestionTypes[currentParagraphIndex] ===
@@ -719,7 +722,7 @@ function EditReadingTest() {
         </>
       )}
 
-      {/* Update Question Modal */}
+      {/* Update Question Modal. USE FOR OPEN UPDATE QUESTION MODALS */}
       {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'MultipleChoice' && (
         <MultipleChoiceUpdateModal
           isOpen={isUpdateModalOpen}
@@ -729,6 +732,32 @@ function EditReadingTest() {
         />
       )}
 
+      {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'FormCompletion' && (
+        <FillInTheBlankUpdateModal
+          isOpen={isUpdateModalOpen}
+          onClose={handleCloseUpdateModal}
+          onSubmit={handleUpdateModalSubmit}
+          question={currentEditQuestion}
+        />
+      )}
+
+      {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'Matching' && (
+        <MatchingUpdate
+          isOpen={isUpdateModalOpen}
+          onClose={handleCloseUpdateModal}
+          onSubmit={handleUpdateModalSubmit}
+          question={currentEditQuestion}
+        />
+      )}
+
+      {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'SingleChoice' && (
+        <SingleChoiceUpdateModal
+          isOpen={isUpdateModalOpen}
+          onClose={handleCloseUpdateModal}
+          onSubmit={handleUpdateModalSubmit}
+          question={currentEditQuestion}
+        />
+      )}
     </div>
   );
 }
