@@ -15,7 +15,7 @@ function TestDetail() {
     const handleStartTest = () => {
         console.log("Start Test clicked", { id, test });
         // maybe other url, doTest/id or smth
-        navigate(`/test/${id}/start`);
+        navigate(`/reading-test/${id}`);
     };
 
     const formatDate = (isoLike: string | Date | undefined): string => {
