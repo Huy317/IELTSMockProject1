@@ -22,6 +22,7 @@ import FillInTheBlankUpdateModal from "./question_update_modal/FillInTheBlankUpd
 import MatchingUpdate from "./question_update_modal/MatchingUpdate";
 import SingleChoiceUpdateModal from "./question_update_modal/SingleChoiceUpdate";
 import DiagramLabelingModal from "./question_modal/DiagramLabelingModal";
+import DiagramLabelingUpdate from "./question_update_modal/DiagramLabelingUpdate";
 
 function EditReadingTest() {
   const { id } = useParams<{ id: string }>();
@@ -769,6 +770,15 @@ function EditReadingTest() {
 
       {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'SingleChoice' && (
         <SingleChoiceUpdateModal
+          isOpen={isUpdateModalOpen}
+          onClose={handleCloseUpdateModal}
+          onSubmit={handleUpdateModalSubmit}
+          question={currentEditQuestion}
+        />
+      )}
+
+      {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'DiagramLabeling' && (
+        <DiagramLabelingUpdate
           isOpen={isUpdateModalOpen}
           onClose={handleCloseUpdateModal}
           onSubmit={handleUpdateModalSubmit}
