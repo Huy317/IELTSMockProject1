@@ -21,6 +21,7 @@ import MultipleChoiceUpdateModal from "./question_update_modal/MultipleChoiceUpd
 import FillInTheBlankUpdateModal from "./question_update_modal/FillInTheBlankUpdate";
 import MatchingUpdate from "./question_update_modal/MatchingUpdate";
 import SingleChoiceUpdateModal from "./question_update_modal/SingleChoiceUpdate";
+import DiagramLabelingModal from "./question_modal/DiagramLabelingModal";
 
 function EditReadingTest() {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +31,8 @@ function EditReadingTest() {
     FillInTheBlank: "Fill In The Blank",
     MultipleChoice: "Multiple Choice",
     SingleChoice: "Single Choice",
-    Matching: "Matching"
+    Matching: "Matching",
+    DiagramLabeling: "Diagram Labeling",
   };
 
 
@@ -719,6 +721,21 @@ function EditReadingTest() {
               }}
             />
           )}
+          
+          {selectedQuestionTypes[currentParagraphIndex] === "DiagramLabeling" && (
+            <DiagramLabelingModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onSubmit={handleModalSubmit}
+              otherData={{
+                parentId: currentParentId,
+                testId: test ? test.id : 0,
+                order: currentOrder,
+              }}
+            />
+          )}
+        
+
         </>
       )}
 
