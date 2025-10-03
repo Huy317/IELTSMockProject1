@@ -83,7 +83,11 @@ namespace IELTS_PRACTICE.Services
             };
 
             _context.Tests.Add(newTest);
+       
             _context.SaveChanges();
+
+            var typeName = await _context.TypeSkills.Where(x => x.Id == newTest.TypeId).Select(x => x.TypeName).FirstOrDefaultAsync();
+
             return new TestDTO
             {
                 Id = newTest.Id,
@@ -92,6 +96,7 @@ namespace IELTS_PRACTICE.Services
                 CreatedAt = newTest.CreatedAt,
                 Resource = newTest.Resource,
                 IsActive = newTest.IsActive,
+                TypeName = typeName,
             };
         }
 

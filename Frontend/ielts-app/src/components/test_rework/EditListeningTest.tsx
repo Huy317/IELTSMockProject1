@@ -15,11 +15,11 @@ import {
 import QuestionDisplay from "./question_display/QuestionDisplay";
 import ModalManager from "./ModalManager";
 
-interface EditReadingTestProps {
+interface EditListeningTestProps {
   testPrefetch: TestWithAuthorName;
 }
 
-function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
+function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
   const { id } = useParams<{ id: string }>();
 
   // Question types mapping table
@@ -30,7 +30,6 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
     Matching: "Matching",
     DiagramLabeling: "Diagram Labeling",
   };
-
 
   // --------------------------------------------------------------
   // --- OTHER DATA HANDLER ---
@@ -70,8 +69,6 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
   }
   // --------------------------------------------------------------
 
-
-
   // --- TEST METADATA HANDLING ---
   const [test, setTest] = useState<TestWithAuthorName | null>(testPrefetch);
   const [changed, setChanged] = useState(false);
@@ -85,7 +82,7 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
     const loadPromise = getAllQuestionsAndParagraphsWithTestId(parseInt(id)).then((data) => {
 
       setQuestions(data);
-      mapParagraphs(data);
+      mapAudioSections(data);
       console.log("Fetched questions:", data);
       return data;
 
@@ -106,55 +103,55 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
   }, []);
   // --------------------------------------------------------------
 
+  // --- AUDIO SECTIONS HANDLING ---
+  // Handling state for audio transcript texts and question types
+  const [audioTranscripts, setAudioTranscripts] = useState<string[]>(["", "", "", ""]);
+  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(["MultipleChoice", "MultipleChoice", "MultipleChoice", "MultipleChoice"]);
+  const [audioTranscriptChange, setAudioTranscriptChange] = useState<boolean[]>([false, false, false, false]);
+  const [audioFiles, setAudioFiles] = useState<File[]>([]);
 
-  // --- PARAGRAPHS HANDLING ---
-  // Handling state for paragraph texts and question types
-  const [paragraphTexts, setParagraphTexts] = useState<string[]>(["", "", ""]);
-  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(["MultipleChoice", "MultipleChoice", "MultipleChoice"]);
-  const [paragraphChange, setParagraphChange] = useState<boolean[]>([false, false, false]);
-
-  const handleParagraphChange = (paragraphIndex: number, value: string) => {
-    const newParagraphTexts = [...paragraphTexts];
-    newParagraphTexts[paragraphIndex] = value;
-    setParagraphChange((prev) => {
+  const handleAudioTranscriptChange = (sectionIndex: number, value: string) => {
+    const newAudioTranscripts = [...audioTranscripts];
+    newAudioTranscripts[sectionIndex] = value;
+    setAudioTranscriptChange((prev) => {
       const newChange = [...prev];
-      newChange[paragraphIndex] = true;
+      newChange[sectionIndex] = true;
       return newChange;
     });
-    setParagraphTexts(newParagraphTexts);
+    setAudioTranscripts(newAudioTranscripts);
   };
 
-  const handleSaveParagraph = (paragraphIndex: number) => {
-    if (!paragraphChange[paragraphIndex]) {
-      toast.info("No changes to save for this paragraph.");
+  const handleSaveAudioSection = (sectionIndex: number) => {
+    if (!audioTranscriptChange[sectionIndex]) {
+      toast.info("No changes to save for this audio section.");
       return;
     }
 
-    const paragraphToUpdate = questions.find(
+    const audioSectionToUpdate = questions.find(
       (q) =>
-        q.questionType === "Paragraph" &&
+        q.questionType === "Audio" &&
         q.parentId === 0 &&
-        q.order - 1 === paragraphIndex
+        q.order - 1 === sectionIndex
     );
 
-    if (!paragraphToUpdate) {
-      toast.error("Paragraph not found.");
+    if (!audioSectionToUpdate) {
+      toast.error("Audio section not found.");
       return;
     }
 
-    const { id, ...rest } = paragraphToUpdate;
+    const { id, ...rest } = audioSectionToUpdate;
 
     // Use the updated content from the textarea, not the original content
-    const updatedParagraph: QuestionToUpdate = {
+    const updatedAudioSection: QuestionToUpdate = {
       ...rest, // Spread existing properties
-      content: paragraphTexts[paragraphIndex],
+      content: audioTranscripts[sectionIndex],
     };
-
-    const updatePromise = updateQuestion(id, updatedParagraph).then((data) => {
+    
+    const updatePromise = updateQuestion(id, updatedAudioSection).then((data) => {
       // Reset change flag
-      setParagraphChange((prev) => {
+      setAudioTranscriptChange((prev) => {
         const newChange = [...prev];
-        newChange[paragraphIndex] = false;
+        newChange[sectionIndex] = false;
         return newChange;
       });
 
@@ -162,76 +159,89 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
     });
 
     toast.promise(updatePromise, {
-      pending: "Saving paragraph...",
-      success: "Paragraph saved successfully.",
-      error: "Failed to save paragraph.",
+      pending: "Saving audio section...",
+      success: "Audio section saved successfully.",
+      error: "Failed to save audio section.",
+    });
+  };
+
+  // Audio file upload placeholder function
+  const handleAudioUpload = (sectionIndex: number, file: File | null) => {
+    if (!file) return;
+    
+    console.log(`Audio file selected for section ${sectionIndex + 1}:`, file.name);
+    
+    // Placeholder implementation - to be implemented later
+    toast.info(`Audio file "${file.name}" selected for Section ${sectionIndex + 1}. Upload functionality to be implemented.`);
+    
+    // For now, just store the file reference
+    setAudioFiles((prev) => {
+      const newFiles = [...prev];
+      newFiles[sectionIndex] = file;
+      return newFiles;
     });
   };
 
   // --------------------------------------------------------------
   // --- QUESTIONS MODAL HANDLING ---
   // Handle question type selection changes
-  const handleQuestionTypeChange = (paragraphIndex: number, value: string) => {
+  const handleQuestionTypeChange = (sectionIndex: number, value: string) => {
     const newSelectedQuestionTypes = [...selectedQuestionTypes];
-    newSelectedQuestionTypes[paragraphIndex] = value;
+    newSelectedQuestionTypes[sectionIndex] = value;
     setSelectedQuestionTypes(newSelectedQuestionTypes);
   };
 
   // Placeholder function to handle add question button clicks
-  const handleAddQuestion = (paragraphIndex: number, _questionType: string) => {
-    handleOpenModal(paragraphIndex);
+  const handleAddQuestion = (sectionIndex: number, _questionType: string) => {
+    handleOpenModal(sectionIndex);
   };
 
   // --------------------------------------------------------------
-
-
 
   // ----------------------
   // --- MODAL HANDLING ---
   // ----------------------
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentParagraphIndex, setCurrentParagraphIndex] = useState<number | null>(null);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState<number | null>(null);
   // Modal handler functions
-  const handleOpenModal = (paragraphIndex: number) => {
-    setCurrentParagraphIndex(paragraphIndex);
+  const handleOpenModal = (sectionIndex: number) => {
+    setCurrentSectionIndex(sectionIndex);
 
-    let selectedParagraph = questions.find(
-      (q) => q.questionType === "Paragraph" && q.parentId === 0 && q.order - 1 === paragraphIndex
+    let selectedAudioSection = questions.find(
+      (q) => q.questionType === "Audio" && q.parentId === 0 && q.order - 1 === sectionIndex
     );
 
-    //console.log("Selected paragraph for modal:", selectedParagraph);
-    if (selectedParagraph) {
-      setCurrentParentId(selectedParagraph.id);
-      setCurrentOrder(getNextOrder(selectedParagraph.id));
+    //console.log("Selected audio section for modal:", selectedAudioSection);
+    if (selectedAudioSection) {
+      setCurrentParentId(selectedAudioSection.id);
+      setCurrentOrder(getNextOrder(selectedAudioSection.id));
     }
-
 
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setCurrentParagraphIndex(null);
+    setCurrentSectionIndex(null);
   };
 
   // This is called after question modal submit successfully
   const handleModalSubmit = (data: Question) => {
-    console.log("Question data submitted:", data, "for paragraph:", currentParagraphIndex);
-    let paragraphId = data.parentId;
-    if (!paragraphId) return;
+    console.log("Question data submitted:", data, "for section:", currentSectionIndex);
+    let sectionId = data.parentId;
+    if (!sectionId) return;
 
     // Increment the order counter for this parentId
-    incrementOrderCounter(paragraphId);
+    incrementOrderCounter(sectionId);
 
     // Add the new question to the questions state
     setQuestions((prevQuestions) => [...prevQuestions, data as QuestionFullDetail]);
 
-    // Also add to paragraphsQuestions state
-    if (currentParagraphIndex === null) return;
-    paragraphsQuestions[currentParagraphIndex || 0].push(data as QuestionFullDetail);
-    setParagraphsQuestions([...paragraphsQuestions]);
-
+    // Also add to sectionsQuestions state
+    if (currentSectionIndex === null) return;
+    sectionsQuestions[currentSectionIndex || 0].push(data as QuestionFullDetail);
+    setSectionsQuestions([...sectionsQuestions]);
 
     handleCloseModal();
   };
@@ -257,17 +267,6 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
     setQuestions((prevQuestions) =>
       prevQuestions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion as QuestionFullDetail : q))
     );
-    
-    
-    // update in paragraphsQuestions state
-    // but not needed since questions also updates it
-
-    // setParagraphsQuestions((prevParaQuestions) => {
-    //   return prevParaQuestions.map((paraQs) =>
-    //     paraQs.map((q) => (q.id === updatedQuestion.id ? updatedQuestion as QuestionFullDetail : q))
-    //   );
-    // });
-    //console.log("Updated paragraphsQuestions state:", paragraphsQuestions);
 
     // Close the modal
     handleCloseUpdateModal();
@@ -303,78 +302,68 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
   // --------------------------------------------------------------
 
   // --- QUESTIONS DISPLAY HANDLING ---
-  // const [onlyQuestions, setOnlyQuestions] = useState<QuestionFullDetail[]>([]);
-  const [paragraphsQuestions, setParagraphsQuestions] = useState<QuestionFullDetail[][]>([[], [], []]);
+  const [sectionsQuestions, setSectionsQuestions] = useState<QuestionFullDetail[][]>([[], [], [], []]);
 
   useEffect(() => {
     //console.log("useEffect triggered for questions update:", questions.length);
     
-    // Filter out only questions (exclude paragraphs)
-    const onlyQuestions = questions.filter((q) => q.questionType !== "Paragraph");
+    // Filter out only questions (exclude audio sections)
+    const onlyQuestions = questions.filter((q) => q.questionType !== "Audio");
     //console.log("Only questions:", onlyQuestions);
 
-    // Map questions to their respective paragraphs based on parentId
-    const paraQuestions: QuestionFullDetail[][] = [[], [], []];
+    // Map questions to their respective sections based on parentId
+    const sectionQuestions: QuestionFullDetail[][] = [[], [], [], []];
     onlyQuestions.forEach((q) => {
-      // Find the index of the paragraph this question belongs to
-      const paraIndex = questions.findIndex(
-        (p) => p.questionType === "Paragraph" && p.id === q.parentId
+      // Find the index of the audio section this question belongs to
+      const sectionIndex = questions.findIndex(
+        (p) => p.questionType === "Audio" && p.id === q.parentId
       );
-      if (paraIndex !== -1 && paraIndex < 3) {
-        paraQuestions[paraIndex].push(q);
+      if (sectionIndex !== -1 && sectionIndex < 4) {
+        sectionQuestions[sectionIndex].push(q);
       }
     });
     
-    console.log("Setting paragraphsQuestions:", paraQuestions);
-    setParagraphsQuestions(paraQuestions);
+    console.log("Setting sectionsQuestions:", sectionQuestions);
+    setSectionsQuestions(sectionQuestions);
 
   }, [questions]);
-
-  
 
   function onDeleteQuestion(deletedQuestionId: number) {
     // Remove the question from the questions state
     setQuestions((prevQuestions) =>
       prevQuestions.filter((q) => q.id !== deletedQuestionId)
     );
-    // Also remove from paragraphsQuestions state
-    setParagraphsQuestions((prevParaQuestions) => {
-      return prevParaQuestions.map((paraQs) =>
-        paraQs.filter((q) => q.id !== deletedQuestionId)
+    // Also remove from sectionsQuestions state
+    setSectionsQuestions((prevSectionQuestions) => {
+      return prevSectionQuestions.map((sectionQs) =>
+        sectionQs.filter((q) => q.id !== deletedQuestionId)
       );
     });
   }
 
   // --------------------------------------------------------------
 
-
-
-
   // --------------------------------------------------------------
   // --- HELPER FUNCTIONS ---
 
-  function mapParagraphs(questionsData: QuestionFullDetail[] = questions) {
-    // go through questions, find .questionType === 'Paragraph', order 100,200,300 / 100 to get index of paragraphs
-    let paragraphs = questionsData.filter(
-      (q) => q.questionType === "Paragraph" && q.parentId === 0
+  function mapAudioSections(questionsData: QuestionFullDetail[] = questions) {
+    let audioSections = questionsData.filter(
+      (q) => q.questionType === "Audio" && q.parentId === 0
     );
 
-    // update the paragraphs into paragraphTexts state
-    // go through paragraphs, set paragraphText[0] to paragraphs order 100, paragraphText[1] to order 200, paragraphText[2] to order 300
-    let newParagraphTexts = [...paragraphTexts];
-    paragraphs.forEach((p) => {
-      let index = p.order - 1;
-      if (index >= 0 && index < newParagraphTexts.length) {
-        newParagraphTexts[index] = p.content || "";
+    // update the audio sections into audioTranscripts state
+    // go through sections, set audioTranscripts[0] to sections order 100, audioTranscripts[1] to order 200, etc.
+    let newAudioTranscripts = [...audioTranscripts];
+    audioSections.forEach((section) => {
+      let index = section.order - 1;
+      if (index >= 0 && index < newAudioTranscripts.length) {
+        newAudioTranscripts[index] = section.content || "";
       }
     });
-    setParagraphTexts(newParagraphTexts);
+    setAudioTranscripts(newAudioTranscripts);
 
-    return paragraphs;
+    return audioSections;
   }
-
-
-
 
   return (
     <div className="container py-4">
@@ -383,8 +372,8 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
           {/* Page Header */}
           <div className="mb-4">
             <h2 className="mb-0">
-              <i className="bi bi-file-text me-2"></i>
-              Create IELTS Reading Test
+              <i className="bi bi-headphones me-2"></i>
+              Create IELTS Listening Test
             </h2>
           </div>
 
@@ -513,61 +502,88 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
             </div>
           </div>
 
-          {/* Paragraphs and Questions Section */}
-          {/* Map and create 3 paragraphs */}
-          {[1, 2, 3].map((paragraphNumber, index) => (
-            <div key={paragraphNumber} className="card mb-4">
+          {/* Audio Sections and Questions Section */}
+          {/* Map and create 4 audio sections */}
+          {[1, 2, 3, 4].map((sectionNumber, index) => (
+            <div key={sectionNumber} className="card mb-4">
               <div className="card-header bg-light">
                 <h5 className="mb-0">
-                  <i className="bi bi-file-earmark-text me-2"></i>
-                  Paragraph {paragraphNumber}
+                  <i className="bi bi-volume-up me-2"></i>
+                  Section {sectionNumber}
                 </h5>
               </div>
               <div className="card-body">
-                {/* Paragraph Text Area */}
+                {/* Audio File Upload */}
                 <div className="mb-4">
                   <label
-                    htmlFor={`paragraph${paragraphNumber}`}
+                    htmlFor={`audioFile${sectionNumber}`}
                     className="form-label fw-bold"
                   >
-                    Paragraph Content
+                    <i className="bi bi-file-earmark-music me-1"></i>
+                    Audio File
+                  </label>
+                  <input
+                    className="form-control"
+                    type="file"
+                    id={`audioFile${sectionNumber}`}
+                    accept="audio/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      handleAudioUpload(index, file);
+                    }}
+                  />
+                  {audioFiles[index] && (
+                    <div className="mt-2">
+                      <small className="text-muted">
+                        <i className="bi bi-check-circle text-success me-1"></i>
+                        Selected: {audioFiles[index].name}
+                      </small>
+                    </div>
+                  )}
+                </div>
+
+                {/* Audio Transcript Text Area */}
+                <div className="mb-4">
+                  <label
+                    htmlFor={`audioTranscript${sectionNumber}`}
+                    className="form-label fw-bold"
+                  >
+                    <i className="bi bi-file-text me-1"></i>
+                    Audio Transcript
                   </label>
                   <textarea
                     className="form-control"
-                    id={`paragraph${paragraphNumber}`}
+                    id={`audioTranscript${sectionNumber}`}
                     rows={8}
-                    placeholder={`Enter the content for paragraph ${paragraphNumber}...`}
-                    value={paragraphTexts[index]}
+                    placeholder={`Enter the transcript for section ${sectionNumber}...`}
+                    value={audioTranscripts[index]}
                     onChange={(e) =>
-                      handleParagraphChange(index, e.target.value)
+                      handleAudioTranscriptChange(index, e.target.value)
                     }
                   ></textarea>
                   <div className="mt-2 d-flex justify-content-end">
                     <button
                       className="btn btn-outline-primary"
-                      onClick={() => handleSaveParagraph(index)}
+                      onClick={() => handleSaveAudioSection(index)}
                     >
                       <i className="bi bi-save me-1"></i>
-                      Save Paragraph
+                      Save Section
                     </button>
                   </div>
                 </div>
 
-                  {/* Question Display List */}
+                {/* Question Display List */}
                 <div className="border-top pt-3">
-                    {/* <QuestionDisplay question={questions[5]} /> */}
-                    {/* map paragraphsQuestions[index] to QuestionDisplay */}
-                    {paragraphsQuestions[index].map((q, qIndex) => (
-                      <QuestionDisplay
-                        question={q}
-                        key={q.id}
-                        questionNumber={qIndex + 1} 
-                        onEdit={handleOpenUpdateModal}
-                        onDelete={onDeleteQuestion}
-                      />
-                    ))}
+                  {sectionsQuestions[index].map((q, qIndex) => (
+                    <QuestionDisplay
+                      question={q}
+                      key={q.id}
+                      questionNumber={qIndex + 1} 
+                      onEdit={handleOpenUpdateModal}
+                      onDelete={onDeleteQuestion}
+                    />
+                  ))}
                 </div>
-
 
                 {/* Add Question Section */}
                 <div className="border-top pt-3">
@@ -578,14 +594,14 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
                   <div className="row align-items-end">
                     <div className="col-md-6">
                       <label
-                        htmlFor={`questionType${paragraphNumber}`}
+                        htmlFor={`questionType${sectionNumber}`}
                         className="form-label"
                       >
                         Question Type
                       </label>
                       <select
                         className="form-select"
-                        id={`questionType${paragraphNumber}`}
+                        id={`questionType${sectionNumber}`}
                         value={selectedQuestionTypes[index]}
                         onChange={(e) =>
                           handleQuestionTypeChange(index, e.target.value)
@@ -638,11 +654,10 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
         </div>
       </div>
 
-
       {/* Modal Manager handles both create and update modals */}
       <ModalManager
         isModalOpen={isModalOpen}
-        currentIndex={currentParagraphIndex}
+        currentIndex={currentSectionIndex}
         selectedQuestionTypes={selectedQuestionTypes}
         handleCloseModal={handleCloseModal}
         handleModalSubmit={handleModalSubmit}
@@ -660,4 +675,4 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
   );
 }
 
-export default EditReadingTest;
+export default EditListeningTest;

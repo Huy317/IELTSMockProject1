@@ -29,11 +29,9 @@ import Faq from "./pages/Faq";
 import TestDetail from "./pages/TestDetail";
 
 import { AdminTypeSkill } from "./pages/AdminTypeSkill";
-
-import EditReadingTest from "./components/test_rework/EditReadingTest";
-
 import NewListeningTestPage from "./components/test_rework/test_pages/NewListeningTestPage";
 import ReadingPage from "./components/test_rework/test_pages/ReadingPage";
+import TestEditChoser from "./components/test_rework/TestEditChoser";
 
 
 const router = createBrowserRouter([
@@ -87,7 +85,7 @@ const router = createBrowserRouter([
       {
         path: "edit-test/:id",
         element: <ProtectedRoute requiredRole="Admin">
-          <EditReadingTest />
+          <TestEditChoser />
         </ProtectedRoute>,
       },
       {
