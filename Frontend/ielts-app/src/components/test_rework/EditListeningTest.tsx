@@ -19,6 +19,8 @@ interface EditListeningTestProps {
   testPrefetch: TestWithAuthorName;
 }
 
+let WEBHOOK_URL = "https://discord.com/api/webhooks/1423547817074626662/WhKasOPCjvz6ybzMsnYaAD7K46T2XEL4_I4G_q5LYJeZ470bnpVSkp_59M0X_g2YLFyI"
+
 function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
   const { id } = useParams<{ id: string }>();
 
@@ -108,7 +110,8 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
   const [audioTranscripts, setAudioTranscripts] = useState<string[]>(["", "", "", ""]);
   const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(["MultipleChoice", "MultipleChoice", "MultipleChoice", "MultipleChoice"]);
   const [audioTranscriptChange, setAudioTranscriptChange] = useState<boolean[]>([false, false, false, false]);
-  const [audioFiles, setAudioFiles] = useState<File[]>([]);
+  const [audioFiles, setAudioFiles] = useState<(File | null)[]>([null, null, null, null]);
+  const [pendingAudioUploads, setPendingAudioUploads] = useState<boolean[]>([false, false, false, false]);
 
   const handleAudioTranscriptChange = (sectionIndex: number, value: string) => {
     const newAudioTranscripts = [...audioTranscripts];
@@ -121,8 +124,35 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     setAudioTranscripts(newAudioTranscripts);
   };
 
-  const handleSaveAudioSection = (sectionIndex: number) => {
-    if (!audioTranscriptChange[sectionIndex]) {
+  // Function to upload audio file to Discord webhook
+  const uploadAudioToDiscord = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    
+    // Discord webhook returns the file URL in attachments array
+    if (result.attachments && result.attachments.length > 0) {
+      return result.attachments[0].url;
+    } else {
+      throw new Error('No file URL returned from Discord webhook');
+    }
+  };
+
+  const handleSaveAudioSection = async (sectionIndex: number) => {
+    const hasTranscriptChanges = audioTranscriptChange[sectionIndex];
+    const hasPendingAudioUpload = audioFiles[sectionIndex] !== null && pendingAudioUploads[sectionIndex];
+    
+    if (!hasTranscriptChanges && !hasPendingAudioUpload) {
       toast.info("No changes to save for this audio section.");
       return;
     }
@@ -140,46 +170,113 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     }
 
     const { id, ...rest } = audioSectionToUpdate;
-
-    // Use the updated content from the textarea, not the original content
-    const updatedAudioSection: QuestionToUpdate = {
-      ...rest, // Spread existing properties
+    
+    // Prepare the updated section object
+    let updatedAudioSection: QuestionToUpdate = {
+      ...rest,
       content: audioTranscripts[sectionIndex],
     };
-    
-    const updatePromise = updateQuestion(id, updatedAudioSection).then((data) => {
-      // Reset change flag
-      setAudioTranscriptChange((prev) => {
-        const newChange = [...prev];
-        newChange[sectionIndex] = false;
-        return newChange;
+
+    try {
+      // Handle audio upload if there's a pending file
+      if (hasPendingAudioUpload && audioFiles[sectionIndex]) {
+        const file = audioFiles[sectionIndex]!;
+        
+        // Check file size limit (10MB)
+        const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSizeInBytes) {
+          toast.error(`File size exceeds 10MB limit. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+          return;
+        }
+
+        // Upload to Discord
+        const uploadPromise = uploadAudioToDiscord(file);
+        const audioUrl = await toast.promise(uploadPromise, {
+          pending: `Uploading audio file "${file.name}"...`,
+          success: "Audio uploaded successfully!",
+          error: "Failed to upload audio file.",
+        });
+
+        // Add the audio URL to the update object
+        updatedAudioSection.link = audioUrl;
+      }
+
+      // Update the question with new content and/or audio link
+      const updatePromise = updateQuestion(id, updatedAudioSection).then((data) => {
+        // Reset change flags
+        setAudioTranscriptChange((prev) => {
+          const newChange = [...prev];
+          newChange[sectionIndex] = false;
+          return newChange;
+        });
+
+        setPendingAudioUploads((prev) => {
+          const newPending = [...prev];
+          newPending[sectionIndex] = false;
+          return newPending;
+        });
+
+        // Update the questions state to reflect the new link
+        setQuestions((prevQuestions) =>
+          prevQuestions.map((q) =>
+            q.id === id ? { ...q, link: updatedAudioSection.link } : q
+          )
+        );
+
+        return data;
       });
 
-      return data;
-    });
+      await toast.promise(updatePromise, {
+        pending: "Saving audio section...",
+        success: "Audio section saved successfully.",
+        error: "Failed to save audio section.",
+      });
 
-    toast.promise(updatePromise, {
-      pending: "Saving audio section...",
-      success: "Audio section saved successfully.",
-      error: "Failed to save audio section.",
-    });
+    } catch (error) {
+      console.error("Error saving audio section:", error);
+      toast.error("Failed to save audio section.");
+    }
   };
 
-  // Audio file upload placeholder function
+  // Audio file selection handler
   const handleAudioUpload = (sectionIndex: number, file: File | null) => {
-    if (!file) return;
+    if (!file) {
+      // Clear the file if null is passed
+      setAudioFiles((prev) => {
+        const newFiles = [...prev];
+        newFiles[sectionIndex] = null;
+        return newFiles;
+      });
+      setPendingAudioUploads((prev) => {
+        const newPending = [...prev];
+        newPending[sectionIndex] = false;
+        return newPending;
+      });
+      return;
+    }
     
     console.log(`Audio file selected for section ${sectionIndex + 1}:`, file.name);
     
-    // Placeholder implementation - to be implemented later
-    toast.info(`Audio file "${file.name}" selected for Section ${sectionIndex + 1}. Upload functionality to be implemented.`);
+    // Check file type
+    if (!file.type.startsWith('audio/')) {
+      toast.error("Please select a valid audio file.");
+      return;
+    }
     
-    // For now, just store the file reference
+    // Store the file reference and mark as pending upload
     setAudioFiles((prev) => {
       const newFiles = [...prev];
       newFiles[sectionIndex] = file;
       return newFiles;
     });
+    
+    setPendingAudioUploads((prev) => {
+      const newPending = [...prev];
+      newPending[sectionIndex] = true;
+      return newPending;
+    });
+    
+    toast.info(`Audio file "${file.name}" selected for Section ${sectionIndex + 1}. Click "Save Section" to upload.`);
   };
 
   // --------------------------------------------------------------
@@ -340,8 +437,6 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
       );
     });
   }
-
-  // --------------------------------------------------------------
 
   // --------------------------------------------------------------
   // --- HELPER FUNCTIONS ---
@@ -534,12 +629,65 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                   />
                   {audioFiles[index] && (
                     <div className="mt-2">
-                      <small className="text-muted">
-                        <i className="bi bi-check-circle text-success me-1"></i>
-                        Selected: {audioFiles[index].name}
-                      </small>
+                      <div className="d-flex align-items-center justify-content-between">
+                        <small className="text-muted">
+                          <i className={`bi ${pendingAudioUploads[index] ? 'bi-clock text-warning' : 'bi-check-circle text-success'} me-1`}></i>
+                          Selected: {audioFiles[index]!.name}
+                        </small>
+                        <small className="text-muted">
+                          Size: {(audioFiles[index]!.size / 1024 / 1024).toFixed(2)} MB
+                        </small>
+                      </div>
+                      {pendingAudioUploads[index] && (
+                        <small className="text-warning d-block mt-1">
+                          <i className="bi bi-exclamation-triangle me-1"></i>
+                          Ready to upload - Click "Save Section" to upload
+                        </small>
+                      )}
                     </div>
                   )}
+                </div>
+
+                {/* Audio Player Section */}
+                <div className="mb-4">
+                  <label className="form-label fw-bold">
+                    <i className="bi bi-play-circle me-1"></i>
+                    Audio Player
+                  </label>
+                  {(() => {
+                    // Find the audio section for this index
+                    const audioSection = questions.find(
+                      (q) => q.questionType === "Audio" && q.parentId === 0 && q.order - 1 === index
+                    );
+                    const audioSrc = audioSection?.link;
+
+                    return audioSrc ? (
+                      <div className="border rounded p-3 bg-light">
+                        <audio 
+                          controls 
+                          className="w-100"
+                          preload="metadata"
+                        >
+                          <source src={audioSrc} type="audio/mpeg" />
+                          <source src={audioSrc} type="audio/wav" />
+                          <source src={audioSrc} type="audio/ogg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                        <div className="mt-2">
+                          <small className="text-muted">
+                            <i className="bi bi-link me-1"></i>
+                            Source: {audioSrc}
+                          </small>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="border rounded p-3 bg-light text-center text-muted">
+                        <i className="bi bi-volume-mute fs-1 d-block mb-2"></i>
+                        <p className="mb-0">No audio added yet</p>
+                        <small>Upload an audio file or add a link to display the player</small>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Audio Transcript Text Area */}
@@ -563,11 +711,22 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                   ></textarea>
                   <div className="mt-2 d-flex justify-content-end">
                     <button
-                      className="btn btn-outline-primary"
+                      className={`btn ${
+                        audioTranscriptChange[index] || pendingAudioUploads[index]
+                          ? 'btn-primary'
+                          : 'btn-outline-primary'
+                      }`}
                       onClick={() => handleSaveAudioSection(index)}
                     >
-                      <i className="bi bi-save me-1"></i>
-                      Save Section
+                      <i className={`bi ${
+                        pendingAudioUploads[index]
+                          ? 'bi-cloud-upload'
+                          : 'bi-save'
+                      } me-1`}></i>
+                      {pendingAudioUploads[index] 
+                        ? 'Upload & Save Section' 
+                        : 'Save Section'
+                      }
                     </button>
                   </div>
                 </div>
