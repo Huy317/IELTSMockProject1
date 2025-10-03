@@ -16,15 +16,32 @@ function AdminDashboardLayout() {
 
     let navigate = useNavigate();
 
-    const createInitialParagraphs = async (testId: number) => {
-        console.log("Creating initial paragraphs for testId:", testId);
-        const questions = [
+    const createInitialSections = async (testId: number, type: 'Reading' | 'Listening') => {
+
+        if (!type) {
+            console.error("Test type", type, "is not valid for creating sections.");
+            return;
+        }
+        console.log("Creating initial sections for test type:", type);
+
+        var questions;
+        if (type === 'Reading'){
+        questions = [
             { questionType: 'Paragraph', content: 'This is a sample paragraph 1.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 1 },
             { questionType: 'Paragraph', content: 'This is a sample paragraph 2.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 2 },
-            { questionType: 'Paragraph', content: 'This is a sample paragraph 3.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 3
-
-             },
+            { questionType: 'Paragraph', content: 'This is a sample paragraph 3.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 3 },
         ]
+        } else if (type === 'Listening'){
+            questions = [
+                { questionType: 'Audio', content: 'This is a sample audio 1 transcript.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 1 },
+                { questionType: 'Audio', content: 'This is a sample audio 2 transcript.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 2 },
+                { questionType: 'Audio', content: 'This is a sample audio 3 transcript.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 3 },
+                { questionType: 'Audio', content: 'This is a sample audio 4 transcript.', correctAnswer: '', choices: '', explanation: '', parentId: 0, testId, link: '', order: 4 },
+            ]
+        }
+
+        if (!questions) return;
+
         for (const q of questions) {
             // Should call createParagraph from questionService not createQuestion
             await toast.promise(
@@ -39,6 +56,7 @@ function AdminDashboardLayout() {
             });
         }
     }
+
 
     interface TestData {
         testName: string;
@@ -76,16 +94,18 @@ function AdminDashboardLayout() {
             );
 
             // Step 2: Create initial paragraphs if it's a Reading test (typeId === 1)
-            if (created && created.id && testData.typeName == 'Reading') {
+            if (created && created.id ) {
+                console.log("Created test:", created);
                 await toast.promise(
-                    createInitialParagraphs(created.id),
+                    createInitialSections(created.id, testData.typeName as 'Reading' | 'Listening'),
                     {
-                        pending: 'Creating initial paragraphs...',
-                        success: 'Initial paragraphs created successfully!',
-                        error: 'Failed to create initial paragraphs'
+                        pending: 'Creating initial sections...',
+                        success: 'Initial sections created successfully!',
+                        error: 'Failed to create initial sections'
                     }
                 );
             }
+
 
             // Step 3: Success - close modal and navigate
             setIsModalOpen(false);

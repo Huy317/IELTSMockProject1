@@ -34,6 +34,7 @@ import EditReadingTest from "./components/test_rework/EditReadingTest";
 
 import NewListeningTestPage from "./components/test_rework/test_pages/NewListeningTestPage";
 import ReadingPage from "./components/test_rework/test_pages/ReadingPage";
+import EditListeningTest from "./components/test_rework/EditListeningTest";
 
 
 const router = createBrowserRouter([
@@ -87,7 +88,7 @@ const router = createBrowserRouter([
       {
         path: "edit-test/:id",
         element: <ProtectedRoute requiredRole="Admin">
-          <EditReadingTest />
+          <EditListeningTest />
         </ProtectedRoute>,
       },
       {

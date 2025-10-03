@@ -35,6 +35,8 @@ function CreateTestModal({ isOpen, onClose, onConfirm }: CreateTestModalProps) {
             return;
         }
 
+        console.log('Creating test with data:', { testName, testTypeId });
+
         // Submit data
         onConfirm({
             testName: testName.trim(),

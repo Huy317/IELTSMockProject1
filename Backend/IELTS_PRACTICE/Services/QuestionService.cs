@@ -109,7 +109,7 @@ namespace IELTS_PRACTICE.Services
             if (rq.ParentId == 0) {
                 var content = new Question
                 {
-                    QuestionType = "Paragraph",
+                    QuestionType = rq.QuestionType,
                     Content = rq.Content,
                     CorrectAnswer = "",
                     Choices = "",
