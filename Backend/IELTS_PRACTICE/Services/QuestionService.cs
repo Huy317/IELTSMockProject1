@@ -113,7 +113,7 @@ namespace IELTS_PRACTICE.Services
                     Content = rq.Content,
                     CorrectAnswer = "",
                     Choices = "",
-                    Explanation = "",
+                    Explanation = rq.Explanation,
                     ParentId = rq.ParentId,
                     //TypeId = rq.TypeId,
                     TestId = rq.TestId,

@@ -106,10 +106,12 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
   // --------------------------------------------------------------
 
   // --- AUDIO SECTIONS HANDLING ---
-  // Handling state for audio transcript texts and question types
+  // Handling state for section content, explanations and question types
   const [audioTranscripts, setAudioTranscripts] = useState<string[]>(["", "", "", ""]);
+  const [audioExplanations, setAudioExplanations] = useState<string[]>(["", "", "", ""]);
   const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(["MultipleChoice", "MultipleChoice", "MultipleChoice", "MultipleChoice"]);
   const [audioTranscriptChange, setAudioTranscriptChange] = useState<boolean[]>([false, false, false, false]);
+  const [audioExplanationChange, setAudioExplanationChange] = useState<boolean[]>([false, false, false, false]);
   const [audioFiles, setAudioFiles] = useState<(File | null)[]>([null, null, null, null]);
   const [pendingAudioUploads, setPendingAudioUploads] = useState<boolean[]>([false, false, false, false]);
 
@@ -122,6 +124,17 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
       return newChange;
     });
     setAudioTranscripts(newAudioTranscripts);
+  };
+
+  const handleAudioExplanationChange = (sectionIndex: number, value: string) => {
+    const newAudioExplanations = [...audioExplanations];
+    newAudioExplanations[sectionIndex] = value;
+    setAudioExplanationChange((prev) => {
+      const newChange = [...prev];
+      newChange[sectionIndex] = true;
+      return newChange;
+    });
+    setAudioExplanations(newAudioExplanations);
   };
 
   // Function to upload audio file to Discord webhook
@@ -150,9 +163,10 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
 
   const handleSaveAudioSection = async (sectionIndex: number) => {
     const hasTranscriptChanges = audioTranscriptChange[sectionIndex];
+    const hasExplanationChanges = audioExplanationChange[sectionIndex];
     const hasPendingAudioUpload = audioFiles[sectionIndex] !== null && pendingAudioUploads[sectionIndex];
     
-    if (!hasTranscriptChanges && !hasPendingAudioUpload) {
+    if (!hasTranscriptChanges && !hasExplanationChanges && !hasPendingAudioUpload) {
       toast.info("No changes to save for this audio section.");
       return;
     }
@@ -175,6 +189,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     let updatedAudioSection: QuestionToUpdate = {
       ...rest,
       content: audioTranscripts[sectionIndex],
+      explanation: audioExplanations[sectionIndex],
     };
 
     try {
@@ -210,16 +225,27 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
           return newChange;
         });
 
+        setAudioExplanationChange((prev) => {
+          const newChange = [...prev];
+          newChange[sectionIndex] = false;
+          return newChange;
+        });
+
         setPendingAudioUploads((prev) => {
           const newPending = [...prev];
           newPending[sectionIndex] = false;
           return newPending;
         });
 
-        // Update the questions state to reflect the new link
+        // Update the questions state to reflect the new content, explanation and link
         setQuestions((prevQuestions) =>
           prevQuestions.map((q) =>
-            q.id === id ? { ...q, link: updatedAudioSection.link } : q
+            q.id === id ? { 
+              ...q, 
+              content: updatedAudioSection.content,
+              explanation: updatedAudioSection.explanation,
+              link: updatedAudioSection.link 
+            } : q
           )
         );
 
@@ -445,17 +471,21 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     let audioSections = questionsData.filter(
       (q) => q.questionType === "Audio" && q.parentId === 0
     );
-
-    // update the audio sections into audioTranscripts state
-    // go through sections, set audioTranscripts[0] to sections order 100, audioTranscripts[1] to order 200, etc.
+    console.log("Mapping audio sections:", audioSections);
+    // update the audio sections into audioTranscripts and audioExplanations states
     let newAudioTranscripts = [...audioTranscripts];
+    let newAudioExplanations = [...audioExplanations];
+    
     audioSections.forEach((section) => {
       let index = section.order - 1;
       if (index >= 0 && index < newAudioTranscripts.length) {
-        newAudioTranscripts[index] = section.content || "";
+        newAudioTranscripts[index] = section.content || "Not found";
+        newAudioExplanations[index] = section.explanation || "Not found";
       }
     });
+    
     setAudioTranscripts(newAudioTranscripts);
+    setAudioExplanations(newAudioExplanations);
 
     return audioSections;
   }
@@ -690,29 +720,50 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                   })()}
                 </div>
 
-                {/* Audio Transcript Text Area */}
+                {/* Section Content Text Area */}
                 <div className="mb-4">
                   <label
-                    htmlFor={`audioTranscript${sectionNumber}`}
+                    htmlFor={`sectionContent${sectionNumber}`}
                     className="form-label fw-bold"
                   >
                     <i className="bi bi-file-text me-1"></i>
-                    Audio Transcript
+                    Section Content
                   </label>
                   <textarea
                     className="form-control"
-                    id={`audioTranscript${sectionNumber}`}
-                    rows={8}
-                    placeholder={`Enter the transcript for section ${sectionNumber}...`}
+                    id={`sectionContent${sectionNumber}`}
+                    rows={6}
+                    placeholder={`Enter the content/requirements for section ${sectionNumber}...`}
                     value={audioTranscripts[index]}
                     onChange={(e) =>
                       handleAudioTranscriptChange(index, e.target.value)
                     }
                   ></textarea>
+                </div>
+
+                {/* Explanation/Audio Transcript Text Area */}
+                <div className="mb-4">
+                  <label
+                    htmlFor={`audioExplanation${sectionNumber}`}
+                    className="form-label fw-bold"
+                  >
+                    <i className="bi bi-chat-left-text me-1"></i>
+                    Explanation/Audio Transcript
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id={`audioExplanation${sectionNumber}`}
+                    rows={6}
+                    placeholder={`Enter the audio transcript or explanation for section ${sectionNumber}...`}
+                    value={audioExplanations[index]}
+                    onChange={(e) =>
+                      handleAudioExplanationChange(index, e.target.value)
+                    }
+                  ></textarea>
                   <div className="mt-2 d-flex justify-content-end">
                     <button
                       className={`btn ${
-                        audioTranscriptChange[index] || pendingAudioUploads[index]
+                        audioTranscriptChange[index] || audioExplanationChange[index] || pendingAudioUploads[index]
                           ? 'btn-primary'
                           : 'btn-outline-primary'
                       }`}
