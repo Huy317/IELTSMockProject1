@@ -1,17 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-
-interface Question {
-  id: number;
-  questionType: string;
-  content: string;
-  correctAnswer: string;
-  choices: string;
-  explanation: string;
-  parentId: number;
-  testId: number;
-  order: number;
-  link: string;
-}
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import type { Question } from "../../../types/Question";
+import { getTestById } from "../../../services/testService";
+import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
 
 interface ListeningSection {
   id: number;
@@ -19,267 +10,196 @@ interface ListeningSection {
   audioUrl: string;
   questions: Question[];
   instructions: string;
-  formData?: {
-    title: string;
-    lines: Array<{
-      text: string;
-      questionId?: number;
-      hasInput: boolean;
-      extraText?: string;
-    }>;
-  };
+  sectionContent?: string;
 }
 
 function NewListeningTestPage() {
-  // Test configuration
-  const [testConfig] = useState({
-    title: "IELTS Simulation Listening Test 1",
+  const { id: testId } = useParams<{ id: string }>();
+
+  // State management for data fetching
+  const [sections, setSections] = useState<ListeningSection[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Test configuration - will be updated based on fetched data
+  const [testConfig, setTestConfig] = useState({
+    title: "IELTS Listening Test",
     duration: 30 * 60, // 30 minutes in seconds
-    totalQuestions: 20
+    totalQuestions: 0
   });
 
-  // Mock data for demonstration - updated to match the image
-  const [sections] = useState<ListeningSection[]>([
-    {
-      id: 1,
-      title: "Recording 1",
-      // Using local audio file from public directory
-      audioUrl: "/audio/example.mp3", 
-      instructions: "Complete the form below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-      questions: [
-        {
-          id: 1,
-          questionType: 'fill-in-blank',
-          content: "First Name",
-          correctAnswer: "",
-          choices: "",
-          explanation: "",
-          parentId: 1,
-          testId: 1,
-          order: 1,
-          link: ""
-        },
-        {
-          id: 2,
-          questionType: 'fill-in-blank',
-          content: "Country of Origin",
-          correctAnswer: "",
-          choices: "",
-          explanation: "",
-          parentId: 1,
-          testId: 1,
-          order: 2,
-          link: ""
-        },
-        {
-          id: 3,
-          questionType: 'fill-in-blank',
-          content: "Date of Arrival",
-          correctAnswer: "",
-          choices: "",
-          explanation: "",
-          parentId: 1,
-          testId: 1,
-          order: 3,
-          link: ""
-        },
-        {
-          id: 4,
-          questionType: 'fill-in-blank',
-          content: "Number of Tenants",
-          correctAnswer: "",
-          choices: "",
-          explanation: "",
-          parentId: 1,
-          testId: 1,
-          order: 4,
-          link: ""
-        },
-        {
-          id: 5,
-          questionType: 'fill-in-blank',
-          content: "Purpose of Visit",
-          correctAnswer: "",
-          choices: "",
-          explanation: "",
-          parentId: 1,
-          testId: 1,
-          order: 5,
-          link: ""
-        },
-        {
-          id: 6,
-          questionType: 'fill-in-blank',
-          content: "Type of Accommodation",
-          correctAnswer: "",
-          choices: "",
-          explanation: "",
-          parentId: 1,
-          testId: 1,
-          order: 6,
-          link: ""
-        },
-        {
-          id: 7,
-          questionType: 'fill-in-blank',
-          content: "Car Parking",
-          correctAnswer: "",
-          choices: "",
-          explanation: "",
-          parentId: 1,
-          testId: 1,
-          order: 7,
-          link: ""
-        },
-        {
-          id: 8,
-          questionType: 'fill-in-blank',
-          content: "Other Requirements",
-          correctAnswer: "",
-          choices: "",
-          explanation: "",
-          parentId: 1,
-          testId: 1,
-          order: 8,
-          link: ""
-        }
-      ],
-      formData: {
-        title: "SHORT STAY ACCOMMODATION",
-        lines: [
-          { text: "Family Name: Mackinlay", hasInput: false },
-          { text: "First Name:", hasInput: true, questionId: 1 },
-          { text: "Country of Origin:", hasInput: true, questionId: 2 },
-          { text: "Date of Arrival:", hasInput: true, questionId: 3 },
-          { text: "Number of Tenants:", hasInput: true, questionId: 4 },
-          { text: "Length of Stay: 2 weeks", hasInput: false },
-          { text: "Purpose of Visit:", hasInput: true, questionId: 5 },
-          { text: "Type of Accommodation:", hasInput: true, questionId: 6 },
-          { text: "Number of Bedrooms: one or two", hasInput: false },
-          { text: "Car Parking: off-street and", hasInput: true, questionId: 7 },
-          { text: "General Area: near the beach", hasInput: false },
-          { text: "Other Requirements: near", hasInput: true, questionId: 8 },
-          { text: "Name of Town:", hasInput: true, questionId: 9 },
-          { text: "Client's Email: smac13@hotmail.com", hasInput: false },
-          { text: "Price Range: up to $", hasInput: true, questionId: 10, extraText: "a week" }
-        ]
+  // Data fetching effect
+  useEffect(() => {
+    const fetchTestData = async () => {
+      if (!testId) {
+        setError("No test ID provided");
+        setLoading(false);
+        return;
       }
-    },
-    {
-      id: 2,
-      title: "Recording 2",
-      // Using the same local audio file from public directory
-      audioUrl: "/audio/example.mp3",
-      instructions: "Answer questions 11-20.",
-      questions: [
-        {
-          id: 11,
-          questionType: 'multiple-choice',
-          content: "The university was founded in:",
-          correctAnswer: "1995",
-          choices: "1985,1995,2005,2015",
-          explanation: "",
-          parentId: 2,
-          testId: 1,
-          order: 11,
-          link: ""
-        },
-        {
-          id: 12,
-          questionType: 'true-false',
-          content: "The library is open 24 hours during exam periods.",
-          correctAnswer: "True",
-          choices: "True,False,Not Given",
-          explanation: "",
-          parentId: 2,
-          testId: 1,
-          order: 12,
-          link: ""
-        },
-        {
-          id: 13,
-          questionType: 'multiple-choice',
-          content: "What is the main focus of the research center?",
-          correctAnswer: "Technology",
-          choices: "Technology,Medicine,Environment,Education",
-          explanation: "",
-          parentId: 2,
-          testId: 1,
-          order: 13,
-          link: ""
-        },
-        {
-          id: 14,
-          questionType: 'fill-in-blank',
-          content: "The new building will have _____ floors.",
-          correctAnswer: "5",
-          choices: "",
-          explanation: "",
-          parentId: 2,
-          testId: 1,
-          order: 14,
-          link: ""
-        },
-        {
-          id: 15,
-          questionType: 'multiple-choice',
-          content: "Students can access the gym:",
-          correctAnswer: "24/7",
-          choices: "Only on weekdays,24/7,Only during term time,With membership",
-          explanation: "",
-          parentId: 2,
-          testId: 1,
-          order: 15,
-          link: ""
-        }
-      ],
-      formData: {
-        title: "UNIVERSITY INFORMATION",
-        lines: [
-          { text: "Questions 11-20", hasInput: false },
-          { text: "Choose the correct letter, A, B, C or D.", hasInput: false },
-          { text: "", hasInput: false },
-          { text: "11. The university was founded in:", hasInput: true, questionId: 11 },
-          { text: "A) 1985  B) 1995  C) 2005  D) 2015", hasInput: false },
-          { text: "", hasInput: false },
-          { text: "12. The library is open 24 hours during exam periods.", hasInput: true, questionId: 12 },
-          { text: "A) True  B) False  C) Not Given", hasInput: false },
-          { text: "", hasInput: false },
-          { text: "13. What is the main focus of the research center?", hasInput: true, questionId: 13 },
-          { text: "A) Technology  B) Medicine  C) Environment  D) Education", hasInput: false },
-          { text: "", hasInput: false },
-          { text: "14. The new building will have _____ floors.", hasInput: true, questionId: 14 },
-          { text: "", hasInput: false },
-          { text: "15. Students can access the gym:", hasInput: true, questionId: 15 },
-          { text: "A) Only on weekdays  B) 24/7  C) Only during term time  D) With membership", hasInput: false }
-        ]
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch test info and questions
+        const [testData, allQuestionsData] = await Promise.all([
+          getTestById(testId),
+          getAllQuestionsAndParagraphsWithTestId(parseInt(testId)),
+        ]);
+
+        // Update test config with fetched data
+        setTestConfig({
+          title: testData.testName,
+          duration: 30 * 60, // Default 30 minutes for listening
+          totalQuestions: allQuestionsData.filter(q => q.parentId !== 0).length
+        });
+
+        // Process data into listening sections
+        const processedSections = processDataIntoSections(allQuestionsData);
+        setSections(processedSections);
+
+      } catch (err) {
+        console.error('Error fetching test data:', err);
+        setError('Failed to load test data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestData();
+  }, [testId]);
+
+  // Helper function to process fetched data into ListeningSection format
+  const processDataIntoSections = (questionsData: any[]): ListeningSection[] => {
+    // Separate Audio sections and questions
+    const audioSections = questionsData
+      .filter(q => q.questionType === "Audio" && q.parentId === 0)
+      .sort((a, b) => a.order - b.order);
+    
+    const questions = questionsData
+      .filter(q => q.parentId !== 0)
+      .sort((a, b) => a.order - b.order);
+
+    // Group questions by their parent ID
+    const questionsByParent = questions.reduce((acc, question) => {
+      if (!acc[question.parentId]) {
+        acc[question.parentId] = [];
+      }
+      acc[question.parentId].push({
+        id: question.id,
+        questionType: question.questionType,
+        content: question.content,
+        correctAnswer: question.correctAnswer,
+        choices: question.choices || "",
+        explanation: question.explanation || "",
+        parentId: question.parentId,
+        testId: question.testId,
+        order: question.order,
+        link: question.link || ""
+      });
+      return acc;
+    }, {} as { [key: number]: Question[] });
+
+    // Create sections from audio sections (which contain the form content)
+    return audioSections.map((audioSection, index) => {
+      // Get questions that belong to this audio section by parentId
+      const sectionQuestions = questionsByParent[audioSection.id] || [];
+
+      return {
+        id: audioSection.id,
+        title: `Recording ${index + 1}`,
+        audioUrl: audioSection.link,
+        // || "/audio/example.mp3", // Use link field for audio URL
+        instructions: extractInstructions(audioSection.content),
+        sectionContent: audioSection.content, // Use Audio section content as form content
+        questions: sectionQuestions
+      };
+    });
+  };
+
+  // Helper function to extract instructions from paragraph content
+  const extractInstructions = (content: string): string => {
+    // Look for instruction patterns in the content
+    const instructionPatterns = [
+      /Complete the form below\..+/i,
+      /Choose the correct answer.+/i,
+      /Write NO MORE THAN.+/i
+    ];
+    
+    for (const pattern of instructionPatterns) {
+      const match = content.match(pattern);
+      if (match) {
+        return match[0];
       }
     }
-  ]);
+    
+    return "Complete the questions below.";
+  };
 
   // State management
   const [currentSection, setCurrentSection] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [timeRemaining, setTimeRemaining] = useState(testConfig.duration);
+  const [timeRemaining, setTimeRemaining] = useState(30 * 60);
   const [answers, setAnswers] = useState<{ [key: number]: string | string[] }>({});
   const [isMuted, setIsMuted] = useState(false);
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [highlightedQuestion, setHighlightedQuestion] = useState<number | null>(null);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const lastTimeUpdateRef = useRef(0);
 
-  // Timer effect
+  // Reset currentSection when sections change to prevent out-of-bounds access
+  useEffect(() => {
+    if (sections.length > 0 && currentSection >= sections.length) {
+      setCurrentSection(0);
+    }
+  }, [sections, currentSection]);
+
+  // Update timeRemaining when test config changes (only when loading completes)
+  useEffect(() => {
+    if (!loading && testConfig.duration > 0) {
+      setTimeRemaining(testConfig.duration);
+    }
+  }, [loading, testConfig.duration]);
+
+  // Answer handlers - using useCallback to prevent unnecessary re-renders
+  const handleAnswerChange = useCallback((questionId: number, answer: string | string[]) => {
+    setAnswers(prev => ({
+      ...prev,
+      [questionId]: answer
+    }));
+  }, []);
+
+  // Optimized audio event handlers
+  const handlePlayPause = useCallback(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch((error) => {
+          console.error('Error playing audio:', error);
+        });
+      }
+      setIsPlaying(!isPlaying);
+    }
+  }, [isPlaying]);
+
+  // Timer effect - Optimized to reduce re-renders
   useEffect(() => {
     const timer = setInterval(() => {
-      if (timeRemaining > 0) {
-        setTimeRemaining(prev => prev - 1);
-      }
+      setTimeRemaining(prev => {
+        if (prev > 0) {
+          return prev - 1;
+        }
+        return prev;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeRemaining]);
+  }, []); // Remove timeRemaining dependency to prevent constant interval recreation
 
   // Close speed menu when clicking outside
   useEffect(() => {
@@ -295,100 +215,105 @@ function NewListeningTestPage() {
     };
   }, [showSpeedMenu]);
 
-  // Audio event handlers
-  const handlePlayPause = () => {
-    console.log('Play/Pause clicked, isPlaying:', isPlaying);
+  const handleTimeUpdate = useCallback(() => {
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        console.log('Audio paused');
-      } else {
-        audioRef.current.play().then(() => {
-          console.log('Audio playing successfully');
-        }).catch((error) => {
-          console.error('Error playing audio:', error);
-        });
+      const now = Date.now();
+      // Throttle time updates to every 100ms to reduce re-renders
+      if (now - lastTimeUpdateRef.current > 100) {
+        setCurrentTime(audioRef.current.currentTime);
+        lastTimeUpdateRef.current = now;
       }
-      setIsPlaying(!isPlaying);
-    } else {
-      console.error('Audio ref is null');
     }
-  };
+  }, []);
 
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-      console.log('Time updated:', audioRef.current.currentTime);
-    }
-  };
-
-  const handleLoadedMetadata = () => {
+  const handleLoadedMetadata = useCallback(() => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
-      console.log('Audio loaded, duration:', audioRef.current.duration);
     }
-  };
+  }, []);
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const seekTime = parseFloat(e.target.value);
-    console.log('Seeking to:', seekTime);
     if (audioRef.current) {
       audioRef.current.currentTime = seekTime;
       setCurrentTime(seekTime);
     }
-  };
+  }, []);
 
-  const handleMuteToggle = () => {
+  const handleMuteToggle = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.muted = !audioRef.current.muted;
       setIsMuted(audioRef.current.muted);
-      console.log('Audio muted:', audioRef.current.muted);
     }
-  };
+  }, []);
 
-  const handleSpeedChange = (speed: number) => {
+  const handleSpeedChange = useCallback((speed: number) => {
     if (audioRef.current) {
       audioRef.current.playbackRate = speed;
       setPlaybackSpeed(speed);
       setShowSpeedMenu(false);
-      console.log('Playback speed changed to:', speed);
     }
-  };
+  }, []);
 
-  const toggleSpeedMenu = () => {
+  const toggleSpeedMenu = useCallback(() => {
     setShowSpeedMenu(!showSpeedMenu);
-  };
+  }, [showSpeedMenu]);
 
-  // Answer handlers
-  const handleAnswerChange = (questionId: number, answer: string | string[]) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: answer
-    }));
-  };
-
-  // Utility functions
-  const formatTime = (time: number) => {
+  // Utility functions - memoized to prevent re-creation
+  const formatTime = useCallback((time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
   return (
     <div className="container-fluid py-4 px-3 px-lg-4">
-      {/* Header */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <h4 className="mb-0">{testConfig.title}</h4>
-            </div>
-            <div>
-              <button className="btn btn-outline-secondary">Leave</button>
+      {/* Loading State */}
+      {loading && (
+        <div className="row">
+          <div className="col-12">
+            <div className="card border-0 shadow-sm">
+              <div className="card-body text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="mt-3 mb-0">Loading test data...</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="row">
+          <div className="col-12">
+            <div className="alert alert-danger" role="alert">
+              <h4 className="alert-heading">Error!</h4>
+              <p>{error}</p>
+              <hr />
+              <p className="mb-0">Please try refreshing the page or contact support if the problem persists.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content - Only show when not loading and no error */}
+      {!loading && !error && sections.length > 0 && (
+        <>
+          {/* Header */}
+          <div className="row mb-4">
+            <div className="col-12">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h4 className="mb-0">{testConfig.title}</h4>
+                </div>
+                <div>
+                  <button className="btn btn-outline-secondary">Leave</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
       {/* Audio Player Bar - Top */}
       <div className="row mb-4">
@@ -399,7 +324,7 @@ function NewListeningTestPage() {
             <div className="row mb-3">
               <div className="col-12">
                 <div className="d-flex">
-                  {sections.map((section, index) => (
+                  {sections && sections.length > 0 && sections.map((section, index) => (
                     <button
                       key={section.id}
                       className={`btn btn-sm me-2 ${
@@ -421,13 +346,11 @@ function NewListeningTestPage() {
               <div className="col-12">
                 <audio
                   ref={audioRef}
-                  src={sections[currentSection]?.audioUrl}
+                  src={sections && sections[currentSection] ? sections[currentSection].audioUrl : ""}
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
                   onEnded={() => setIsPlaying(false)}
                   onError={(e) => console.error('Audio error:', e)}
-                  onLoadStart={() => console.log('Audio loading started')}
-                  onCanPlay={() => console.log('Audio can play')}
                   className="d-none"
                 />
 
@@ -536,66 +459,182 @@ function NewListeningTestPage() {
             </div>
           </div>
         </div>
-      </div>      <div className="row">
+      </div>      
+      <div className="row">
         {/* Questions Column - Now takes more space */}
         <div className="col-lg-9">
           <div className="card border-0 shadow-sm">
             <div className="card-body">
               {/* Form Content - Rendered dynamically based on current section data */}
               {(() => {
+                // Safety check: ensure sections exist and currentSection is valid
+                if (!sections || sections.length === 0 || currentSection >= sections.length) {
+                  return (
+                    <div className="text-center py-4">
+                      <p className="text-muted">No content available for this section.</p>
+                    </div>
+                  );
+                }
+
                 const currentSectionData = sections[currentSection];
-                if (!currentSectionData.formData) return null;
-
-                const formData = currentSectionData.formData;
-
-                return (
-                  <div className="accommodation-form">
+                
+                // Additional safety check for currentSectionData
+                if (!currentSectionData) {
+                  return (
+                    <div className="text-center py-4">
+                      <p className="text-muted">Section data not found.</p>
+                    </div>
+                  );
+                }
+                
+                // Check if this section has FormCompletion questions or sectionContent
+                const hasFormCompletion = currentSectionData.questions.some((q: Question) => q.questionType === 'FormCompletion');
+                
+                // If sectionContent exists or has FormCompletion questions, render with form layout
+                if (currentSectionData.sectionContent || hasFormCompletion) {
+                  return (
                     <div className="row">
-                      {/* Left Column - Instructions, Title and Form Text */}
+                      {/* Form content column */}
                       <div className="col-md-8">
-                        <div className="bg-light p-3" style={{ lineHeight: '2.5' }}>
-                          <div className="mb-4">
-                            <p className="mb-0 fst-italic">{currentSectionData.instructions}</p>
-                          </div>
-                          
-                          <h5 className="mb-4">{formData.title}</h5>
-                          
-                          {formData.lines.map((line: any, index: number) => (
-                            <div className="mb-2" key={index}>
-                              <span>
-                                {line.hasInput 
-                                  ? `${line.text} ____${line.questionId}____${line.extraText ? ` ${line.extraText}` : ''}`
-                                  : line.text
-                                }
-                              </span>
+                        <div className="bg-light p-3" style={{ lineHeight: "2.5" }}>
+                          {currentSectionData.sectionContent ? (
+                            currentSectionData.sectionContent.includes('<') ? (
+                              <div dangerouslySetInnerHTML={{ __html: currentSectionData.sectionContent }} />
+                            ) : (
+                              <div style={{ whiteSpace: 'pre-line' }}>{currentSectionData.sectionContent}</div>
+                            )
+                          ) : (
+                            <div className="text-center py-4">
+                              <p className="text-muted">Form content will appear here</p>
                             </div>
-                          ))}
+                          )}
                         </div>
                       </div>
-
-                      {/* Right Column - Input Fields */}
+                      
+                      {/* Input fields column */}
                       <div className="col-md-4">
-                        <div className="pt-3" style={{ lineHeight: '2.5' }}>
-                          {formData.lines
-                            .filter((line: any) => line.hasInput && line.questionId)
-                            .map((line: any) => (
-                              <div className="mb-5 d-flex align-items-center" style={{ height: '2.5rem' }} key={line.questionId}>
-                                <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                  {line.questionId}
-                                </span>
-                                <input
-                                  id={`question-${line.questionId}`}
-                                  type="text"
-                                  className="form-control form-control-sm"
-                                  style={{ width: '200px' }}
-                                  value={answers[line.questionId] as string || ''}
-                                  onChange={(e) => handleAnswerChange(line.questionId!, e.target.value)}
-                                />
-                              </div>
-                            ))}
+                        <div className="pt-3" style={{ lineHeight: '2.5', paddingTop: '120px' }}>
+                          {currentSectionData.questions.map((question) => {
+                            // Calculate sequential question number across all sections
+                            const allQuestions = sections.flatMap(s => s.questions);
+                            const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
+                            const questionNumber = globalQuestionIndex + 1;
+                            
+                            return (
+                            <div 
+                              key={question.id} 
+                              className={`mb-5 d-flex align-items-center ${
+                                highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
+                              }`} 
+                              style={{ 
+                                height: '2.5rem',
+                                transition: 'all 0.3s ease'
+                              }}
+                            >
+                              <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                                {questionNumber}
+                              </span>
+                              <input
+                                id={`question-${question.id}`}
+                                type="text"
+                                className="form-control form-control-sm"
+                                style={{ width: '200px' }}
+                                value={answers[question.id] as string || ''}
+                                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                              />
+                            </div>
+                          )
+                          })}
                         </div>
                       </div>
                     </div>
+                  );
+                }
+                
+                // If no sectionContent, render multiple choice questions
+                return (
+                  <div className="multiple-choice-questions">
+                    <div className="mb-4">
+                      <p className="mb-0 fst-italic">{currentSectionData.instructions}</p>
+                    </div>
+                    
+                    {currentSectionData.questions.map((question) => {
+                      // Calculate sequential question number across all sections
+                      const allQuestions = sections.flatMap(s => s.questions);
+                      const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
+                      const questionNumber = globalQuestionIndex + 1;
+                      
+                      // Handle different question types
+                      if (question.questionType === 'SingleChoice' || question.questionType === 'multiple-choice') {
+                        const choices = question.choices.split(/[,|]/).map(c => c.trim()).filter(c => c);
+                        return (
+                          <div 
+                            key={question.id} 
+                            id={`question-${question.id}`}
+                            className={`question-item mb-4 ${
+                              highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+                            }`}
+                            style={{ transition: 'all 0.3s ease' }}
+                          >
+                            <div className="d-flex align-items-start mb-3">
+                              <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                                {questionNumber}
+                              </span>
+                              <div className="flex-grow-1">
+                                <p className="mb-3"><strong>{question.content}</strong></p>
+                                {choices.map((choice, index) => {
+                                  const choiceValue = choice.trim();
+                                  return (
+                                    <div key={index} className="form-check mb-2">
+                                      <input
+                                        className="form-check-input border-dark"
+                                        type="radio"
+                                        name={`question-${question.id}`}
+                                        id={`q${question.id}-${index}`}
+                                        value={choiceValue}
+                                        checked={answers[question.id] === choiceValue}
+                                        onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                      />
+                                      <label className="form-check-label" htmlFor={`q${question.id}-${index}`}>
+                                        {choiceValue}
+                                      </label>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      // Handle other question types that might not have choices
+                      return (
+                        <div 
+                          key={question.id} 
+                          id={`question-${question.id}`}
+                          className={`question-item mb-4 ${
+                            highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+                          }`}
+                          style={{ transition: 'all 0.3s ease' }}
+                        >
+                          <div className="d-flex align-items-start mb-3">
+                            <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                              {questionNumber}
+                            </span>
+                            <div className="flex-grow-1">
+                              <p className="mb-3"><strong>{question.content}</strong></p>
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter your answer"
+                                value={answers[question.id] as string || ''}
+                                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               })()}
@@ -613,85 +652,81 @@ function NewListeningTestPage() {
             </div>
           </div>
 
-          {/* Question Navigation */}
-          <div className="card border-0 shadow-sm">
-            <div className="card-header bg-light d-flex justify-content-between align-items-center">
-              <span className="fw-bold">{sections[0]?.title}</span>
-            </div>
-            <div className="card-body">
-              <div className="row g-2">
-                {sections[0]?.formData?.lines
-                  .filter((line: any) => line.hasInput && line.questionId)
-                  .map((line: any) => (
-                  <div key={line.questionId} className="col-2">
-                    <button 
-                      className={`btn btn-sm w-100 ${
-                        answers[line.questionId] ? 'btn-success' : 
-                        currentSection === 0 ? 'btn-outline-primary' : 'btn-outline-secondary'
-                      }`}
-                      onClick={() => {
-                        // Switch to Recording 1 if not already there
-                        if (currentSection !== 0) {
-                          setCurrentSection(0);
-                        }
-                        // Scroll to and focus the specific question input
-                        setTimeout(() => {
-                          const inputElement = document.getElementById(`question-${line.questionId}`) as HTMLInputElement;
-                          if (inputElement) {
-                            inputElement.focus();
-                            inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          {/* Dynamic Recording Navigation */}
+          {sections && sections.length > 0 && sections.map((section, sectionIndex) => (
+            <div key={section.id} className={`card border-0 shadow-sm ${sectionIndex > 0 ? 'mt-3' : ''}`}>
+              <div className="card-header bg-light d-flex justify-content-between align-items-center">
+                <span className="fw-bold">{section.title}</span>
+              </div>
+              <div className="card-body">
+                <div className="row g-2">
+                  {section.questions.map((q) => {
+                    // Calculate sequential question number across all sections
+                    const allQuestions = sections.flatMap(s => s.questions);
+                    const globalQuestionIndex = allQuestions.findIndex(question => question.id === q.id);
+                    const questionNumber = globalQuestionIndex + 1;
+                    
+                    return (
+                    <div key={q.id} className="col-2">
+                      <button 
+                        className={`btn btn-sm w-100 ${
+                          answers[q.id] ? 'btn-success' : 
+                          currentSection === sectionIndex ? 'btn-outline-primary' : 'btn-outline-secondary'
+                        }`}
+                        onClick={() => {
+                          // Switch to the correct section if not already there
+                          if (currentSection !== sectionIndex) {
+                            setCurrentSection(sectionIndex);
                           }
-                        }, 100);
-                      }}
-                    >
-                      {line.questionId}
-                    </button>
-                  </div>
-                ))}
+                          // Scroll to and highlight the specific question
+                          setTimeout(() => {
+                            const questionElement = document.getElementById(`question-${q.id}`);
+                            if (questionElement) {
+                              // Scroll to the question
+                              questionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              // Add highlight effect
+                              setHighlightedQuestion(q.id);
+                              // Remove highlight after 500ms
+                              setTimeout(() => setHighlightedQuestion(null), 500);
+                              
+                              // Focus based on question type
+                              if (q.questionType === 'FormCompletion' || q.questionType === 'fill-in-blank') {
+                                // For form completion, focus the input directly
+                                const inputElement = questionElement as HTMLInputElement;
+                                if (inputElement && inputElement.tagName === 'INPUT') {
+                                  inputElement.focus();
+                                } else {
+                                  // If questionElement is a container, find the input inside
+                                  const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
+                                  if (input) input.focus();
+                                }
+                              } else if (q.questionType === 'SingleChoice' || q.questionType === 'multiple-choice') {
+                                // For single choice or multiple choice, focus the first radio button
+                                const firstRadio = questionElement.querySelector('input[type="radio"]') as HTMLInputElement;
+                                if (firstRadio) firstRadio.focus();
+                              } else {
+                                // For other question types, try to focus any input
+                                const input = questionElement.querySelector('input') as HTMLInputElement;
+                                if (input) input.focus();
+                              }
+                            }
+                          }, 100);
+                        }}
+                        title={`Go to question ${questionNumber}: ${q.content || 'Question'}`}
+                      >
+                        {questionNumber}
+                      </button>
+                    </div>
+                  )
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Recording 2 Navigation */}
-          <div className="card border-0 shadow-sm mt-3">
-            <div className="card-header bg-light d-flex justify-content-between align-items-center">
-              <span className="fw-bold">{sections[1]?.title}</span>
-            </div>
-            <div className="card-body">
-              <div className="row g-2">
-                {sections[1]?.formData?.lines
-                  .filter((line: any) => line.hasInput && line.questionId)
-                  .map((line: any) => (
-                  <div key={line.questionId} className="col-2">
-                    <button 
-                      className={`btn btn-sm w-100 ${
-                        answers[line.questionId] ? 'btn-success' : 
-                        currentSection === 1 ? 'btn-outline-primary' : 'btn-outline-secondary'
-                      }`}
-                      onClick={() => {
-                        // Switch to Recording 2 if not already there
-                        if (currentSection !== 1) {
-                          setCurrentSection(1);
-                        }
-                        // Scroll to and focus the specific question input
-                        setTimeout(() => {
-                          const inputElement = document.getElementById(`question-${line.questionId}`) as HTMLInputElement;
-                          if (inputElement) {
-                            inputElement.focus();
-                            inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                          }
-                        }, 100);
-                      }}
-                    >
-                      {line.questionId}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }
