@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import type { TestToUpdate, TestWithAuthorName } from "../../types/Test";
-import { getTestById, updateTest } from "../../services/testService";
+import { updateTest } from "../../services/testService";
 import type {
   Question,
   QuestionFullDetail,
@@ -15,7 +15,11 @@ import {
 import QuestionDisplay from "./question_display/QuestionDisplay";
 import ModalManager from "./ModalManager";
 
-function EditListeningTest() {
+interface EditListeningTestProps {
+  testPrefetch: TestWithAuthorName;
+}
+
+function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
   const { id } = useParams<{ id: string }>();
 
   // Question types mapping table
@@ -66,22 +70,8 @@ function EditListeningTest() {
   // --------------------------------------------------------------
 
   // --- TEST METADATA HANDLING ---
-  const [test, setTest] = useState<TestWithAuthorName | null>(null);
+  const [test, setTest] = useState<TestWithAuthorName | null>(testPrefetch);
   const [changed, setChanged] = useState(false);
-
-  const fetchTest = async () => {
-    if (!id) return;
-    const loadPromise = getTestById(id).then((data) => {
-      setTest(data);
-      return data;
-    });
-
-    toast.promise(loadPromise, {
-      pending: "Loading test...",
-      success: "Test loaded",
-      error: "Failed to load test details.",
-    });
-  };
   // --------------------------------------------------------------
   // --- QUESTIONS LIST HANDLING ---
   const [questions, setQuestions] = useState<QuestionFullDetail[]>([]);
@@ -109,7 +99,7 @@ function EditListeningTest() {
   // useEffect being called twice is cuz of StrictMode in main.tsx
   // should not cause issues in production though
   useEffect(() => {
-    fetchTest().then(fetchQuestions).then(initializeCounters);
+    fetchQuestions().then(initializeCounters);
   }, []);
   // --------------------------------------------------------------
 
@@ -202,7 +192,7 @@ function EditListeningTest() {
   };
 
   // Placeholder function to handle add question button clicks
-  const handleAddQuestion = (sectionIndex: number, questionType: string) => {
+  const handleAddQuestion = (sectionIndex: number, _questionType: string) => {
     handleOpenModal(sectionIndex);
   };
 
