@@ -2,8 +2,7 @@ import { useState } from "react";
 import type { QuestionToCreate } from "../../../types/Question";
 import { toast } from "react-toastify";
 import { createQuestion } from "../../../services/questionService";
-
-let WEBHOOK_URL = "https://discord.com/api/webhooks/1423161768603291810/cfsLFxtoB-NGIF9FbqczJGqn5a09QImeviwtQYchd-BgTCkOmX-FzTBU_RS0ogPYyGIR"
+import { uploadFile } from "../../../services/fileUploadService";
 
 interface DiagramEntry {
     id: number;
@@ -93,13 +92,7 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            // Check file size (25MB limit for Discord)
-            if (file.size > 25 * 1024 * 1024) {
-                alert("File size too large. Please select an image under 25MB.");
-                return;
-            }
-            
-            // Check file type
+            // Basic file type validation for images
             if (!file.type.startsWith('image/')) {
                 alert("Please select a valid image file.");
                 return;
@@ -178,33 +171,9 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
         return true;
     };
 
-    const uploadImageToDiscord = async (file: File): Promise<string> => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('content', `Diagram image uploaded at ${new Date().toISOString()}`);
-
-        try {
-            const response = await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                body: formData,
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            
-            // Extract the CDN URL from the Discord response
-            if (data.attachments && data.attachments.length > 0) {
-                return data.attachments[0].url;
-            } else {
-                throw new Error('No attachment URL found in Discord response');
-            }
-        } catch (error) {
-            console.error('Error uploading image to Discord:', error);
-            throw new Error('Failed to upload image to Discord');
-        }
+    const uploadImageFile = async (file: File): Promise<string> => {
+        // Use the generic upload function (includes Catbox 200MB limit validation)
+        return await uploadFile(file);
     };
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -218,11 +187,11 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
         setIsSubmitting(true);
 
         try {
-            // Upload image to Discord first and get the CDN URL
+            // Upload image file and get the URL
             let imageLink = "";
             if (selectedImage) {
-                toast.info("Uploading image to Discord...");
-                imageLink = await uploadImageToDiscord(selectedImage);
+                toast.info("Uploading image...");
+                imageLink = await uploadImageFile(selectedImage);
                 toast.success("Image uploaded successfully!");
             }
 

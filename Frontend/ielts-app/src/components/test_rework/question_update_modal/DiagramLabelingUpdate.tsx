@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Question, QuestionToUpdate } from '../../../types/Question';
 import { toast } from 'react-toastify';
 import { updateQuestion } from '../../../services/questionService';
-
-let WEBHOOK_URL = "https://discord.com/api/webhooks/1423161768603291810/cfsLFxtoB-NGIF9FbqczJGqn5a09QImeviwtQYchd-BgTCkOmX-FzTBU_RS0ogPYyGIR"
+import { uploadFile } from "../../../services/fileUploadService";
 
 interface DiagramEntry {
     id: number;
@@ -213,40 +212,9 @@ function DiagramLabelingUpdateModal({
         return true;
     };
 
-    const uploadImageToDiscord = async (file: File): Promise<string> => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('content', `Diagram image updated at ${new Date().toISOString()}`);
-
-        try {
-            const response = await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                body: formData,
-            });
-            
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Discord upload failed with status ${response.status}: ${errorText}`);
-            }
-
-            const data = await response.json();
-            
-            // Extract the CDN URL from the Discord response
-            if (data.attachments && data.attachments.length > 0) {
-                return data.attachments[0].url;
-            } else {
-                throw new Error('No attachment URL found in Discord response');
-            }
-        } catch (error) {
-            // Provide more specific error messages
-            if (error instanceof TypeError && error.message.includes('fetch')) {
-                throw new Error('Network error: Unable to connect to Discord. Please check your internet connection.');
-            } else if (error instanceof Error) {
-                throw new Error(`Discord upload failed: ${error.message}`);
-            } else {
-                throw new Error('Unknown error occurred while uploading to Discord');
-            }
-        }
+    const uploadImageFile = async (file: File): Promise<string> => {
+        // Use the generic upload function (includes Catbox 200MB limit validation)
+        return await uploadFile(file);
     };
 
     const handleSubmit = async () => {
@@ -269,14 +237,19 @@ function DiagramLabelingUpdateModal({
             let imageLink = currentImageUrl; // Keep existing image by default
             if (selectedImage) {
                 try {
-                    toast.info("Uploading new image to Discord...");
-                    imageLink = await uploadImageToDiscord(selectedImage);
+                    toast.info("Uploading new image...");
+                    imageLink = await uploadImageFile(selectedImage);
                     toast.success("Image uploaded successfully!");
+                    
+                    // Update the preview to show the uploaded image URL instead of local file
+                    setImagePreview(imageLink);
+                    setCurrentImageUrl(imageLink);
+                    setSelectedImage(null); // Clear the selected file since it's now uploaded
                 } catch (uploadError) {
                     
                     // Ask user if they want to proceed without the new image
                     const proceed = window.confirm(
-                        `Failed to upload new image to Discord: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}\n\n` +
+                        `Failed to upload new image: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}\n\n` +
                         'Would you like to proceed with updating the question while keeping the existing image?\n\n' +
                         'Click "OK" to proceed with existing image, or "Cancel" to try again.'
                     );
@@ -312,7 +285,12 @@ function DiagramLabelingUpdateModal({
                     error: 'Failed to update diagram labeling question'
                 }
             ).then((updatedQuestion) => {
-                onSubmit(updatedQuestion);
+                // Ensure the updated question includes the new image link
+                const questionWithUpdatedImage = {
+                    ...updatedQuestion,
+                    link: imageLink // Make sure the new image URL is included
+                };
+                onSubmit(questionWithUpdatedImage);
                 onClose();
             });
 
