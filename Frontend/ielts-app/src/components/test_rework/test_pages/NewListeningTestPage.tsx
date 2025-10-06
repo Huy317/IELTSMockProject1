@@ -433,6 +433,7 @@ function NewListeningTestPage() {
                       currentGroup.questions.push(question);
                     }
                   } else {
+                    // All other question types (SingleChoice, MultipleChoice, etc.) are treated as single questions
                     currentGroup = { type: 'single', question: question };
                     questionGroups.push(currentGroup);
                   }
@@ -513,8 +514,10 @@ function NewListeningTestPage() {
                         const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
                         const questionNumber = globalQuestionIndex + 1;
                         
-                        if (question.questionType === 'SingleChoice' || question.questionType === 'multiple-choice') {
+                        if (question.questionType === 'SingleChoice' || question.questionType === 'MultipleChoice') {
                           const choices = question.choices.split(/[,|]/).map((c: string) => c.trim()).filter((c: string) => c);
+                          const isMultipleChoice = question.questionType === 'MultipleChoice';
+                          
                           return (
                             <div key={question.id}>
                               <div 
@@ -532,16 +535,31 @@ function NewListeningTestPage() {
                                     <p className="mb-3"><strong>{question.content}</strong></p>
                                     {choices.map((choice: string, index: number) => {
                                       const choiceValue = choice.trim();
+                                      const isChecked = isMultipleChoice 
+                                        ? Array.isArray(answers[question.id]) && (answers[question.id] as string[]).includes(choiceValue)
+                                        : answers[question.id] === choiceValue;
+                                      
                                       return (
                                         <div key={index} className="form-check mb-2">
                                           <input
                                             className="form-check-input border-dark"
-                                            type="radio"
-                                            name={`question-${question.id}`}
+                                            type={isMultipleChoice ? "checkbox" : "radio"}
+                                            name={isMultipleChoice ? undefined : `question-${question.id}`}
                                             id={`q${question.id}-${index}`}
                                             value={choiceValue}
-                                            checked={answers[question.id] === choiceValue}
-                                            onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                            checked={isChecked}
+                                            onChange={(e) => {
+                                              if (isMultipleChoice) {
+                                                const currentAnswers = Array.isArray(answers[question.id]) ? answers[question.id] as string[] : [];
+                                                if (e.target.checked) {
+                                                  handleAnswerChange(question.id, [...currentAnswers, choiceValue]);
+                                                } else {
+                                                  handleAnswerChange(question.id, currentAnswers.filter(a => a !== choiceValue));
+                                                }
+                                              } else {
+                                                handleAnswerChange(question.id, e.target.value);
+                                              }
+                                            }}
                                           />
                                           <label className="form-check-label" htmlFor={`q${question.id}-${index}`}>
                                             {choiceValue}
@@ -655,10 +673,10 @@ function NewListeningTestPage() {
                                   const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
                                   if (input) input.focus();
                                 }
-                              } else if (q.questionType === 'SingleChoice' || q.questionType === 'multiple-choice') {
-                                // For single choice or multiple choice, focus the first radio button
-                                const firstRadio = questionElement.querySelector('input[type="radio"]') as HTMLInputElement;
-                                if (firstRadio) firstRadio.focus();
+                              } else if (q.questionType === 'SingleChoice' || q.questionType === 'MultipleChoice') {
+                                // For single choice or multiple choice, focus the first input (radio or checkbox)
+                                const firstInput = questionElement.querySelector('input[type="radio"], input[type="checkbox"]') as HTMLInputElement;
+                                if (firstInput) firstInput.focus();
                               } else {
                                 // For other question types, try to focus any input
                                 const input = questionElement.querySelector('input') as HTMLInputElement;
