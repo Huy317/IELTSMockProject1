@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import type { Question } from "../../../types/Question";
 import { getTestById } from "../../../services/testService";
@@ -9,7 +9,6 @@ interface ListeningSection {
   title: string;
   audioUrl: string;
   questions: Question[];
-  instructions: string;
   sectionContent?: string;
 }
 
@@ -110,30 +109,10 @@ function NewListeningTestPage() {
         title: `Recording ${index + 1}`,
         audioUrl: audioSection.link,
         // || "/audio/example.mp3", // Use link field for audio URL
-        instructions: extractInstructions(audioSection.content),
         sectionContent: audioSection.content, // Use Audio section content as form content
         questions: sectionQuestions
       };
     });
-  };
-
-  // Helper function to extract instructions from paragraph content
-  const extractInstructions = (content: string): string => {
-    // Look for instruction patterns in the content
-    const instructionPatterns = [
-      /Complete the form below\..+/i,
-      /Choose the correct answer.+/i,
-      /Write NO MORE THAN.+/i
-    ];
-    
-    for (const pattern of instructionPatterns) {
-      const match = content.match(pattern);
-      if (match) {
-        return match[0];
-      }
-    }
-    
-    return "Complete the questions below.";
   };
 
   // State management
@@ -151,55 +130,39 @@ function NewListeningTestPage() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const lastTimeUpdateRef = useRef(0);
 
-  // Reset currentSection when sections change to prevent out-of-bounds access
+  // Reset currentSection when sections change and update timer when config changes
   useEffect(() => {
     if (sections.length > 0 && currentSection >= sections.length) {
       setCurrentSection(0);
     }
-  }, [sections, currentSection]);
-
-  // Update timeRemaining when test config changes (only when loading completes)
-  useEffect(() => {
     if (!loading && testConfig.duration > 0) {
       setTimeRemaining(testConfig.duration);
     }
-  }, [loading, testConfig.duration]);
+  }, [sections, currentSection, loading, testConfig.duration]);
 
-  // Answer handlers - using useCallback to prevent unnecessary re-renders
-  const handleAnswerChange = useCallback((questionId: number, answer: string | string[]) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: answer
-    }));
-  }, []);
+  // Event handlers
+  const handleAnswerChange = (questionId: number, answer: string | string[]) => {
+    setAnswers(prev => ({ ...prev, [questionId]: answer }));
+  };
 
-  // Optimized audio event handlers
-  const handlePlayPause = useCallback(() => {
+  const handlePlayPause = () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        audioRef.current.play().catch((error) => {
-          console.error('Error playing audio:', error);
-        });
+        audioRef.current.play().catch(console.error);
       }
       setIsPlaying(!isPlaying);
     }
-  }, [isPlaying]);
+  };
 
-  // Timer effect - Optimized to reduce re-renders
+  // Timer effect
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev > 0) {
-          return prev - 1;
-        }
-        return prev;
-      });
+      setTimeRemaining(prev => prev > 0 ? prev - 1 : prev);
     }, 1000);
-
     return () => clearInterval(timer);
-  }, []); // Remove timeRemaining dependency to prevent constant interval recreation
+  }, []);
 
   // Close speed menu when clicking outside
   useEffect(() => {
@@ -208,63 +171,52 @@ function NewListeningTestPage() {
         setShowSpeedMenu(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showSpeedMenu]);
 
-  const handleTimeUpdate = useCallback(() => {
+  const handleTimeUpdate = () => {
     if (audioRef.current) {
       const now = Date.now();
-      // Throttle time updates to every 100ms to reduce re-renders
       if (now - lastTimeUpdateRef.current > 100) {
         setCurrentTime(audioRef.current.currentTime);
         lastTimeUpdateRef.current = now;
       }
     }
-  }, []);
+  };
 
-  const handleLoadedMetadata = useCallback(() => {
-    if (audioRef.current) {
-      setDuration(audioRef.current.duration);
-    }
-  }, []);
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) setDuration(audioRef.current.duration);
+  };
 
-  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const seekTime = parseFloat(e.target.value);
     if (audioRef.current) {
       audioRef.current.currentTime = seekTime;
       setCurrentTime(seekTime);
     }
-  }, []);
+  };
 
-  const handleMuteToggle = useCallback(() => {
+  const handleMuteToggle = () => {
     if (audioRef.current) {
       audioRef.current.muted = !audioRef.current.muted;
       setIsMuted(audioRef.current.muted);
     }
-  }, []);
+  };
 
-  const handleSpeedChange = useCallback((speed: number) => {
+  const handleSpeedChange = (speed: number) => {
     if (audioRef.current) {
       audioRef.current.playbackRate = speed;
       setPlaybackSpeed(speed);
       setShowSpeedMenu(false);
     }
-  }, []);
+  };
 
-  const toggleSpeedMenu = useCallback(() => {
-    setShowSpeedMenu(!showSpeedMenu);
-  }, [showSpeedMenu]);
-
-  // Utility functions - memoized to prevent re-creation
-  const formatTime = useCallback((time: number) => {
+  const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }, []);
+  };
 
   return (
     <div className="container-fluid py-4 px-3 px-lg-4">
@@ -356,14 +308,7 @@ function NewListeningTestPage() {
 
                 <div className="d-flex align-items-center">
                   {/* Play/Pause Button */}
-                  <button 
-                    className="btn btn-outline-secondary me-3"
-                    onClick={handlePlayPause}
-                    onMouseLeave={(e) => e.currentTarget.blur()}
-                    style={{
-                      transition: 'all 0.2s ease',
-                    }}
-                  >
+                  <button className="btn btn-outline-secondary me-3" onClick={handlePlayPause}>
                     <i className={`isax ${isPlaying ? 'isax-pause' : 'isax-play'}`}></i>
                   </button>
                   
@@ -407,8 +352,6 @@ function NewListeningTestPage() {
                       className="btn btn-outline-secondary btn-sm me-2"
                       onClick={handleMuteToggle}
                       title={isMuted ? 'Unmute' : 'Mute'}
-                      onMouseLeave={(e) => e.currentTarget.blur()}
-                      style={{ transition: 'all 0.2s ease' }}
                     >
                       <i className={`isax ${isMuted ? 'isax-volume-slash' : 'isax-volume-high'}`}></i>
                     </button>
@@ -417,9 +360,7 @@ function NewListeningTestPage() {
                     <div className="position-relative">
                       <button 
                         className="btn btn-outline-secondary btn-sm"
-                        onClick={toggleSpeedMenu}
-                        onMouseLeave={(e) => e.currentTarget.blur()}
-                        style={{ transition: 'all 0.2s ease' }}
+                        onClick={() => setShowSpeedMenu(!showSpeedMenu)}
                         title="Playback Speed"
                       >
                         <i className="isax isax-setting"></i>
@@ -465,175 +406,189 @@ function NewListeningTestPage() {
         <div className="col-lg-9">
           <div className="card border-0 shadow-sm">
             <div className="card-body">
-              {/* Form Content - Rendered dynamically based on current section data */}
+              {/* Questions Content - Unified Rendering */}
               {(() => {
-                // Safety check: ensure sections exist and currentSection is valid
-                if (!sections || sections.length === 0 || currentSection >= sections.length) {
-                  return (
-                    <div className="text-center py-4">
-                      <p className="text-muted">No content available for this section.</p>
-                    </div>
-                  );
+                if (!sections?.length || currentSection >= sections.length) {
+                  return <div className="text-center py-4"><p className="text-muted">No content available.</p></div>;
                 }
 
                 const currentSectionData = sections[currentSection];
-                
-                // Additional safety check for currentSectionData
                 if (!currentSectionData) {
-                  return (
-                    <div className="text-center py-4">
-                      <p className="text-muted">Section data not found.</p>
-                    </div>
-                  );
+                  return <div className="text-center py-4"><p className="text-muted">Section data not found.</p></div>;
                 }
+
+                // Sort questions by their order to maintain proper sequence
+                const sortedQuestions = [...currentSectionData.questions].sort((a, b) => a.order - b.order);
                 
-                // Check if this section has FormCompletion questions or sectionContent
-                const hasFormCompletion = currentSectionData.questions.some((q: Question) => q.questionType === 'FormCompletion');
+                // Group consecutive FormCompletion questions together
+                const questionGroups: any[] = [];
+                let currentGroup: any = null;
                 
-                // If sectionContent exists or has FormCompletion questions, render with form layout
-                if (currentSectionData.sectionContent || hasFormCompletion) {
-                  return (
-                    <div className="row">
-                      {/* Form content column */}
-                      <div className="col-md-8">
-                        <div className="bg-light p-3" style={{ lineHeight: "2.5" }}>
-                          {currentSectionData.sectionContent ? (
-                            currentSectionData.sectionContent.includes('<') ? (
-                              <div dangerouslySetInnerHTML={{ __html: currentSectionData.sectionContent }} />
-                            ) : (
-                              <div style={{ whiteSpace: 'pre-line' }}>{currentSectionData.sectionContent}</div>
-                            )
-                          ) : (
-                            <div className="text-center py-4">
-                              <p className="text-muted">Form content will appear here</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Input fields column */}
-                      <div className="col-md-4">
-                        <div className="pt-3" style={{ lineHeight: '2.5', paddingTop: '120px' }}>
-                          {currentSectionData.questions.map((question) => {
-                            // Calculate sequential question number across all sections
-                            const allQuestions = sections.flatMap(s => s.questions);
-                            const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
-                            const questionNumber = globalQuestionIndex + 1;
-                            
-                            return (
-                            <div 
-                              key={question.id} 
-                              className={`mb-5 d-flex align-items-center ${
-                                highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
-                              }`} 
-                              style={{ 
-                                height: '2.5rem',
-                                transition: 'all 0.3s ease'
-                              }}
-                            >
-                              <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                {questionNumber}
-                              </span>
-                              <input
-                                id={`question-${question.id}`}
-                                type="text"
-                                className="form-control form-control-sm"
-                                style={{ width: '200px' }}
-                                value={answers[question.id] as string || ''}
-                                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                              />
-                            </div>
-                          )
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
+                sortedQuestions.forEach((question) => {
+                  if (question.questionType === 'FormCompletion' || question.questionType === 'fill-in-blank') {
+                    if (!currentGroup || currentGroup.type !== 'form') {
+                      currentGroup = { type: 'form', questions: [question] };
+                      questionGroups.push(currentGroup);
+                    } else {
+                      currentGroup.questions.push(question);
+                    }
+                  } else {
+                    currentGroup = { type: 'single', question: question };
+                    questionGroups.push(currentGroup);
+                  }
+                });
                 
-                // If no sectionContent, render multiple choice questions
                 return (
-                  <div className="multiple-choice-questions">
-                    <div className="mb-4">
-                      <p className="mb-0 fst-italic">{currentSectionData.instructions}</p>
-                    </div>
-                    
-                    {currentSectionData.questions.map((question) => {
-                      // Calculate sequential question number across all sections
-                      const allQuestions = sections.flatMap(s => s.questions);
-                      const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
-                      const questionNumber = globalQuestionIndex + 1;
+                  <div>
+                    {questionGroups.map((group, groupIndex) => {
+                      const isLastGroup = groupIndex === questionGroups.length - 1;
                       
-                      // Handle different question types
-                      if (question.questionType === 'SingleChoice' || question.questionType === 'multiple-choice') {
-                        const choices = question.choices.split(/[,|]/).map(c => c.trim()).filter(c => c);
+                      if (group.type === 'form') {
+                        // Render form completion group with shared form content
                         return (
-                          <div 
-                            key={question.id} 
-                            id={`question-${question.id}`}
-                            className={`question-item mb-4 ${
-                              highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
-                            }`}
-                            style={{ transition: 'all 0.3s ease' }}
-                          >
-                            <div className="d-flex align-items-start mb-3">
-                              <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                {questionNumber}
-                              </span>
-                              <div className="flex-grow-1">
-                                <p className="mb-3"><strong>{question.content}</strong></p>
-                                {choices.map((choice, index) => {
-                                  const choiceValue = choice.trim();
-                                  return (
-                                    <div key={index} className="form-check mb-2">
-                                      <input
-                                        className="form-check-input border-dark"
-                                        type="radio"
-                                        name={`question-${question.id}`}
-                                        id={`q${question.id}-${index}`}
-                                        value={choiceValue}
-                                        checked={answers[question.id] === choiceValue}
-                                        onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                      />
-                                      <label className="form-check-label" htmlFor={`q${question.id}-${index}`}>
-                                        {choiceValue}
-                                      </label>
+                          <div key={`form-group-${groupIndex}`}>
+                            <div className="row mb-4">
+                              {/* Form content column */}
+                              <div className="col-md-8">
+                                <div className="bg-light p-3 h-100" style={{ lineHeight: "2.5" }}>
+                                  {currentSectionData.sectionContent ? (
+                                    currentSectionData.sectionContent.includes('<') ? (
+                                      <div dangerouslySetInnerHTML={{ __html: currentSectionData.sectionContent }} />
+                                    ) : (
+                                      <div style={{ whiteSpace: 'pre-line' }}>{currentSectionData.sectionContent}</div>
+                                    )
+                                  ) : (
+                                    <div className="text-center py-4">
+                                      <p className="text-muted">Form content will appear here</p>
                                     </div>
-                                  );
-                                })}
+                                  )}
+                                </div>
+                              </div>
+                              
+                              {/* Input fields column for all questions in this group */}
+                              <div className="col-md-4">
+                                <div className="pt-3" style={{ lineHeight: '2.5', paddingTop: '120px' }}>
+                                  {group.questions.map((question: any) => {
+                                    // Calculate sequential question number across all sections
+                                    const allQuestions = sections.flatMap(s => s.questions);
+                                    const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
+                                    const questionNumber = globalQuestionIndex + 1;
+                                    
+                                    return (
+                                      <div 
+                                        key={question.id}
+                                        className={`mb-5 d-flex align-items-center ${
+                                          highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
+                                        }`} 
+                                        style={{ 
+                                          height: '2.5rem',
+                                          transition: 'all 0.3s ease'
+                                        }}
+                                      >
+                                        <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                                          {questionNumber}
+                                        </span>
+                                        <input
+                                          id={`question-${question.id}`}
+                                          type="text"
+                                          className="form-control form-control-sm"
+                                          style={{ width: '200px' }}
+                                          value={answers[question.id] as string || ''}
+                                          onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
                             </div>
+                            {/* Add separator unless it's the last group */}
+                            {!isLastGroup && <hr className="my-4" />}
+                          </div>
+                        );
+                      } else {
+                        // Render single choice or other question types
+                        const question = group.question;
+                        const allQuestions = sections.flatMap(s => s.questions);
+                        const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
+                        const questionNumber = globalQuestionIndex + 1;
+                        
+                        if (question.questionType === 'SingleChoice' || question.questionType === 'multiple-choice') {
+                          const choices = question.choices.split(/[,|]/).map((c: string) => c.trim()).filter((c: string) => c);
+                          return (
+                            <div key={question.id}>
+                              <div 
+                                id={`question-${question.id}`}
+                                className={`question-item mb-4 ${
+                                  highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+                                }`}
+                                style={{ transition: 'all 0.3s ease' }}
+                              >
+                                <div className="d-flex align-items-start mb-3">
+                                  <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                                    {questionNumber}
+                                  </span>
+                                  <div className="flex-grow-1">
+                                    <p className="mb-3"><strong>{question.content}</strong></p>
+                                    {choices.map((choice: string, index: number) => {
+                                      const choiceValue = choice.trim();
+                                      return (
+                                        <div key={index} className="form-check mb-2">
+                                          <input
+                                            className="form-check-input border-dark"
+                                            type="radio"
+                                            name={`question-${question.id}`}
+                                            id={`q${question.id}-${index}`}
+                                            value={choiceValue}
+                                            checked={answers[question.id] === choiceValue}
+                                            onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                          />
+                                          <label className="form-check-label" htmlFor={`q${question.id}-${index}`}>
+                                            {choiceValue}
+                                          </label>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Add separator unless it's the last group */}
+                              {!isLastGroup && <hr className="my-4" />}
+                            </div>
+                          );
+                        }
+                        
+                        // Handle other question types
+                        return (
+                          <div key={question.id}>
+                            <div 
+                              id={`question-${question.id}`}
+                              className={`question-item mb-4 ${
+                                highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+                              }`}
+                              style={{ transition: 'all 0.3s ease' }}
+                            >
+                              <div className="d-flex align-items-start mb-3">
+                                <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                                  {questionNumber}
+                                </span>
+                                <div className="flex-grow-1">
+                                  <p className="mb-3"><strong>{question.content}</strong></p>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter your answer"
+                                    value={answers[question.id] as string || ''}
+                                    onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            {/* Add separator unless it's the last group */}
+                            {!isLastGroup && <hr className="my-4" />}
                           </div>
                         );
                       }
-                      
-                      // Handle other question types that might not have choices
-                      return (
-                        <div 
-                          key={question.id} 
-                          id={`question-${question.id}`}
-                          className={`question-item mb-4 ${
-                            highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
-                          }`}
-                          style={{ transition: 'all 0.3s ease' }}
-                        >
-                          <div className="d-flex align-items-start mb-3">
-                            <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                              {questionNumber}
-                            </span>
-                            <div className="flex-grow-1">
-                              <p className="mb-3"><strong>{question.content}</strong></p>
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter your answer"
-                                value={answers[question.id] as string || ''}
-                                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      );
                     })}
                   </div>
                 );
