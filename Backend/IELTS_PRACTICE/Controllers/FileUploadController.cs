@@ -14,7 +14,7 @@ namespace IELTS_PRACTICE.Controllers
         private const long MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB in bytes
 
         // Catbox user hash - provide your user hash here if you want authenticated uploads
-        private const string CATBOX_USER_HASH = ""; // Leave empty for anonymous uploads or add your hash
+        private const string CATBOX_USER_HASH = "41e0413dc4f428359bad06306"; // Leave empty for anonymous uploads or add your hash
 
         public FileUploadController(IHttpClientFactory httpClientFactory)
         {
