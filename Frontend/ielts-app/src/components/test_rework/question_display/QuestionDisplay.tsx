@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { deleteQuestion } from "../../../services/questionService";
 import type { Question } from "../../../types/Question";
@@ -11,6 +12,14 @@ interface QuestionDisplayProps {
 }
 
 function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActions = true }: QuestionDisplayProps) {
+    // State to track image loading errors
+    const [imageError, setImageError] = useState(false);
+    
+    // Reset image error when question link changes
+    useEffect(() => {
+        setImageError(false);
+    }, [question.link]);
+
     // Question types mapping
     const questionTypeLabels: Record<string, string> = {
         FillInTheBlank: "Fill In The Blank",
@@ -130,33 +139,33 @@ function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActio
                                             Diagram Image:
                                         </small>
                                         <div className="border rounded p-2 bg-light">
-                                            <img
-                                                src={question.link}
-                                                alt="Question diagram"
-                                                className="img-fluid rounded"
-                                                style={{ 
-                                                    maxHeight: "200px", 
-                                                    maxWidth: "100%",
-                                                    objectFit: "contain"
-                                                }}
-                                                onError={(e) => {
-                                                    const target = e.target as HTMLImageElement;
-                                                    target.style.display = 'none';
-                                                    const parent = target.parentElement;
-                                                    if (parent) {
-                                                        parent.innerHTML = `
-                                                            <div class="text-center text-muted p-3">
-                                                                <i class="bi bi-image-fill fs-2 d-block mb-2"></i>
-                                                                <small>Failed to load image</small>
-                                                                <br>
-                                                                <a href="${question.link}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
-                                                                    <small>View Original Link</small>
-                                                                </a>
-                                                            </div>
-                                                        `;
-                                                    }
-                                                }}
-                                            />
+                                            {!imageError ? (
+                                                <img
+                                                    src={`${question.link}?v=${Date.now()}`}
+                                                    alt="Question diagram"
+                                                    className="img-fluid rounded"
+                                                    style={{ 
+                                                        maxHeight: "200px", 
+                                                        maxWidth: "100%",
+                                                        objectFit: "contain"
+                                                    }}
+                                                    onError={() => setImageError(true)}
+                                                />
+                                            ) : (
+                                                <div className="text-center text-muted p-3">
+                                                    <i className="bi bi-image-fill fs-2 d-block mb-2"></i>
+                                                    <small>Failed to load image</small>
+                                                    <br />
+                                                    <a 
+                                                        href={question.link} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer" 
+                                                        className="text-decoration-none"
+                                                    >
+                                                        <small>View Original Link</small>
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}

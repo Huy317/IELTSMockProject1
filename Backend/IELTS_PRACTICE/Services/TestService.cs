@@ -83,7 +83,7 @@ namespace IELTS_PRACTICE.Services
             };
 
             _context.Tests.Add(newTest);
-       
+            
             _context.SaveChanges();
 
             var typeName = await _context.TypeSkills.Where(x => x.Id == newTest.TypeId).Select(x => x.TypeName).FirstOrDefaultAsync();

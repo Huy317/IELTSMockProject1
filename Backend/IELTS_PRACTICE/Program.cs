@@ -1,5 +1,7 @@
 using IELTS_PRACTICE.Contexts;
 using IELTS_PRACTICE.Services;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -16,6 +18,22 @@ namespace IELTS_PRACTICE
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            // CaboxImplement: HttpClient factory for file upload controller
+            builder.Services.AddHttpClient();
+
+            // CaboxImplement: Configure file upload limits
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 200 * 1024 * 1024; // 200MB
+            });
+
+            // CaboxImplement: Configure Kestrel server limits
+            builder.Services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = 200 * 1024 * 1024; // 200MB
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             //builder.Services.AddSwaggerGen();

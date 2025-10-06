@@ -12,14 +12,13 @@ import {
   getAllQuestionsAndParagraphsWithTestId,
   updateQuestion,
 } from "../../services/questionService";
+import { uploadFile } from "../../services/fileUploadService";
 import QuestionDisplay from "./question_display/QuestionDisplay";
 import ModalManager from "./ModalManager";
 
 interface EditListeningTestProps {
   testPrefetch: TestWithAuthorName;
 }
-
-let WEBHOOK_URL = "https://discord.com/api/webhooks/1423547817074626662/WhKasOPCjvz6ybzMsnYaAD7K46T2XEL4_I4G_q5LYJeZ470bnpVSkp_59M0X_g2YLFyI"
 
 function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
   const { id } = useParams<{ id: string }>();
@@ -31,13 +30,14 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     SingleChoice: "Single Choice",
     Matching: "Matching",
     DiagramLabeling: "Diagram Labeling",
+    ShortAnswer: "Short Answer",
   };
 
   // --------------------------------------------------------------
   // --- OTHER DATA HANDLER ---
   // To keep track of the next order number for each parentId
   const [orderCounters, setOrderCounters] = useState<Record<number, number>>();
-  
+
   const [currentParentId, setCurrentParentId] = useState<number>(0);
   const [currentOrder, setCurrentOrder] = useState<number>(0);
 
@@ -137,35 +137,17 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     setAudioExplanations(newAudioExplanations);
   };
 
-  // Function to upload audio file to Discord webhook
-  const uploadAudioToDiscord = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const response = await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    
-    // Discord webhook returns the file URL in attachments array
-    if (result.attachments && result.attachments.length > 0) {
-      return result.attachments[0].url;
-    } else {
-      throw new Error('No file URL returned from Discord webhook');
-    }
+  // Function to upload audio file using file upload service
+  const uploadAudioFile = async (file: File): Promise<string> => {
+    // Use the generic upload function (includes Catbox 200MB limit validation)
+    return await uploadFile(file);
   };
 
   const handleSaveAudioSection = async (sectionIndex: number) => {
     const hasTranscriptChanges = audioTranscriptChange[sectionIndex];
     const hasExplanationChanges = audioExplanationChange[sectionIndex];
     const hasPendingAudioUpload = audioFiles[sectionIndex] !== null && pendingAudioUploads[sectionIndex];
-    
+
     if (!hasTranscriptChanges && !hasExplanationChanges && !hasPendingAudioUpload) {
       toast.info("No changes to save for this audio section.");
       return;
@@ -184,7 +166,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     }
 
     const { id, ...rest } = audioSectionToUpdate;
-    
+
     // Prepare the updated section object
     let updatedAudioSection: QuestionToUpdate = {
       ...rest,
@@ -196,16 +178,9 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
       // Handle audio upload if there's a pending file
       if (hasPendingAudioUpload && audioFiles[sectionIndex]) {
         const file = audioFiles[sectionIndex]!;
-        
-        // Check file size limit (10MB)
-        const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
-        if (file.size > maxSizeInBytes) {
-          toast.error(`File size exceeds 10MB limit. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
-          return;
-        }
 
-        // Upload to Discord
-        const uploadPromise = uploadAudioToDiscord(file);
+        // Upload using file upload service (includes validation)
+        const uploadPromise = uploadAudioFile(file);
         const audioUrl = await toast.promise(uploadPromise, {
           pending: `Uploading audio file "${file.name}"...`,
           success: "Audio uploaded successfully!",
@@ -240,11 +215,11 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
         // Update the questions state to reflect the new content, explanation and link
         setQuestions((prevQuestions) =>
           prevQuestions.map((q) =>
-            q.id === id ? { 
-              ...q, 
+            q.id === id ? {
+              ...q,
               content: updatedAudioSection.content,
               explanation: updatedAudioSection.explanation,
-              link: updatedAudioSection.link 
+              link: updatedAudioSection.link
             } : q
           )
         );
@@ -280,28 +255,28 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
       });
       return;
     }
-    
+
     console.log(`Audio file selected for section ${sectionIndex + 1}:`, file.name);
-    
-    // Check file type
+
+    // Basic file type validation for audio
     if (!file.type.startsWith('audio/')) {
       toast.error("Please select a valid audio file.");
       return;
     }
-    
+
     // Store the file reference and mark as pending upload
     setAudioFiles((prev) => {
       const newFiles = [...prev];
       newFiles[sectionIndex] = file;
       return newFiles;
     });
-    
+
     setPendingAudioUploads((prev) => {
       const newPending = [...prev];
       newPending[sectionIndex] = true;
       return newPending;
     });
-    
+
     toast.info(`Audio file "${file.name}" selected for Section ${sectionIndex + 1}. Click "Save Section" to upload.`);
   };
 
@@ -385,7 +360,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
 
   function handleUpdateModalSubmit(updatedQuestion: Question) {
     console.log("Question updated:", updatedQuestion);
-    
+
     // Update the question in the questions state
     setQuestions((prevQuestions) =>
       prevQuestions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion as QuestionFullDetail : q))
@@ -429,7 +404,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
 
   useEffect(() => {
     //console.log("useEffect triggered for questions update:", questions.length);
-    
+
     // Filter out only questions (exclude audio sections)
     const onlyQuestions = questions.filter((q) => q.questionType !== "Audio");
     //console.log("Only questions:", onlyQuestions);
@@ -445,7 +420,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
         sectionQuestions[sectionIndex].push(q);
       }
     });
-    
+
     console.log("Setting sectionsQuestions:", sectionQuestions);
     setSectionsQuestions(sectionQuestions);
 
@@ -475,7 +450,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     // update the audio sections into audioTranscripts and audioExplanations states
     let newAudioTranscripts = [...audioTranscripts];
     let newAudioExplanations = [...audioExplanations];
-    
+
     audioSections.forEach((section) => {
       let index = section.order - 1;
       if (index >= 0 && index < newAudioTranscripts.length) {
@@ -483,7 +458,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
         newAudioExplanations[index] = section.explanation || "Not found";
       }
     });
-    
+
     setAudioTranscripts(newAudioTranscripts);
     setAudioExplanations(newAudioExplanations);
 
@@ -693,8 +668,8 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
 
                     return audioSrc ? (
                       <div className="border rounded p-3 bg-light">
-                        <audio 
-                          controls 
+                        <audio
+                          controls
                           className="w-100"
                           preload="metadata"
                         >
@@ -762,20 +737,18 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                   ></textarea>
                   <div className="mt-2 d-flex justify-content-end">
                     <button
-                      className={`btn ${
-                        audioTranscriptChange[index] || audioExplanationChange[index] || pendingAudioUploads[index]
-                          ? 'btn-primary'
-                          : 'btn-outline-primary'
-                      }`}
+                      className={`btn ${audioTranscriptChange[index] || audioExplanationChange[index] || pendingAudioUploads[index]
+                        ? 'btn-primary'
+                        : 'btn-outline-primary'
+                        }`}
                       onClick={() => handleSaveAudioSection(index)}
                     >
-                      <i className={`bi ${
-                        pendingAudioUploads[index]
-                          ? 'bi-cloud-upload'
-                          : 'bi-save'
-                      } me-1`}></i>
-                      {pendingAudioUploads[index] 
-                        ? 'Upload & Save Section' 
+                      <i className={`bi ${pendingAudioUploads[index]
+                        ? 'bi-cloud-upload'
+                        : 'bi-save'
+                        } me-1`}></i>
+                      {pendingAudioUploads[index]
+                        ? 'Upload & Save Section'
                         : 'Save Section'
                       }
                     </button>
@@ -788,7 +761,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                     <QuestionDisplay
                       question={q}
                       key={q.id}
-                      questionNumber={qIndex + 1} 
+                      questionNumber={qIndex + 1}
                       onEdit={handleOpenUpdateModal}
                       onDelete={onDeleteQuestion}
                     />

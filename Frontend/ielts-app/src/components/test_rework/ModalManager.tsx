@@ -4,11 +4,13 @@ import FillInTheBlankModal from './question_modal/FillInTheBlankModal';
 import SingleChoiceModal from './question_modal/SingleChoiceModal';
 import MatchingModal from './question_modal/MatchingModal';
 import DiagramLabelingModal from './question_modal/DiagramLabelingModal';
+import ShortAnswerModal from './question_modal/ShortAnswerModal';
 import MultipleChoiceUpdateModal from './question_update_modal/MultipleChoiceUpdate';
 import FillInTheBlankUpdateModal from './question_update_modal/FillInTheBlankUpdate';
 import MatchingUpdate from './question_update_modal/MatchingUpdate';
 import SingleChoiceUpdateModal from './question_update_modal/SingleChoiceUpdate';
 import DiagramLabelingUpdate from './question_update_modal/DiagramLabelingUpdate';
+import ShortAnswerUpdateModal from './question_update_modal/ShortAnswerUpdate';
 import type { Question } from '../../types/Question';
 
 interface ModalManagerProps {
@@ -95,6 +97,15 @@ const ModalManager: React.FC<ModalManagerProps> = ({
               otherData={otherData}
             />
           )}
+
+          {selectedQuestionTypes[currentIndex] === "ShortAnswer" && (
+            <ShortAnswerModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onSubmit={handleModalSubmit}
+              otherData={otherData}
+            />
+          )}
         </>
       )}
 
@@ -137,6 +148,15 @@ const ModalManager: React.FC<ModalManagerProps> = ({
 
       {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'DiagramLabeling' && (
         <DiagramLabelingUpdate
+          isOpen={isUpdateModalOpen}
+          onClose={handleCloseUpdateModal}
+          onSubmit={handleUpdateModalSubmit}
+          question={currentEditQuestion}
+        />
+      )}
+
+      {isUpdateModalOpen && currentEditQuestion && currentEditQuestion.questionType === 'ShortAnswer' && (
+        <ShortAnswerUpdateModal
           isOpen={isUpdateModalOpen}
           onClose={handleCloseUpdateModal}
           onSubmit={handleUpdateModalSubmit}
