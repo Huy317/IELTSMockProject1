@@ -29,6 +29,7 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
     SingleChoice: "Single Choice",
     Matching: "Matching",
     DiagramLabeling: "Diagram Labeling",
+    ShortAnswer: "Short Answer",
   };
 
 
