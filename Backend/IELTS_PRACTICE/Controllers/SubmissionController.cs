@@ -59,5 +59,11 @@ namespace IELTS_PRACTICE.Controllers
             }
             return Ok(result);
         }
+
+        [HttpPost("submit")]
+        public async Task<IActionResult> SubmitTest(SubmitRequest rq) { 
+            var  result = await _testSubmissionService.SubmitTest(rq);
+            return Ok(result);
+        }
     }
 }

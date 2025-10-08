@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import type { TestWithAuthorName } from "../../../types/Test";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
 import { getTestById } from "../../../services/testService";
+import { SubmitTest } from "../../../services/submissionService";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface ParagraphData {
   id: number;
@@ -26,6 +28,7 @@ interface QuestionData {
 
 function ReadingPage() {
   const { id: testId } = useParams<{ id: string }>();
+  const {user} = useAuth();
 
   // State management
   const [test, setTest] = useState<TestWithAuthorName | null>(null);
@@ -201,6 +204,12 @@ function ReadingPage() {
   const handleSubmitTest = () => {
     console.log("Submitting test with answers:", userAnswers);
     // Implement submission logic here
+    const data = SubmitTest({
+      userId: user?.id || 0,
+      testId: test ? test.id : 0,
+      userAnswerMap: userAnswers,
+    })
+    console.log(data.then(res => console.log(res)));
   };
 
   // Format time
@@ -449,9 +458,6 @@ function ReadingPage() {
             </div>
             <div className="col-md-4 text-end">
               <div className="timer d-flex align-items-center justify-content-end">
-                {/* <span className="fw-bold fs-2 font-monospace text-white">
-                  {formatTime(timeRemaining)}
-                </span> */}
                 <span className="badge bg-light text-dark fw-bold fs-20 px-4 py-2 rounded-pill shadow-sm">
                   {formatTime(timeRemaining)}
                 </span>
