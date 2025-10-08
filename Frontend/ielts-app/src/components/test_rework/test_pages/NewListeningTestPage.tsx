@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import type { Question } from "../../../types/Question";
 import { getTestById } from "../../../services/testService";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
+import { SubmitTest } from '../../../services/submissionService';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface ListeningSection {
   id: number;
@@ -19,6 +21,7 @@ function NewListeningTestPage() {
   const [sections, setSections] = useState<ListeningSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   // Test configuration - will be updated based on fetched data
   const [testConfig, setTestConfig] = useState({
@@ -107,8 +110,7 @@ function NewListeningTestPage() {
       return {
         id: audioSection.id,
         title: `Recording ${index + 1}`,
-        audioUrl: audioSection.link,
-        // || "/audio/example.mp3", // Use link field for audio URL
+        audioUrl: audioSection.link || "/audio/example.mp3", // Use link field for audio URL
         sectionContent: audioSection.content, // Use Audio section content as form content
         questions: sectionQuestions
       };
@@ -121,7 +123,7 @@ function NewListeningTestPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(30 * 60);
-  const [answers, setAnswers] = useState<{ [key: number]: string | string[] }>({});
+  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
   const [isMuted, setIsMuted] = useState(false);
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
@@ -129,6 +131,17 @@ function NewListeningTestPage() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const lastTimeUpdateRef = useRef(0);
+
+  const handleSubmitTest = () => {
+    console.log("Submitting test with answers:", answers);
+    // Implement submission logic here
+    const data = SubmitTest({
+      userId: user?.id || 0,
+      testId: testId || 0,
+      userAnswerMap: answers,
+    })
+    console.log(data.then(res => console.log(res)));
+  };
 
   // Reset currentSection when sections change and update timer when config changes
   useEffect(() => {
@@ -141,7 +154,7 @@ function NewListeningTestPage() {
   }, [sections, currentSection, loading, testConfig.duration]);
 
   // Event handlers
-  const handleAnswerChange = (questionId: number, answer: string | string[]) => {
+  const handleAnswerChange = (questionId: number, answer: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
   };
 
@@ -535,8 +548,10 @@ function NewListeningTestPage() {
                                     <p className="mb-3"><strong>{question.content}</strong></p>
                                     {choices.map((choice: string, index: number) => {
                                       const choiceValue = choice.trim();
+                                      const currentAnswer = answers[question.id] || '';
+                                      const currentAnswers = currentAnswer ? currentAnswer.split(', ') : [];
                                       const isChecked = isMultipleChoice 
-                                        ? Array.isArray(answers[question.id]) && (answers[question.id] as string[]).includes(choiceValue)
+                                        ? currentAnswers.includes(choiceValue)
                                         : answers[question.id] === choiceValue;
                                       
                                       return (
@@ -550,11 +565,12 @@ function NewListeningTestPage() {
                                             checked={isChecked}
                                             onChange={(e) => {
                                               if (isMultipleChoice) {
-                                                const currentAnswers = Array.isArray(answers[question.id]) ? answers[question.id] as string[] : [];
                                                 if (e.target.checked) {
-                                                  handleAnswerChange(question.id, [...currentAnswers, choiceValue]);
+                                                  const newAnswers = [...currentAnswers, choiceValue];
+                                                  handleAnswerChange(question.id, newAnswers.join(', '));
                                                 } else {
-                                                  handleAnswerChange(question.id, currentAnswers.filter(a => a !== choiceValue));
+                                                  const newAnswers = currentAnswers.filter(a => a !== choiceValue);
+                                                  handleAnswerChange(question.id, newAnswers.join(', '));
                                                 }
                                               } else {
                                                 handleAnswerChange(question.id, e.target.value);
@@ -621,7 +637,7 @@ function NewListeningTestPage() {
             <div className="card-body text-center">
               <h6 className="text-muted mb-1">Duration:</h6>
               <h2 className="text-danger mb-3">{formatTime(timeRemaining)}</h2>
-              <button className="btn btn-primary w-100 mb-3">SUBMIT</button>
+              <button className="btn btn-primary w-100 mb-3" onClick={handleSubmitTest}>SUBMIT</button>
             </div>
           </div>
 
