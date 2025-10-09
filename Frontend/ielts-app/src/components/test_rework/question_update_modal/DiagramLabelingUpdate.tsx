@@ -81,6 +81,8 @@ function DiagramLabelingUpdateModal({
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>('');
     const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
+    const [imageLink, setImageLink] = useState<string>('');
+    const [imageMode, setImageMode] = useState<'upload' | 'link'>('upload');
     const [entries, setEntries] = useState<DiagramEntry[]>([]);
     const [explanation, setExplanation] = useState('');
     const [nextEntryId, setNextEntryId] = useState(1);
@@ -110,6 +112,8 @@ function DiagramLabelingUpdateModal({
             setExplanation(question.explanation || '');
             setCurrentImageUrl(question.link || '');
             setImagePreview(question.link || ''); // Show current image as preview
+            setImageLink(''); // Reset image link
+            setImageMode('upload'); // Default to upload mode
             
             const parsedEntries = parseEntriesFromQuestion(question.choices, question.correctAnswer);
             setEntries(parsedEntries);
@@ -135,6 +139,7 @@ function DiagramLabelingUpdateModal({
             }
             
             setSelectedImage(file);
+            setImageLink(''); // Clear link when file is selected
             setHasChanges(true);
             
             // Create preview URL
@@ -143,6 +148,37 @@ function DiagramLabelingUpdateModal({
                 setImagePreview(e.target?.result as string);
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const handleImageLinkChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const url = event.target.value;
+        setImageLink(url);
+        setSelectedImage(null); // Clear file when link is entered
+        setHasChanges(true);
+        
+        // Update preview with the link
+        if (url.trim()) {
+            setImagePreview(url);
+        } else {
+            setImagePreview(currentImageUrl); // Revert to current image if link is empty
+        }
+    };
+
+    const handleModeChange = (mode: 'upload' | 'link') => {
+        setImageMode(mode);
+        
+        // Clear the other mode's data when switching
+        if (mode === 'upload') {
+            setImageLink('');
+            if (!selectedImage) {
+                setImagePreview(currentImageUrl); // Show current image if no new file
+            }
+        } else {
+            setSelectedImage(null);
+            if (!imageLink) {
+                setImagePreview(currentImageUrl); // Show current image if no link
+            }
         }
     };
 
@@ -194,9 +230,17 @@ function DiagramLabelingUpdateModal({
             return false;
         }
 
-        if (!currentImageUrl && !selectedImage) {
-            toast.error('Please select a diagram image or keep the existing one');
+        if (!currentImageUrl && !selectedImage && !imageLink.trim()) {
+            toast.error('Please provide a diagram image');
             return false;
+        }
+
+        if (imageMode === 'link' && imageLink.trim() && !currentImageUrl && !selectedImage) {
+            // Validate that the link was actually provided
+            if (!imageLink.trim()) {
+                toast.error('Please provide an image URL');
+                return false;
+            }
         }
 
         if (entries.some((entry) => !entry.label.trim())) {
@@ -233,17 +277,19 @@ function DiagramLabelingUpdateModal({
         setIsSubmitting(true);
 
         try {
-            // Upload new image to Discord if one was selected
-            let imageLink = currentImageUrl; // Keep existing image by default
-            if (selectedImage) {
+            // Handle image based on selected mode
+            let finalImageLink = currentImageUrl; // Keep existing image by default
+            
+            if (imageMode === 'upload' && selectedImage) {
+                // Upload new image file
                 try {
                     toast.info("Uploading new image...");
-                    imageLink = await uploadImageFile(selectedImage);
+                    finalImageLink = await uploadImageFile(selectedImage);
                     toast.success("Image uploaded successfully!");
                     
                     // Update the preview to show the uploaded image URL instead of local file
-                    setImagePreview(imageLink);
-                    setCurrentImageUrl(imageLink);
+                    setImagePreview(finalImageLink);
+                    setCurrentImageUrl(finalImageLink);
                     setSelectedImage(null); // Clear the selected file since it's now uploaded
                 } catch (uploadError) {
                     
@@ -260,9 +306,12 @@ function DiagramLabelingUpdateModal({
                     }
                     
                     // Proceed with existing image
-                    imageLink = currentImageUrl;
+                    finalImageLink = currentImageUrl;
                     toast.warning('Proceeding with existing image due to upload failure.');
                 }
+            } else if (imageMode === 'link' && imageLink.trim()) {
+                // Use the provided image URL directly
+                finalImageLink = imageLink.trim();
             }
 
             const data: QuestionToUpdate = {
@@ -273,7 +322,7 @@ function DiagramLabelingUpdateModal({
                 explanation: explanation,
                 parentId: question.parentId,
                 order: question.order,
-                link: imageLink, // Store Discord CDN URL in link field
+                link: finalImageLink, // Store uploaded URL or provided image URL
             };
 
             // Call API to update question after Discord upload (if needed) succeeds
@@ -288,7 +337,7 @@ function DiagramLabelingUpdateModal({
                 // Ensure the updated question includes the new image link
                 const questionWithUpdatedImage = {
                     ...updatedQuestion,
-                    link: imageLink // Make sure the new image URL is included
+                    link: finalImageLink // Make sure the new image URL is included
                 };
                 onSubmit(questionWithUpdatedImage);
                 onClose();
@@ -317,50 +366,97 @@ function DiagramLabelingUpdateModal({
                         ></button>
                     </div>
                     <div className="modal-body">
-                        {/* Current Image Display */}
-                        {currentImageUrl && !selectedImage && (
-                            <div className="mb-3">
-                                <label className="form-label fw-bold">Current Diagram Image</label>
-                                <div className="border rounded p-2 bg-light">
-                                    <img
-                                        src={currentImageUrl}
-                                        alt="Current diagram"
-                                        className="img-fluid border rounded"
-                                        style={{ maxHeight: "300px", maxWidth: "100%" }}
-                                    />
-                                </div>
-                                <small className="form-text text-muted">
-                                    Select a new image below to replace this one, or keep it as is.
-                                </small>
-                            </div>
-                        )}
-
-                        {/* Image Upload Section */}
+                        {/* Image Mode Selector */}
                         <div className="mb-3">
-                            <label htmlFor="diagramImage" className="form-label fw-bold">
-                                {selectedImage ? 'New Diagram Image' : 'Update Diagram Image (optional)'}
-                            </label>
-                            <input
-                                type="file"
-                                className="form-control"
-                                id="diagramImage"
-                                accept="image/*"
-                                onChange={handleImageChange}
-                            />
-                            {selectedImage && imagePreview && (
-                                <div className="mt-3">
-                                    <small className="form-text text-success d-block mb-2">
-                                        New image preview:
-                                    </small>
-                                    <img
-                                        src={imagePreview}
-                                        alt="New diagram preview"
-                                        className="img-fluid border rounded"
-                                        style={{ maxHeight: "300px", maxWidth: "100%" }}
+                            <label className="form-label fw-bold">Diagram Image</label>
+                            <div className="btn-group w-100 mb-3" role="group">
+                                <input
+                                    type="radio"
+                                    className="btn-check"
+                                    name="imageMode"
+                                    id="uploadMode"
+                                    checked={imageMode === 'upload'}
+                                    onChange={() => handleModeChange('upload')}
+                                />
+                                <label 
+                                    className={`btn ${imageMode === 'upload' ? 'btn-primary' : 'btn-outline-primary'}`} 
+                                    htmlFor="uploadMode"
+                                >
+                                    <i className="bi bi-upload me-2"></i>
+                                    Upload Image
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    className="btn-check"
+                                    name="imageMode"
+                                    id="linkMode"
+                                    checked={imageMode === 'link'}
+                                    onChange={() => handleModeChange('link')}
+                                />
+                                <label 
+                                    className={`btn ${imageMode === 'link' ? 'btn-primary' : 'btn-outline-primary'}`} 
+                                    htmlFor="linkMode"
+                                >
+                                    <i className="bi bi-link-45deg me-2"></i>
+                                    Use Image Link
+                                </label>
+                            </div>
+
+                            {/* Upload Mode */}
+                            {imageMode === 'upload' && (
+                                <div>
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        id="diagramImage"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
                                     />
+                                    <small className="form-text text-muted">
+                                        {selectedImage 
+                                            ? 'New image selected for upload.' 
+                                            : currentImageUrl 
+                                                ? 'Select a new image to replace the current one, or leave as is.'
+                                                : 'Select an image file from your computer to upload.'}
+                                    </small>
+                                </div>
+                            )}
+
+                            {/* Link Mode */}
+                            {imageMode === 'link' && (
+                                <div>
+                                    <input
+                                        type="url"
+                                        className="form-control"
+                                        id="diagramImageLink"
+                                        placeholder="Enter direct image URL (e.g., https://example.com/diagram.png)"
+                                        value={imageLink}
+                                        onChange={handleImageLinkChange}
+                                    />
+                                    <small className="form-text text-muted">
+                                        Provide a direct URL to an image hosted online.
+                                    </small>
                                 </div>
                             )}
                         </div>
+
+                        {/* Image Preview */}
+                        {imagePreview && (
+                            <div className="mb-3">
+                                <label className="form-label fw-bold">
+                                    {selectedImage ? 'New Image Preview' : imageLink ? 'Image Preview' : 'Current Image'}
+                                </label>
+                                <div className="border rounded p-2 bg-light">
+                                    <img
+                                        src={imagePreview}
+                                        alt="Diagram preview"
+                                        className="img-fluid border rounded"
+                                        style={{ maxHeight: "300px", maxWidth: "100%" }}
+                                    />
+                                </div>
+                            </div>
+                        )}
 
                         {/* Question Content */}
                         <div className="mb-3">
