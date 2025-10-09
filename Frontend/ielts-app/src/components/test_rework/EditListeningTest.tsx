@@ -114,6 +114,8 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
   const [audioExplanationChange, setAudioExplanationChange] = useState<boolean[]>([false, false, false, false]);
   const [audioFiles, setAudioFiles] = useState<(File | null)[]>([null, null, null, null]);
   const [pendingAudioUploads, setPendingAudioUploads] = useState<boolean[]>([false, false, false, false]);
+  const [audioLinks, setAudioLinks] = useState<string[]>(["", "", "", ""]);
+  const [audioLinkChanges, setAudioLinkChanges] = useState<boolean[]>([false, false, false, false]);
 
   const handleAudioTranscriptChange = (sectionIndex: number, value: string) => {
     const newAudioTranscripts = [...audioTranscripts];
@@ -137,6 +139,17 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     setAudioExplanations(newAudioExplanations);
   };
 
+  const handleAudioLinkChange = (sectionIndex: number, value: string) => {
+    const newAudioLinks = [...audioLinks];
+    newAudioLinks[sectionIndex] = value;
+    setAudioLinkChanges((prev) => {
+      const newChange = [...prev];
+      newChange[sectionIndex] = true;
+      return newChange;
+    });
+    setAudioLinks(newAudioLinks);
+  };
+
   // Function to upload audio file using file upload service
   const uploadAudioFile = async (file: File): Promise<string> => {
     // Use the generic upload function (includes Catbox 200MB limit validation)
@@ -147,8 +160,9 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     const hasTranscriptChanges = audioTranscriptChange[sectionIndex];
     const hasExplanationChanges = audioExplanationChange[sectionIndex];
     const hasPendingAudioUpload = audioFiles[sectionIndex] !== null && pendingAudioUploads[sectionIndex];
+    const hasLinkChanges = audioLinkChanges[sectionIndex];
 
-    if (!hasTranscriptChanges && !hasExplanationChanges && !hasPendingAudioUpload) {
+    if (!hasTranscriptChanges && !hasExplanationChanges && !hasPendingAudioUpload && !hasLinkChanges) {
       toast.info("No changes to save for this audio section.");
       return;
     }
@@ -189,6 +203,9 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
 
         // Add the audio URL to the update object
         updatedAudioSection.link = audioUrl;
+      } else if (hasLinkChanges) {
+        // Handle audio link change (direct URL input)
+        updatedAudioSection.link = audioLinks[sectionIndex];
       }
 
       // Update the question with new content and/or audio link
@@ -210,6 +227,12 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
           const newPending = [...prev];
           newPending[sectionIndex] = false;
           return newPending;
+        });
+
+        setAudioLinkChanges((prev) => {
+          const newChange = [...prev];
+          newChange[sectionIndex] = false;
+          return newChange;
         });
 
         // Update the questions state to reflect the new content, explanation and link
@@ -447,20 +470,23 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
       (q) => q.questionType === "Audio" && q.parentId === 0
     );
     console.log("Mapping audio sections:", audioSections);
-    // update the audio sections into audioTranscripts and audioExplanations states
+    // update the audio sections into audioTranscripts, audioExplanations, and audioLinks states
     let newAudioTranscripts = [...audioTranscripts];
     let newAudioExplanations = [...audioExplanations];
+    let newAudioLinks = [...audioLinks];
 
     audioSections.forEach((section) => {
       let index = section.order - 1;
       if (index >= 0 && index < newAudioTranscripts.length) {
         newAudioTranscripts[index] = section.content || "Not found";
         newAudioExplanations[index] = section.explanation || "Not found";
+        newAudioLinks[index] = section.link || "";
       }
     });
 
     setAudioTranscripts(newAudioTranscripts);
     setAudioExplanations(newAudioExplanations);
+    setAudioLinks(newAudioLinks);
 
     return audioSections;
   }
@@ -653,6 +679,36 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                   )}
                 </div>
 
+                {/* Audio Link Input */}
+                <div className="mb-4">
+                  <label
+                    htmlFor={`audioLink${sectionNumber}`}
+                    className="form-label fw-bold"
+                  >
+                    <i className="bi bi-link-45deg me-1"></i>
+                    Audio Link (Alternative to file upload)
+                  </label>
+                  <input
+                    className="form-control"
+                    type="url"
+                    id={`audioLink${sectionNumber}`}
+                    placeholder="Enter direct audio URL (e.g., https://example.com/audio.mp3)"
+                    value={audioLinks[index]}
+                    onChange={(e) => handleAudioLinkChange(index, e.target.value)}
+                  />
+                  {audioLinkChanges[index] && (
+                    <div className="mt-2">
+                      <small className="text-warning d-block">
+                        <i className="bi bi-exclamation-triangle me-1"></i>
+                        Audio link changed - Click "Save Section" to save the new link
+                      </small>
+                    </div>
+                  )}
+                  <small className="form-text text-muted">
+                    You can provide a direct URL to an audio file instead of uploading. This will be used for the audio player.
+                  </small>
+                </div>
+
                 {/* Audio Player Section */}
                 <div className="mb-4">
                   <label className="form-label fw-bold">
@@ -660,11 +716,14 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                     Audio Player
                   </label>
                   {(() => {
-                    // Find the audio section for this index
+                    // Get the current audio URL from state (includes unsaved changes)
+                    const currentAudioLink = audioLinks[index];
+                    
+                    // If no current link, fall back to saved data
                     const audioSection = questions.find(
                       (q) => q.questionType === "Audio" && q.parentId === 0 && q.order - 1 === index
                     );
-                    const audioSrc = audioSection?.link;
+                    const audioSrc = currentAudioLink || audioSection?.link;
 
                     return audioSrc ? (
                       <div className="border rounded p-3 bg-light">
@@ -737,7 +796,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                   ></textarea>
                   <div className="mt-2 d-flex justify-content-end">
                     <button
-                      className={`btn ${audioTranscriptChange[index] || audioExplanationChange[index] || pendingAudioUploads[index]
+                      className={`btn ${audioTranscriptChange[index] || audioExplanationChange[index] || pendingAudioUploads[index] || audioLinkChanges[index]
                         ? 'btn-primary'
                         : 'btn-outline-primary'
                         }`}

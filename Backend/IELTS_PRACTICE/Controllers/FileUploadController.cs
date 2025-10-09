@@ -13,7 +13,7 @@ namespace IELTS_PRACTICE.Controllers
         private const string CATBOX_API_URL = "https://catbox.moe/user/api.php";
         private const long MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB in bytes
 
-        // Catbox user hash - provide your user hash here if you want authenticated uploads
+        // Catbox user hash
         private const string CATBOX_USER_HASH = "41e0413dc4f428359bad06306"; // Leave empty for anonymous uploads or add your hash
 
         public FileUploadController(IHttpClientFactory httpClientFactory)
@@ -157,16 +157,6 @@ namespace IELTS_PRACTICE.Controllers
             }
         }
 
-        // Test endpoint to verify controller is working
-        [HttpGet("test")]
-        public IActionResult Test()
-        {
-            return Ok(new
-            {
-                message = "FileUpload controller is working!",
-                timestamp = DateTime.UtcNow,
-                catboxUrl = CATBOX_API_URL
-            });
-        }
+  
     }
 }
