@@ -82,6 +82,8 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
     const [questionContent, setQuestionContent] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
+    const [imageLink, setImageLink] = useState<string>("");
+    const [imageMode, setImageMode] = useState<'upload' | 'link'>('upload'); // Toggle between upload and link modes
     const [entries, setEntries] = useState<DiagramEntry[]>([
         { id: 1, label: "", correctAnswer: "" },
         { id: 2, label: "", correctAnswer: "" },
@@ -99,6 +101,7 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
             }
             
             setSelectedImage(file);
+            setImageLink(""); // Clear link when file is selected
             
             // Create preview URL
             const reader = new FileReader();
@@ -106,6 +109,36 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
                 setImagePreview(e.target?.result as string);
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const handleImageLinkChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const url = event.target.value;
+        setImageLink(url);
+        setSelectedImage(null); // Clear file when link is entered
+        
+        // Update preview with the link
+        if (url.trim()) {
+            setImagePreview(url);
+        } else {
+            setImagePreview(""); // Clear preview if no URL
+        }
+    };
+
+    const handleModeChange = (mode: 'upload' | 'link') => {
+        setImageMode(mode);
+        
+        // Clear the other mode's data when switching
+        if (mode === 'upload') {
+            setImageLink("");
+            if (!selectedImage) {
+                setImagePreview("");
+            }
+        } else {
+            setSelectedImage(null);
+            if (!imageLink) {
+                setImagePreview("");
+            }
         }
     };
 
@@ -153,8 +186,13 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
             return false;
         }
 
-        if (!selectedImage) {
+        if (imageMode === 'upload' && !selectedImage) {
             alert("Please select a diagram image");
+            return false;
+        }
+
+        if (imageMode === 'link' && !imageLink.trim()) {
+            alert("Please provide an image URL");
             return false;
         }
 
@@ -187,12 +225,15 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
         setIsSubmitting(true);
 
         try {
-            // Upload image file and get the URL
-            let imageLink = "";
-            if (selectedImage) {
+            // Handle image based on selected mode
+            let finalImageLink = "";
+            if (imageMode === 'upload' && selectedImage) {
                 toast.info("Uploading image...");
-                imageLink = await uploadImageFile(selectedImage);
+                finalImageLink = await uploadImageFile(selectedImage);
                 toast.success("Image uploaded successfully!");
+            } else if (imageMode === 'link' && imageLink.trim()) {
+                // Use the provided image URL directly
+                finalImageLink = imageLink.trim();
             }
 
             const data: QuestionToCreate = {
@@ -204,7 +245,7 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
                 parentId: otherData.parentId,
                 testId: otherData.testId,
                 order: otherData.order,
-                link: imageLink, // Store Discord CDN URL in link field
+                link: finalImageLink, // Store uploaded URL or provided image URL
             };
 
             // Call API to create question after Discord upload succeeds
@@ -245,29 +286,91 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
                         ></button>
                     </div>
                     <div className="modal-body">
-                        {/* Image Upload Section */}
+                        {/* Image Mode Selector */}
                         <div className="mb-3">
-                            <label htmlFor="diagramImage" className="form-label fw-bold">
-                                Diagram Image
-                            </label>
-                            <input
-                                type="file"
-                                className="form-control"
-                                id="diagramImage"
-                                accept="image/*"
-                                onChange={handleImageChange}
-                            />
-                            {imagePreview && (
-                                <div className="mt-3">
-                                    <img
-                                        src={imagePreview}
-                                        alt="Diagram preview"
-                                        className="img-fluid border rounded"
-                                        style={{ maxHeight: "300px", maxWidth: "100%" }}
+                            <label className="form-label fw-bold">Diagram Image</label>
+                            <div className="btn-group w-100 mb-3" role="group">
+                                <input
+                                    type="radio"
+                                    className="btn-check"
+                                    name="imageMode"
+                                    id="uploadMode"
+                                    checked={imageMode === 'upload'}
+                                    onChange={() => handleModeChange('upload')}
+                                />
+                                <label 
+                                    className={`btn ${imageMode === 'upload' ? 'btn-primary' : 'btn-outline-primary'}`} 
+                                    htmlFor="uploadMode"
+                                >
+                                    <i className="bi bi-upload me-2"></i>
+                                    Upload Image
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    className="btn-check"
+                                    name="imageMode"
+                                    id="linkMode"
+                                    checked={imageMode === 'link'}
+                                    onChange={() => handleModeChange('link')}
+                                />
+                                <label 
+                                    className={`btn ${imageMode === 'link' ? 'btn-primary' : 'btn-outline-primary'}`} 
+                                    htmlFor="linkMode"
+                                >
+                                    <i className="bi bi-link-45deg me-2"></i>
+                                    Use Image Link
+                                </label>
+                            </div>
+
+                            {/* Upload Mode */}
+                            {imageMode === 'upload' && (
+                                <div>
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        id="diagramImage"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
                                     />
+                                    <small className="form-text text-muted">
+                                        Select an image file from your computer to upload.
+                                    </small>
+                                </div>
+                            )}
+
+                            {/* Link Mode */}
+                            {imageMode === 'link' && (
+                                <div>
+                                    <input
+                                        type="url"
+                                        className="form-control"
+                                        id="diagramImageLink"
+                                        placeholder="Enter direct image URL (e.g., https://example.com/diagram.png)"
+                                        value={imageLink}
+                                        onChange={handleImageLinkChange}
+                                    />
+                                    <small className="form-text text-muted">
+                                        Provide a direct URL to an image hosted online.
+                                    </small>
                                 </div>
                             )}
                         </div>
+
+                        {/* Image Preview */}
+                        {imagePreview && (
+                            <div className="mb-3">
+                                <label className="form-label fw-bold">Image Preview</label>
+                                <div className="border rounded p-2 bg-light">
+                                    <img
+                                        src={imagePreview}
+                                        alt="Diagram preview"
+                                        className="img-fluid rounded"
+                                        style={{ maxHeight: "300px", maxWidth: "100%" }}
+                                    />
+                                </div>
+                            </div>
+                        )}
 
                         {/* Question Content */}
                         <div className="mb-3">
