@@ -5,6 +5,8 @@ import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questi
 import { getTestById } from "../../../services/testService";
 import { SubmitTest } from "../../../services/submissionService";
 import { useAuth } from "../../../contexts/AuthContext";
+import { toast } from "react-toastify/unstyled";
+import { confirmToast } from "../../layout/confirmToast";
 
 interface ParagraphData {
   id: number;
@@ -28,7 +30,7 @@ interface QuestionData {
 
 function ReadingPage() {
   const { id: testId } = useParams<{ id: string }>();
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   // State management
   const [test, setTest] = useState<TestWithAuthorName | null>(null);
@@ -98,7 +100,6 @@ function ReadingPage() {
         setParagraphs(paragraphsData);
         setQuestions(actualQuestions);
         setLoading(false);
-
       } catch (error) {
         setLoading(false);
         console.log("Error fetching test data:", error);
@@ -203,13 +204,27 @@ function ReadingPage() {
   // Submit test
   const handleSubmitTest = () => {
     console.log("Submitting test with answers:", userAnswers);
-    // Implement submission logic here
-    const data = SubmitTest({
-      userId: user?.id || 0,
-      testId: test ? test.id : 0,
-      userAnswerMap: userAnswers,
-    })
-    console.log(data.then(res => console.log(res)));
+    confirmToast(
+      `You have ${40 - Object.keys(userAnswers).length} questions unanswered. Do you want to submit the test now?`,
+      async () => {
+        try {
+          const data = await SubmitTest({
+            userId: user?.id || 0,
+            testId: test ? test.id : 0,
+            userAnswerMap: userAnswers,
+          });
+          console.log("this is data", data);
+          toast.success("Test submitted successfully!");
+        } catch (err) {
+          console.error("Submit failed", err);
+          toast.error("Failed to submit test. Please try again.");
+        }
+      },
+      () => {
+        // Optional cancel callback - just closes the toast
+        console.log("Submit cancelled");
+      }
+    );
   };
 
   // Format time

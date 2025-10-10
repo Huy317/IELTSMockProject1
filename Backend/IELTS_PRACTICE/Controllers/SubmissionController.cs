@@ -62,7 +62,7 @@ namespace IELTS_PRACTICE.Controllers
 
         [HttpPost("submit")]
         public async Task<IActionResult> SubmitTest(SubmitRequest rq) { 
-            var  result = await _testSubmissionService.SubmitTest(rq);
+            var  result = await _testSubmissionService.SubmitTest2(rq);
             return Ok(result);
         }
     }
