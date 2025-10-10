@@ -110,7 +110,7 @@ function NewListeningTestPage() {
       return {
         id: audioSection.id,
         title: `Recording ${index + 1}`,
-        audioUrl: audioSection.link || "/audio/example.mp3", // Use link field for audio URL
+        audioUrl: audioSection.link, // || "/audio/example.mp3", // Use link field for audio URL
         sectionContent: audioSection.content, // Use Audio section content as form content
         questions: sectionQuestions
       };
@@ -133,7 +133,7 @@ function NewListeningTestPage() {
   const lastTimeUpdateRef = useRef(0);
 
   const handleSubmitTest = () => {
-    console.log("Submitting test with answers:", answers);
+    console.log('Submitting test with answers:', answers);
     // Implement submission logic here
     const data = SubmitTest({
       userId: user?.id || 0,
@@ -152,6 +152,26 @@ function NewListeningTestPage() {
       setTimeRemaining(testConfig.duration);
     }
   }, [sections, currentSection, loading, testConfig.duration]);
+
+  // Reset audio when section changes
+  useEffect(() => {
+    if (sections.length > 0) {
+      // Reset states
+      setIsPlaying(false);
+      setCurrentTime(0);
+      setDuration(0);
+      lastTimeUpdateRef.current = 0;
+      
+      // Log the current audio URL for debugging
+      const currentAudioUrl = sections[currentSection]?.audioUrl;
+      console.log('Section changed to:', currentSection + 1, 'Audio URL:', currentAudioUrl);
+      
+      // If there's an audio element and URL, force reload
+      if (audioRef.current && currentAudioUrl) {
+        audioRef.current.load(); // Force reload of the audio
+      }
+    }
+  }, [currentSection, sections]);
 
   // Event handlers
   const handleAnswerChange = (questionId: number, answer: string) => {
@@ -191,15 +211,20 @@ function NewListeningTestPage() {
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       const now = Date.now();
-      if (now - lastTimeUpdateRef.current > 100) {
-        setCurrentTime(audioRef.current.currentTime);
+      // Reduce throttling from 100ms to 50ms for smoother progress bar
+      if (now - lastTimeUpdateRef.current > 50) {
+        const newCurrentTime = audioRef.current.currentTime;
+        setCurrentTime(newCurrentTime);
         lastTimeUpdateRef.current = now;
       }
     }
   };
 
   const handleLoadedMetadata = () => {
-    if (audioRef.current) setDuration(audioRef.current.duration);
+    if (audioRef.current) {
+      const audioDuration = audioRef.current.duration;
+      setDuration(audioDuration);
+    }
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -310,13 +335,15 @@ function NewListeningTestPage() {
             <div className="row align-items-center">
               <div className="col-12">
                 <audio
+                  key={`audio-${currentSection}`}
                   ref={audioRef}
-                  src={sections && sections[currentSection] ? sections[currentSection].audioUrl : ""}
+                  src={sections && sections[currentSection] && sections[currentSection].audioUrl ? sections[currentSection].audioUrl : undefined}
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
                   onEnded={() => setIsPlaying(false)}
                   onError={(e) => console.error('Audio error:', e)}
                   className="d-none"
+                  preload="metadata"
                 />
 
                 <div className="d-flex align-items-center">
@@ -528,7 +555,7 @@ function NewListeningTestPage() {
                         const questionNumber = globalQuestionIndex + 1;
                         
                         if (question.questionType === 'SingleChoice' || question.questionType === 'MultipleChoice') {
-                          const choices = question.choices.split(/[,|]/).map((c: string) => c.trim()).filter((c: string) => c);
+                          const choices = question.choices.split('|').map((c: string) => c.trim()).filter((c: string) => c);
                           const isMultipleChoice = question.questionType === 'MultipleChoice';
                           
                           return (
@@ -549,7 +576,10 @@ function NewListeningTestPage() {
                                     {choices.map((choice: string, index: number) => {
                                       const choiceValue = choice.trim();
                                       const currentAnswer = answers[question.id] || '';
-                                      const currentAnswers = currentAnswer ? currentAnswer.split(', ') : [];
+                                      // Clean current answer to handle any mixed separators
+                                      const currentAnswers = currentAnswer 
+                                        ? currentAnswer.split('|').filter(a => a.trim()) 
+                                        : [];
                                       const isChecked = isMultipleChoice 
                                         ? currentAnswers.includes(choiceValue)
                                         : answers[question.id] === choiceValue;
@@ -565,12 +595,20 @@ function NewListeningTestPage() {
                                             checked={isChecked}
                                             onChange={(e) => {
                                               if (isMultipleChoice) {
+                                                // Clean the current answer to remove any mixed separators
+                                                const cleanCurrentAnswer = answers[question.id] || '';
+                                                const cleanCurrentAnswers = cleanCurrentAnswer 
+                                                  ? cleanCurrentAnswer.split('|').filter(a => a.trim()) 
+                                                  : [];
+                                                
                                                 if (e.target.checked) {
-                                                  const newAnswers = [...currentAnswers, choiceValue];
-                                                  handleAnswerChange(question.id, newAnswers.join(', '));
+                                                  const newAnswers = [...cleanCurrentAnswers, choiceValue];
+                                                  const finalAnswer = newAnswers.join('|');
+                                                  handleAnswerChange(question.id, finalAnswer);
                                                 } else {
-                                                  const newAnswers = currentAnswers.filter(a => a !== choiceValue);
-                                                  handleAnswerChange(question.id, newAnswers.join(', '));
+                                                  const newAnswers = cleanCurrentAnswers.filter(a => a !== choiceValue);
+                                                  const finalAnswer = newAnswers.join('|');
+                                                  handleAnswerChange(question.id, finalAnswer);
                                                 }
                                               } else {
                                                 handleAnswerChange(question.id, e.target.value);
