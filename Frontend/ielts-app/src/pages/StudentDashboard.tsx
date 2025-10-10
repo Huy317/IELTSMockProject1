@@ -107,8 +107,8 @@ function StudentDashboard() {
           <SubmissionCard 
             key={idx}
             id={sub.id}
-            image="/assets/img/course/course-01.jpg"
-            adminAvatar="/assets/img/user/user-29.jpg"
+            image="/assets/img/ielts-banner.jpeg"
+            adminAvatar="/assets/img/user/user-00.jpg"
             adminName={sub.instructorName.toUpperCase()}
             title={sub.testName}
             rating={sub.score}

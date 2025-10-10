@@ -66,8 +66,8 @@ function TestList() {
           <TestCardNew
             key={test.id || idx}
             id ={test.id}
-            image="/assets/img/course/course-01.jpg"
-            adminAvatar="/assets/img/user/user-29.jpg"
+            image="/assets/img/ielts-banner.jpeg"
+            adminAvatar="/assets/img/user/user-00.jpg"
             adminName={test.instructorName.toUpperCase()}
             title={test.testName}
             rating={4.9}
