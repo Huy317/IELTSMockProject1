@@ -14,7 +14,7 @@ export function confirmToast(message: string, onConfirm: () => void, onCancel?: 
               closeToast();
             }}
           >
-            Cancel
+            NO
           </button>
           <button
             className="btn btn-danger btn-sm"
@@ -23,7 +23,7 @@ export function confirmToast(message: string, onConfirm: () => void, onCancel?: 
               closeToast();
             }}
           >
-            Delete
+            YES
           </button>
         </div>
       </div>

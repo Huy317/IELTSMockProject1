@@ -125,7 +125,8 @@ namespace IELTS_PRACTICE.Services
                 submission.Score = 9;
             }
 
-                string jsonAnswer = JsonSerializer.Serialize(rq.UserAnswerMap);
+            string jsonAnswer = JsonSerializer.Serialize(rq.UserAnswerMap);
+
             var submissionDetail = new TestSubmissionDetail
             {
                 SubmissionId = submission.Id,
@@ -143,6 +144,74 @@ namespace IELTS_PRACTICE.Services
                 Correct = countCorrect,
                 Incorrect = 40 - countCorrect,
             };
+        }
+
+        public async Task<SubmitResponse> SubmitTest2(SubmitRequest rq)
+        {
+            var submission = new TestSubmission
+            {
+                UserId = rq.UserId,
+                TestId = rq.TestId,
+                SubmittedAt = DateTime.Now,
+            };
+
+            _context.TestSubmissions.Add(submission);
+            await _context.SaveChangesAsync();
+
+            int countCorrect = 0;
+
+            var currentQuestions = _context.Questions
+                .Where(x => x.TestId == submission.TestId)
+                .ToList();
+
+            foreach (var (questionId, userAnswer) in rq.UserAnswerMap)
+            {
+                var correctAnswer = currentQuestions
+                    .Where(x => x.Id == questionId)
+                    .Select(x => x.CorrectAnswer)
+                    .FirstOrDefault();
+
+                if (correctAnswer == userAnswer)
+                {
+                    countCorrect++;
+                }
+            }
+            submission.Score = CalculateScore(countCorrect);
+
+            string jsonAnswer = JsonSerializer.Serialize(rq.UserAnswerMap);
+
+            var submissionDetail = new TestSubmissionDetail
+            {
+                SubmissionId = submission.Id,
+                Feedback = "this is good feedback",
+                Answer = jsonAnswer,
+            };
+            _context.TestSubmissionDetails.Add(submissionDetail);
+            await _context.SaveChangesAsync();
+            return new SubmitResponse
+            {
+                UserId = submission.UserId,
+                TestId = submission.TestId,
+                SubmittedAt = submission.SubmittedAt,
+                Score = submission.Score,
+                Correct = countCorrect,
+                Incorrect = 40 - countCorrect,
+            };
+        }
+
+        public double CalculateScore(int correct) {
+            if (correct >= 39) return 9.0;
+            else if (correct >= 37) return 8.5;
+            else if (correct >= 35) return 8.0;
+            else if (correct >= 32) return 7.5;
+            else if (correct >= 30) return 7.0;
+            else if (correct >= 26) return 6.5;
+            else if (correct >= 23) return 6.0;
+            else if (correct >= 18) return 5.5;
+            else if (correct >= 16) return 5.0;
+            else if (correct >= 13) return 4.5;
+            else if (correct >= 10) return 4.0;
+            else return 0.0;
         }
     }
 }
