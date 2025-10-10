@@ -71,11 +71,11 @@ export function TestCardNew({
             </span>
           </div>
           <h6 className="title mb-2">
-            <a href="#">{title}</a>
+            <a href={`/test/${id}`}>{title}</a>
           </h6>
           <p className="d-flex align-items-center mb-3">
-            <i className="fa-solid fa-star text-warning me-2"></i>
-            {rating} ({reviewCount} Attempts)
+            <i className="bi bi-pencil-square text-warning me-2"></i>
+            {reviewCount} Attempts
           </p>
           <div className="d-flex align-items-center justify-content-between">
             <a
