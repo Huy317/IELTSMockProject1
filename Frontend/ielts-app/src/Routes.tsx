@@ -8,7 +8,7 @@ import StudentDashboard from "./pages/StudentDashboard";
 import StudentProfile from "./pages/StudentProfile";
 import StudentCourses from "./pages/StudentCourses";
 import Layout from "./components/layout/Layout";
-import LoginPage from "./pages/LoginPage";
+// import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminLayout from "./components/layout/AdminLayout";
 import StudentLayout from "./components/layout/StudentLayout";
