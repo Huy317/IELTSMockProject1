@@ -5,6 +5,8 @@ import { getTestById } from "../../../services/testService";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
 import { SubmitTest } from '../../../services/submissionService';
 import { useAuth } from '../../../contexts/AuthContext';
+import { toast } from "react-toastify/unstyled"
+import { confirmToast } from '../../layout/confirmToast';
 
 interface ListeningSection {
   id: number;
@@ -135,12 +137,32 @@ function NewListeningTestPage() {
   const handleSubmitTest = () => {
     console.log('Submitting test with answers:', answers);
     // Implement submission logic here
-    const data = SubmitTest({
-      userId: user?.id || 0,
-      testId: testId || 0,
-      userAnswerMap: answers,
-    })
-    console.log(data.then(res => console.log(res)));
+    // const data = SubmitTest({
+    //   userId: user?.id || 0,
+    //   testId: testId || 0,
+    //   userAnswerMap: answers,
+    // })
+    // console.log(data.then(res => console.log(res)));
+
+    confirmToast(`You have ${40 - Object.keys(answers).length} unanswered questions. Do you want to submit the test now?`,
+      async () => {
+        try {
+          const data = await SubmitTest({
+            userId: user?.id || 0,
+            testId: testId || 0,
+            userAnswerMap: answers,
+          });
+          console.log("this is data",data);
+          toast.success("Test submitted successfully!");
+        } catch (error) {
+          console.error('Submit failed', error);
+          toast.error("Failed to submit the test. Please try again.");
+        }
+      },
+      () => {
+        console.log("Submission cancelled");
+      }
+    );
   };
 
   // Reset currentSection when sections change and update timer when config changes
@@ -460,7 +482,7 @@ function NewListeningTestPage() {
                 // Sort questions by their order to maintain proper sequence
                 const sortedQuestions = [...currentSectionData.questions].sort((a, b) => a.order - b.order);
                 
-                // Group consecutive FormCompletion questions together
+                // Group consecutive FormCompletion and Matching questions together
                 const questionGroups: any[] = [];
                 let currentGroup: any = null;
                 
@@ -468,6 +490,13 @@ function NewListeningTestPage() {
                   if (question.questionType === 'FormCompletion' || question.questionType === 'fill-in-blank') {
                     if (!currentGroup || currentGroup.type !== 'form') {
                       currentGroup = { type: 'form', questions: [question] };
+                      questionGroups.push(currentGroup);
+                    } else {
+                      currentGroup.questions.push(question);
+                    }
+                  } else if (question.questionType === 'Matching') {
+                    if (!currentGroup || currentGroup.type !== 'matching') {
+                      currentGroup = { type: 'matching', questions: [question] };
                       questionGroups.push(currentGroup);
                     } else {
                       currentGroup.questions.push(question);
@@ -536,6 +565,85 @@ function NewListeningTestPage() {
                                           style={{ width: '200px' }}
                                           value={answers[question.id] as string || ''}
                                           onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                            {/* Add separator unless it's the last group */}
+                            {!isLastGroup && <hr className="my-4" />}
+                          </div>
+                        );
+                      } else if (group.type === 'matching') {
+                        // Render matching questions group with shared options and input fields
+                        return (
+                          <div key={`matching-group-${groupIndex}`}>
+                            <div className="row mb-4">
+                              {/* Options and questions content column */}
+                              <div className="col-md-8">
+                                <div className="bg-light p-3 h-100">
+                                  {/* Display the list of options from the first question in the group */}
+                                  {group.questions[0].choices && (
+                                    <div className="mb-4">
+                                      <h6 className="fw-bold mb-3">Options:</h6>
+                                      <div style={{ whiteSpace: 'pre-line', lineHeight: '1.8' }}>
+                                        {group.questions[0].choices}
+                                      </div>
+                                    </div>
+                                  )}
+                                  
+                                  {/* Display all question contents */}
+                                  <div>
+                                    <h6 className="fw-bold mb-3">Questions:</h6>
+                                    {group.questions.map((question: any) => {
+                                      // Calculate sequential question number across all sections
+                                      const allQuestions = sections.flatMap(s => s.questions);
+                                      const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
+                                      const questionNumber = globalQuestionIndex + 1;
+                                      
+                                      return (
+                                        <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
+                                          <span>{question.content}</span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Input fields column for all questions in this group */}
+                              <div className="col-md-4">
+                                <div className="pt-3" style={{ lineHeight: '1.8' }}>
+                                  {/* <h6 className="fw-bold mb-3">Answers:</h6> */}
+                                  {group.questions.map((question: any) => {
+                                    // Calculate sequential question number across all sections
+                                    const allQuestions = sections.flatMap(s => s.questions);
+                                    const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
+                                    const questionNumber = globalQuestionIndex + 1;
+                                    
+                                    return (
+                                      <div 
+                                        key={question.id}
+                                        className={`mb-5 d-flex align-items-center ${
+                                          highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
+                                        }`} 
+                                        style={{ 
+                                          transition: 'all 0.3s ease'
+                                        }}
+                                      >
+                                        <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                                          {questionNumber}
+                                        </span>
+                                        <input
+                                          id={`question-${question.id}`}
+                                          type="text"
+                                          className="form-control form-control-sm"
+                                          style={{ width: '200px' }}
+                                          value={answers[question.id] as string || ''}
+                                          onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                          // placeholder="Enter option"
                                         />
                                       </div>
                                     );
@@ -727,6 +835,10 @@ function NewListeningTestPage() {
                                   const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
                                   if (input) input.focus();
                                 }
+                              } else if (q.questionType === 'Matching') {
+                                // For matching questions, focus the input field
+                                const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
+                                if (input) input.focus();
                               } else if (q.questionType === 'SingleChoice' || q.questionType === 'MultipleChoice') {
                                 // For single choice or multiple choice, focus the first input (radio or checkbox)
                                 const firstInput = questionElement.querySelector('input[type="radio"], input[type="checkbox"]') as HTMLInputElement;

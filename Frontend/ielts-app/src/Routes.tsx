@@ -195,7 +195,7 @@ const router = createBrowserRouter([
     element: <div>Unauthorized Access</div>,
   },
   {
-    path: "new-listening-test/:id",
+    path: "listening-test/:id",
     element: <NewListeningTestPage />,
   },
   {

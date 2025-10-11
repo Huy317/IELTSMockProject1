@@ -6,6 +6,7 @@ import { getAvrScore, getHighestScore, getLowestScore, getTotalSubmission } from
 import type { ViewSubmissionDTO } from "../types/Submission";
 import { GetRecentlySubmissionById } from "../services/submissionService";
 import { set } from "react-hook-form";
+import Pagination from "../components/utils/Pagination";
 
 function StudentDashboard() {
   const {user} = useAuth();
@@ -14,6 +15,21 @@ function StudentDashboard() {
   const [high, setHigh] = useState<number>(0);
   const [low, setLow] = useState<number>(0);
   const [submissions, setSubmissions] = useState<ViewSubmissionDTO[]>([]);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 9; // Number of submission cards per page
+
+  // Calculate pagination values
+  const totalItems = submissions.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentSubmissions = submissions.slice(startIndex, endIndex);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,7 +119,7 @@ function StudentDashboard() {
       <h5 className="mb-3 fs-18">Recently Taken Tests</h5>
       <div className="row">
         {/* <TestCard/> */}
-        {submissions.map((sub, idx) => (
+        {currentSubmissions.map((sub, idx) => (
           <SubmissionCard 
             key={idx}
             id={sub.id}
@@ -116,6 +132,13 @@ function StudentDashboard() {
           />
         ))}
       </div>
+
+      <Pagination
+        totalItems={totalItems}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }
