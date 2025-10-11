@@ -32,6 +32,7 @@ import { AdminTypeSkill } from "./pages/AdminTypeSkill";
 import NewListeningTestPage from "./components/test_rework/test_pages/NewListeningTestPage";
 import ReadingPage from "./components/test_rework/test_pages/ReadingPage";
 import TestEditChoser from "./components/test_rework/TestEditChoser";
+import SubmissionDetailPage from "./pages/Submission/SubmissionDetailPage";
 
 
 const router = createBrowserRouter([
@@ -87,6 +88,14 @@ const router = createBrowserRouter([
         element: <ProtectedRoute requiredRole="Admin">
           <TestEditChoser />
         </ProtectedRoute>,
+      },
+      {
+        path: "submission-detail/:id",
+        element: (
+          <ProtectedRoute allowedRoles={["Student", "Admin"]}>
+            <SubmissionDetailPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin",
@@ -192,7 +201,8 @@ const router = createBrowserRouter([
   {
     path: "reading-test/:id",
     element: <ReadingPage/>
-  }
+  },
+  
 ]);
 
 export default function Routes() {

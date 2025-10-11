@@ -12,6 +12,21 @@ export interface Question {
     link: string;
 }
 
+export interface QuestionWithUserChoice {
+    id: number;
+    questionType: string;
+    content: string;
+    correctAnswer: string;
+    choices: string;
+    explanation: string;
+    parentId: number;
+    testId: number;
+    order: number;
+    link: string;
+    answer: string;
+}
+
+
 export interface QuestionGetReturn {
     id: number;
     questionType: string;
