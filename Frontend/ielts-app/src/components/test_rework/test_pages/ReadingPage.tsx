@@ -42,6 +42,8 @@ function ReadingPage() {
   const [currentParagraphNumber, setCurrentParagraphNumber] = useState(1);
   const [loading, setLoading] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState(60 * 60); // 60 minutes in seconds
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [modalImageSrc, setModalImageSrc] = useState("");
 
   //Fetch test data
   useEffect(() => {
@@ -124,12 +126,40 @@ function ReadingPage() {
     return () => clearInterval(timer);
   }, []);
 
+  // Handle Escape key for image modal
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && imageModalOpen) {
+        closeImageModal();
+      }
+    };
+
+    if (imageModalOpen) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [imageModalOpen]);
+
   // Handle answer changes
   const handleAnswerChange = (questionId: number, answer: string) => {
     setUserAnswers((prev) => ({
       ...prev,
       [questionId]: answer,
     }));
+  };
+
+  // Handle image modal
+  const openImageModal = (imageSrc: string) => {
+    setModalImageSrc(imageSrc);
+    setImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setImageModalOpen(false);
+    setModalImageSrc("");
   };
 
   // Paragraph navigation functions
@@ -251,6 +281,8 @@ function ReadingPage() {
         return renderFormCompletionQuestion(question, userAnswer);
       case "Matching":
         return renderMatchingQuestion(question, userAnswer);
+      case "DiagramLabeling":
+        return renderDiagramLabelingQuestion(question, userAnswer);
       default:
         return (
           <div className="alert alert-warning">
@@ -345,9 +377,9 @@ function ReadingPage() {
             </audio>
           </div>
         )}
-        <div className="choices">
+        <div className="choices d-flex flex-wrap gap-3">
           {choices.map((choice, index) => (
-            <div key={index} className="form-check mb-2">
+            <div key={index} className="form-check">
               <input
                 className="form-check-input"
                 type="radio"
@@ -436,6 +468,58 @@ function ReadingPage() {
             onChange={(e) => handleAnswerChange(question.id, e.target.value)}
             placeholder="Enter letter (A, B, C, etc.)"
             maxLength={1}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderDiagramLabelingQuestion = (
+    question: QuestionData,
+    userAnswer: string
+  ) => {
+    return (
+      <div className="question-content">
+        <p className="question-text">{question.content}</p>
+        
+        {/* Display diagram image if link exists */}
+        {question.link && (
+          <div className="diagram-image mb-3">
+            <img
+              src={question.link}
+              alt="Diagram for labeling"
+              className="img-fluid border rounded"
+              style={{ 
+                maxHeight: "400px", 
+                maxWidth: "100%", 
+                cursor: "pointer",
+                transition: "transform 0.2s ease-in-out"
+              }}
+              onClick={() => openImageModal(question.link)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.02)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+              title="Click to enlarge image"
+            />
+            <small className="text-muted d-block mt-1">
+              <i className="bi bi-zoom-in me-1"></i>
+              Click image to enlarge
+            </small>
+          </div>
+        )}
+        
+        {/* Input field for user answer */}
+        <div className="diagram-labeling-input">
+          <label className="form-label">Your answer:</label>
+          <input
+            type="text"
+            className="form-control"
+            value={userAnswer}
+            onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+            placeholder="Enter your answer for this diagram"
           />
         </div>
       </div>
@@ -684,6 +768,54 @@ function ReadingPage() {
           </div>
         </div>
       </div>
+
+      {/* Image Modal for Diagram Viewing */}
+      {imageModalOpen && (
+        <div 
+          className="modal show d-block" 
+          tabIndex={-1} 
+          style={{ backgroundColor: "rgba(0,0,0,0.8)", zIndex: 1050 }}
+          onClick={closeImageModal}
+        >
+          <div className="modal-dialog modal-xl modal-dialog-centered">
+            <div className="modal-content bg-transparent border-0">
+              <div className="modal-header border-0 pb-0">
+                <button
+                  type="button"
+                  className="btn-close btn-close-white ms-auto"
+                  aria-label="Close"
+                  onClick={closeImageModal}
+                  style={{ 
+                    fontSize: "1.5rem",
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    borderRadius: "50%",
+                    padding: "10px"
+                  }}
+                ></button>
+              </div>
+              <div className="modal-body text-center p-0">
+                <img
+                  src={modalImageSrc}
+                  alt="Enlarged diagram"
+                  className="img-fluid rounded"
+                  style={{ 
+                    maxHeight: "85vh", 
+                    maxWidth: "100%",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+                  }}
+                  onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking image
+                />
+                <div className="mt-3">
+                  <small className="text-white bg-dark bg-opacity-75 px-3 py-1 rounded">
+                    <i className="bi bi-info-circle me-1"></i>
+                    Click outside or press X to close
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
