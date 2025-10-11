@@ -1,3 +1,10 @@
+export interface Submission {
+    id : number;
+    userId : number;
+    testId : number;
+    submittedAt : string;
+    score : number;
+}
 export interface ViewSubmissionDTO {
     id : number;
     instructorName : string;
