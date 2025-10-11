@@ -4,71 +4,11 @@ import { toast } from 'react-toastify';
 import { updateQuestion } from '../../../services/questionService';
 import { uploadFile } from "../../../services/fileUploadService";
 
-interface DiagramEntry {
-    id: number;
-    label: string;
-    correctAnswer: string;
-}
-
 interface DiagramLabelingUpdateModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (updatedQuestion: Question) => void;
     question: Question;
-}
-
-// DiagramEntryItem component - MUST be defined outside to prevent re-renders and focus loss
-interface DiagramEntryItemProps {
-    entry: DiagramEntry;
-    index: number;
-    onLabelChange: (id: number, label: string) => void;
-    onAnswerChange: (id: number, answer: string) => void;
-    onDelete: (id: number) => void;
-    canDelete: boolean;
-}
-
-function DiagramEntryItem({entry, index, onLabelChange, onAnswerChange, onDelete, canDelete}: DiagramEntryItemProps) {
-    return (
-        <div className="border rounded p-3 mb-3 bg-light">
-            <div className="row align-items-center">
-                <div className="col-10">
-                    <div className="row">
-                        <div className="col-6">
-                            <label className="form-label fw-bold">Entry {index + 1}</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={entry.label}
-                                onChange={(e) => onLabelChange(entry.id, e.target.value)}
-                                placeholder={`Label for entry ${index + 1}`}
-                            />
-                        </div>
-                        <div className="col-6">
-                            <label className="form-label fw-bold">Correct Answer</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={entry.correctAnswer}
-                                onChange={(e) => onAnswerChange(entry.id, e.target.value)}
-                                placeholder="Enter correct answer"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="col-2 text-center">
-                    <button
-                        type="button"
-                        className="btn btn-outline-danger btn-md rounded-3"
-                        onClick={() => onDelete(entry.id)}
-                        disabled={!canDelete}
-                        title="Delete entry"
-                    >
-                        <i className="bi bi-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
 }
 
 function DiagramLabelingUpdateModal({ 
@@ -78,46 +18,25 @@ function DiagramLabelingUpdateModal({
     question 
 }: DiagramLabelingUpdateModalProps) {
     const [questionContent, setQuestionContent] = useState('');
+    const [correctAnswer, setCorrectAnswer] = useState(''); // Simple string instead of entries
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>('');
     const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
     const [imageLink, setImageLink] = useState<string>('');
     const [imageMode, setImageMode] = useState<'upload' | 'link'>('upload');
-    const [entries, setEntries] = useState<DiagramEntry[]>([]);
     const [explanation, setExplanation] = useState('');
-    const [nextEntryId, setNextEntryId] = useState(1);
     const [hasChanges, setHasChanges] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // Parse entries from question data
-    const parseEntriesFromQuestion = (choicesStr: string, correctAnswersStr: string): DiagramEntry[] => {
-        if (!choicesStr) return [
-            { id: 1, label: '', correctAnswer: '' }
-        ];
-
-        const labels = choicesStr.split('|').filter(Boolean);
-        const answers = correctAnswersStr ? correctAnswersStr.split('|').filter(Boolean) : [];
-        
-        return labels.map((label, index) => ({
-            id: index + 1,
-            label: label.trim(),
-            correctAnswer: answers[index] ? answers[index].trim() : ''
-        }));
-    };
-
     // Initialize form with question data when modal opens or question changes
     useEffect(() => {
         if (isOpen && question) {
             setQuestionContent(question.content || '');
+            setCorrectAnswer(question.correctAnswer || '');
             setExplanation(question.explanation || '');
             setCurrentImageUrl(question.link || '');
             setImagePreview(question.link || ''); // Show current image as preview
             setImageLink(''); // Reset image link
             setImageMode('upload'); // Default to upload mode
-            
-            const parsedEntries = parseEntriesFromQuestion(question.choices, question.correctAnswer);
-            setEntries(parsedEntries);
-            setNextEntryId(parsedEntries.length + 1);
             setHasChanges(false); // Reset changes when modal opens
             setSelectedImage(null); // Reset selected image
         }
@@ -182,47 +101,23 @@ function DiagramLabelingUpdateModal({
         }
     };
 
-    const handleAddEntry = () => {
-        const newEntry: DiagramEntry = {
-            id: nextEntryId,
-            label: '',
-            correctAnswer: '',
-        };
-        setEntries([...entries, newEntry]);
-        setNextEntryId(nextEntryId + 1);
+    // Track changes for question content
+    const handleQuestionContentChange = (value: string) => {
+        setQuestionContent(value);
         setHasChanges(true);
     };
 
-    const handleEntryLabelChange = (id: number, label: string) => {
-        setEntries(
-            entries.map((entry) => (entry.id === id ? { ...entry, label } : entry))
-        );
+    // Track changes for correct answer
+    const handleCorrectAnswerChange = (value: string) => {
+        setCorrectAnswer(value);
         setHasChanges(true);
     };
 
-    const handleEntryAnswerChange = (id: number, correctAnswer: string) => {
-        setEntries(
-            entries.map((entry) =>
-                entry.id === id ? { ...entry, correctAnswer } : entry
-            )
-        );
+    // Track changes for explanation
+    const handleExplanationChange = (value: string) => {
+        setExplanation(value);
         setHasChanges(true);
     };
-
-    const handleDeleteEntry = (id: number) => {
-        // Prevent deleting if only 1 entry remains
-        if (entries.length <= 1) return;
-        setEntries(entries.filter((entry) => entry.id !== id));
-        setHasChanges(true);
-    };
-
-    function formatEntriesToChoicesString(entries: DiagramEntry[]): string {
-        return entries.map((entry) => entry.label).join('|');
-    }
-
-    function formatCorrectAnswersToString(entries: DiagramEntry[]): string {
-        return entries.map((entry) => entry.correctAnswer).join('|');
-    }
 
     const validateForm = () => {
         if (!questionContent.trim()) {
@@ -243,13 +138,8 @@ function DiagramLabelingUpdateModal({
             }
         }
 
-        if (entries.some((entry) => !entry.label.trim())) {
-            toast.error('All entries must have a label');
-            return false;
-        }
-
-        if (entries.some((entry) => !entry.correctAnswer.trim())) {
-            toast.error('All entries must have a correct answer');
+        if (!correctAnswer.trim()) {
+            toast.error('Correct answer is required');
             return false;
         }
 
@@ -317,8 +207,8 @@ function DiagramLabelingUpdateModal({
             const data: QuestionToUpdate = {
                 questionType: 'DiagramLabeling',
                 content: questionContent,
-                choices: formatEntriesToChoicesString(entries),
-                correctAnswer: formatCorrectAnswersToString(entries),
+                choices: '', // No longer needed with simplified approach
+                correctAnswer: correctAnswer,
                 explanation: explanation,
                 parentId: question.parentId,
                 order: question.order,
@@ -468,43 +358,27 @@ function DiagramLabelingUpdateModal({
                                 id="questionContent"
                                 rows={3}
                                 value={questionContent}
-                                onChange={(e) => {
-                                    setQuestionContent(e.target.value);
-                                    setHasChanges(true);
-                                }}
+                                onChange={(e) => handleQuestionContentChange(e.target.value)}
                                 placeholder="Enter instructions for the diagram labeling task..."
                             ></textarea>
                         </div>
 
-                        {/* Entries Section */}
+                        {/* Correct Answer Section */}
                         <div className="mb-3">
-                            <label className="form-label fw-bold">Diagram Entries</label>
-                            <small className="form-text text-muted d-block mb-3">
-                                Add labels and their corresponding correct answers for the diagram
+                            <label htmlFor="correctAnswer" className="form-label fw-bold">
+                                Correct Answer
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="correctAnswer"
+                                value={correctAnswer}
+                                onChange={(e) => handleCorrectAnswerChange(e.target.value)}
+                                placeholder="Enter the correct answer for this question..."
+                            />
+                            <small className="form-text text-muted">
+                                Provide the correct answer that students should identify from the diagram
                             </small>
-
-                            {/* Render all entries */}
-                            {entries.map((entry, index) => (
-                                <DiagramEntryItem
-                                    key={entry.id}
-                                    entry={entry}
-                                    index={index}
-                                    onLabelChange={handleEntryLabelChange}
-                                    onAnswerChange={handleEntryAnswerChange}
-                                    onDelete={handleDeleteEntry}
-                                    canDelete={entries.length > 1}
-                                />
-                            ))}
-
-                            {/* Add Entry Button */}
-                            <button
-                                type="button"
-                                className="btn btn-outline-primary btn-sm rounded-1"
-                                onClick={handleAddEntry}
-                            >
-                                <i className="bi bi-plus me-1"></i>
-                                Add Entry
-                            </button>
                         </div>
 
                         {/* Explanation */}
@@ -517,10 +391,7 @@ function DiagramLabelingUpdateModal({
                                 id="explanation"
                                 rows={3}
                                 value={explanation}
-                                onChange={(e) => {
-                                    setExplanation(e.target.value);
-                                    setHasChanges(true);
-                                }}
+                                onChange={(e) => handleExplanationChange(e.target.value)}
                                 placeholder="Provide explanations for the correct answers..."
                             ></textarea>
                         </div>
