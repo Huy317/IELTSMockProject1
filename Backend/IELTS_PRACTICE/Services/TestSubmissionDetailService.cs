@@ -29,7 +29,8 @@ namespace IELTS_PRACTICE.Services
         public async Task<TestSubmissionDetailDTO> GetTestSubmissionDetailById(int id)
         {
             return _context.TestSubmissionDetails
-                .Where(x => x.Id == id)
+                //.Where(x => x.Id == id)
+                .Where(x => x.SubmissionId == id)
                 .Select(x => new TestSubmissionDetailDTO
                 {
                     Id = x.Id,
