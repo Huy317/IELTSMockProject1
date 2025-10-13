@@ -143,6 +143,7 @@ namespace IELTS_PRACTICE.Services
                 Score = submission.Score,
                 Correct = countCorrect,
                 Incorrect = 40 - countCorrect,
+                SubmissionId = submission.Id
             };
         }
 
@@ -196,6 +197,7 @@ namespace IELTS_PRACTICE.Services
                 Score = submission.Score,
                 Correct = countCorrect,
                 Incorrect = 40 - countCorrect,
+                SubmissionId = submission.Id
             };
         }
 

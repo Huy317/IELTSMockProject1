@@ -149,12 +149,16 @@ function SubmissionDetailPage() {
                                         <div className="mb-0">
                                             <label className="form-label text-muted">Submitted At</label>
                                             <p className="fw-bold">
-                                                {new Date(submissionData.submittedAt).toLocaleString('en-US', {
+                                                {new Date(submissionData.submittedAt.endsWith('Z') 
+                                                ? submissionData.submittedAt 
+                                                : `${submissionData.submittedAt}Z`).toLocaleString('en-US', {
                                                     year: 'numeric',
                                                     month: 'long',
                                                     day: 'numeric',
                                                     hour: '2-digit',
-                                                    minute: '2-digit'
+                                                    minute: '2-digit',
+                                                    hour12: false,
+                                                    timeZone: 'Asia/Ho_Chi_Minh'
                                                 })}
                                             </p>
                                         </div>
