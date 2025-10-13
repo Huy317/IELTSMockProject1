@@ -83,7 +83,7 @@ function CourseTable({ tests, onTestsChange }: CourseTableProps) {
           <td>
             <div className="d-flex align-items-center">
               <a className="d-inline-flex fs-14 me-1 action-icon" onClick={() => handleEdit(test.id)}>
-                <i className="isax isax-edit-2"></i>
+                <i className="isax isax-edit"></i>
               </a>
               <a onClick={() => handleDelete(test.id)} href="#" className="d-inline-flex fs-14 action-icon">
                 <i className="isax isax-trash"></i>

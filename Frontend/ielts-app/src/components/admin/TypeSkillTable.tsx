@@ -164,16 +164,16 @@ export function TypeSkillTable() {
                     {/* <Link to={`edit-typeskill/${skill.id}`} className="d-inline-flex fs-14 action-icon">
                     <i className="isax isax-edit"></i>
                   </Link> */}
-                    <button
+                    <a
                       type="button"
-                      className="d-inline-flex fs-14 action-icon btn btn-link p-0"
+                      className="d-inline-flex fs-14 action-icon btn p-0"
                       onClick={(e) => {
                         e.preventDefault();
                         openEditPopup(skill);
                       }}
                     >
                       <i className="isax isax-edit"></i>
-                    </button>
+                    </a>
                     <Link
                       onClick={() => handleDelete(skill.id)}
                       to="#"

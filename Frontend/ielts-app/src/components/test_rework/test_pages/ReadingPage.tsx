@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { TestWithAuthorName } from "../../../types/Test";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
 import { getTestById } from "../../../services/testService";
@@ -7,6 +7,7 @@ import { SubmitTest } from "../../../services/submissionService";
 import { useAuth } from "../../../contexts/AuthContext";
 import { toast } from "react-toastify/unstyled";
 import { confirmToast } from "../../layout/confirmToast";
+
 
 interface ParagraphData {
   id: number;
@@ -44,6 +45,7 @@ function ReadingPage() {
   const [timeRemaining, setTimeRemaining] = useState(60 * 60); // 60 minutes in seconds
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState("");
+  const navigate = useNavigate();
 
   //Fetch test data
   useEffect(() => {
@@ -245,6 +247,7 @@ function ReadingPage() {
           });
           console.log("this is data", data);
           toast.success("Test submitted successfully!");
+          navigate(`/submission-detail/${data.submissionId}`);
         } catch (err) {
           console.error("Submit failed", err);
           toast.error("Failed to submit test. Please try again.");

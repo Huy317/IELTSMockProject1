@@ -178,7 +178,7 @@ function ShortAnswerModal({
                         </div>
 
                         {/* Preview Section */}
-                        {questionContent && (
+                        {/* {questionContent && (
                             <div className="mb-4">
                                 <h6 className="fw-bold text-muted">
                                     <i className="bi bi-eye me-1"></i>
@@ -198,7 +198,7 @@ function ShortAnswerModal({
                                     )}
                                 </div>
                             </div>
-                        )}
+                        )} */}
                     </div>
                     <div className="modal-footer">
                         <button

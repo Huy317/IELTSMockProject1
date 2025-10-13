@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { Question } from "../../../types/Question";
 import { getTestById } from "../../../services/testService";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
@@ -133,6 +133,7 @@ function NewListeningTestPage() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const lastTimeUpdateRef = useRef(0);
+  const navigate = useNavigate()
 
   const handleSubmitTest = () => {
     console.log('Submitting test with answers:', answers);
@@ -144,6 +145,7 @@ function NewListeningTestPage() {
     // })
     // console.log(data.then(res => console.log(res)));
 
+    
     confirmToast(`You have ${40 - Object.keys(answers).length} unanswered questions. Do you want to submit the test now?`,
       async () => {
         try {
@@ -154,6 +156,7 @@ function NewListeningTestPage() {
           });
           console.log("this is data",data);
           toast.success("Test submitted successfully!");
+          navigate(`/submission-detail/${data.submissionId}`);
         } catch (error) {
           console.error('Submit failed', error);
           toast.error("Failed to submit the test. Please try again.");
@@ -482,7 +485,7 @@ function NewListeningTestPage() {
                 // Sort questions by their order to maintain proper sequence
                 const sortedQuestions = [...currentSectionData.questions].sort((a, b) => a.order - b.order);
                 
-                // Group consecutive FormCompletion and Matching questions together
+                // Group consecutive FormCompletion, Matching, and DiagramLabeling questions together
                 const questionGroups: any[] = [];
                 let currentGroup: any = null;
                 
@@ -501,6 +504,13 @@ function NewListeningTestPage() {
                     } else {
                       currentGroup.questions.push(question);
                     }
+                  } else if (question.questionType === 'DiagramLabeling') {
+                    if (!currentGroup || currentGroup.type !== 'diagram') {
+                      currentGroup = { type: 'diagram', questions: [question] };
+                      questionGroups.push(currentGroup);
+                    } else {
+                      currentGroup.questions.push(question);
+                    }
                   } else {
                     // All other question types (SingleChoice, MultipleChoice, etc.) are treated as single questions
                     currentGroup = { type: 'single', question: question };
@@ -512,6 +522,21 @@ function NewListeningTestPage() {
                   <div>
                     {questionGroups.map((group, groupIndex) => {
                       const isLastGroup = groupIndex === questionGroups.length - 1;
+                      const nextGroup = !isLastGroup ? questionGroups[groupIndex + 1] : null;
+                      
+                      // Determine if we should show separator
+                      let shouldShowSeparator = false;
+                      if (!isLastGroup && nextGroup) {
+                        if (group.type !== nextGroup.type) {
+                          // Different group types (form, matching, diagram vs single)
+                          shouldShowSeparator = true;
+                        } else if (group.type === 'single' && nextGroup.type === 'single') {
+                          // Both are single questions, check their question types
+                          const currentQuestionType = group.question.questionType;
+                          const nextQuestionType = nextGroup.question.questionType;
+                          shouldShowSeparator = currentQuestionType !== nextQuestionType;
+                        }
+                      }
                       
                       if (group.type === 'form') {
                         // Render form completion group with shared form content
@@ -520,7 +545,7 @@ function NewListeningTestPage() {
                             <div className="row mb-4">
                               {/* Form content column */}
                               <div className="col-md-8">
-                                <div className="bg-light p-3 h-100" style={{ lineHeight: "2.5" }}>
+                                <div className="border rounded bg-light p-3 h-100" style={{ lineHeight: "2.5" }}>
                                   {currentSectionData.sectionContent ? (
                                     currentSectionData.sectionContent.includes('<') ? (
                                       <div dangerouslySetInnerHTML={{ __html: currentSectionData.sectionContent }} />
@@ -572,8 +597,8 @@ function NewListeningTestPage() {
                                 </div>
                               </div>
                             </div>
-                            {/* Add separator unless it's the last group */}
-                            {!isLastGroup && <hr className="my-4" />}
+                            {/* Add separator only if next group is different type */}
+                            {shouldShowSeparator && <hr className="my-4" />}
                           </div>
                         );
                       } else if (group.type === 'matching') {
@@ -583,7 +608,7 @@ function NewListeningTestPage() {
                             <div className="row mb-4">
                               {/* Options and questions content column */}
                               <div className="col-md-8">
-                                <div className="bg-light p-3 h-100">
+                                <div className="border rounded bg-light p-3 h-100">
                                   {/* Display the list of options from the first question in the group */}
                                   {group.questions[0].choices && (
                                     <div className="mb-4">
@@ -598,11 +623,6 @@ function NewListeningTestPage() {
                                   <div>
                                     <h6 className="fw-bold mb-3">Questions:</h6>
                                     {group.questions.map((question: any) => {
-                                      // Calculate sequential question number across all sections
-                                      const allQuestions = sections.flatMap(s => s.questions);
-                                      const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
-                                      const questionNumber = globalQuestionIndex + 1;
-                                      
                                       return (
                                         <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
                                           <span>{question.content}</span>
@@ -651,8 +671,86 @@ function NewListeningTestPage() {
                                 </div>
                               </div>
                             </div>
-                            {/* Add separator unless it's the last group */}
-                            {!isLastGroup && <hr className="my-4" />}
+                            {/* Add separator only if next group is different type */}
+                            {shouldShowSeparator && <hr className="my-4" />}
+                          </div>
+                        );
+                      } else if (group.type === 'diagram') {
+                        // Render diagram labeling group with shared image and instructions
+                        return (
+                          <div key={`diagram-group-${groupIndex}`}>
+                            <div className="row mb-4">
+                              {/* Left column: Image and question content */}
+                              <div className="col-md-8">
+                                <div className="pe-3">
+                                  {/* Show image if available */}
+                                  {group.questions[0]?.link && (
+                                    <div className="mb-4">
+                                      <div className="border rounded p-3 bg-light">
+                                        <h6 className="fw-bold mb-3">Diagram:</h6>
+                                        <img
+                                          src={group.questions[0].link}
+                                          alt="Diagram for labeling"
+                                          className="img-fluid rounded mb-3"
+                                          style={{ maxHeight: "400px", maxWidth: "100%" }}
+                                        />
+                                        {/* Display all question contents */}
+                                        <div>
+                                          <h6 className="fw-bold mb-3">Questions:</h6>
+                                          {group.questions.map((question: any) => {
+                                            return (
+                                              <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
+                                                <span>{question.content}</span>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              {/* Input fields column for all questions in this group */}
+                              <div className="col-md-4">
+                                <div className="pt-3" style={{ lineHeight: '1.8' }}>
+                                  {/* <h6 className="fw-bold mb-3">Answers:</h6> */}
+                                  {group.questions.map((question: any) => {
+                                    // Calculate sequential question number across all sections
+                                    const allQuestions = sections.flatMap(s => s.questions);
+                                    const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
+                                    const questionNumber = globalQuestionIndex + 1;
+                                    
+                                    return (
+                                      <div 
+                                        key={question.id}
+                                        className={`mb-4 d-flex align-items-center ${
+                                          highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
+                                        }`} 
+                                        style={{ 
+                                          transition: 'all 0.3s ease'
+                                        }}
+                                      >
+                                        <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                                          {questionNumber}
+                                        </span>
+                                        <input
+                                          id={`question-${question.id}`}
+                                          type="text"
+                                          className="form-control form-control-sm"
+                                          style={{ width: '200px' }}
+                                          value={answers[question.id] as string || ''}
+                                          onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                          // placeholder="Enter label"
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                            {/* Add separator only if next group is different type */}
+                            {shouldShowSeparator && <hr className="my-4" />}
                           </div>
                         );
                       } else {
@@ -732,8 +830,39 @@ function NewListeningTestPage() {
                                   </div>
                                 </div>
                               </div>
-                              {/* Add separator unless it's the last group */}
-                              {!isLastGroup && <hr className="my-4" />}
+                              {/* Add separator only if next group is different type */}
+                              {shouldShowSeparator && <hr className="my-4" />}
+                            </div>
+                          );
+                        } else if (question.questionType === 'ShortAnswer') {
+                          // Render short answer question with text input
+                          return (
+                            <div key={question.id}>
+                              <div 
+                                id={`question-${question.id}`}
+                                className={`question-item mb-4 ${
+                                  highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+                                }`}
+                                style={{ transition: 'all 0.3s ease' }}
+                              >
+                                <div className="d-flex align-items-start mb-3">
+                                  <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                                    {questionNumber}
+                                  </span>
+                                  <div className="flex-grow-1">
+                                    <p className="mb-3"><strong>{question.content}</strong></p>
+                                    <input
+                                      type="text"
+                                      className="form-control w-50"
+                                      // placeholder="Enter your short answer"
+                                      value={answers[question.id] as string || ''}
+                                      onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Add separator only if next group is different type */}
+                              {shouldShowSeparator && <hr className="my-4" />}
                             </div>
                           );
                         }
@@ -764,8 +893,8 @@ function NewListeningTestPage() {
                                 </div>
                               </div>
                             </div>
-                            {/* Add separator unless it's the last group */}
-                            {!isLastGroup && <hr className="my-4" />}
+                            {/* Add separator only if next group is different type */}
+                            {shouldShowSeparator && <hr className="my-4" />}
                           </div>
                         );
                       }
@@ -837,6 +966,14 @@ function NewListeningTestPage() {
                                 }
                               } else if (q.questionType === 'Matching') {
                                 // For matching questions, focus the input field
+                                const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
+                                if (input) input.focus();
+                              } else if (q.questionType === 'DiagramLabeling') {
+                                // For diagram labeling questions, focus the input field
+                                const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
+                                if (input) input.focus();
+                              } else if (q.questionType === 'ShortAnswer') {
+                                // For short answer questions, focus the input field
                                 const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
                                 if (input) input.focus();
                               } else if (q.questionType === 'SingleChoice' || q.questionType === 'MultipleChoice') {
