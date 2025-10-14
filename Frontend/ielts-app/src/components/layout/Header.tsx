@@ -274,14 +274,14 @@ function Header() {
                         Your Profile
                       </NavLink>
                     </li>
-                    <li>
+                    {/* <li>
                       <NavLink
                         to="student/courses"
                         className={({ isActive }) => (isActive ? "active" : "")}
                       >
                         Your Tests
                       </NavLink>
-                    </li>
+                    </li> */}
                     <li>
                       <NavLink
                         to="student/settings"

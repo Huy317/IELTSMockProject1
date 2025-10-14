@@ -149,8 +149,8 @@ function AdminDashboardLayout() {
                                 <div>
                                     <h5 className="mb-1 text-white d-inline-flex align-items-center">
                                         {user?.name || 'Loading...'}
-                                        <NavLink to="/admin/settings" className="link-light fs-16 ms-2">
-                                            <i className="isax isax-edit-2"></i>
+                                        <NavLink to="/admin/settings" className="link-light fs-16 ms-2 mt-1">
+                                            <i className="isax isax-edit"></i>
                                         </NavLink>
                                     </h5>
                                     <p className="text-light">{user?.role || 'Loading...'}</p>
