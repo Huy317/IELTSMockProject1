@@ -289,19 +289,19 @@ function NewListeningTestPage() {
   };
 
   // Render question group based on type
-  const renderQuestionGroup = (group: any, groupIndex: number, shouldShowSeparator: boolean) => {
+  const renderQuestionGroup = (group: any, shouldShowSeparator: boolean) => {
     switch (group.type) {
       case 'form':
-        return renderFormCompletionGroup(group, groupIndex, shouldShowSeparator);
+        return renderFormCompletionGroup(group, shouldShowSeparator);
       case 'matching':
-        return renderMatchingGroup(group, groupIndex, shouldShowSeparator);
+        return renderMatchingGroup(group, shouldShowSeparator);
       case 'diagram':
-        return renderDiagramGroup(group, groupIndex, shouldShowSeparator);
+        return renderDiagramGroup(group, shouldShowSeparator);
       case 'single':
-        return renderSingleQuestion(group, groupIndex, shouldShowSeparator);
+        return renderSingleQuestion(group, shouldShowSeparator);
       default:
         return (
-          <div key={`unknown-group-${groupIndex}`}>
+          <div key={`unknown-group`}>
             <div className="alert alert-warning">
               Unsupported group type: {group.type}
             </div>
@@ -312,11 +312,11 @@ function NewListeningTestPage() {
   };
 
   // Render form completion group
-  const renderFormCompletionGroup = (group: any, groupIndex: number, shouldShowSeparator: boolean) => {
+  const renderFormCompletionGroup = (group: any, shouldShowSeparator: boolean) => {
     const currentSectionData = sections[currentSection];
     
     return (
-      <div key={`form-group-${groupIndex}`}>
+      <div key={`form-group`}>
         <div className="row mb-4">
           {/* Form content column */}
           <div className="col-md-8">
@@ -375,9 +375,9 @@ function NewListeningTestPage() {
   };
 
   // Render matching group
-  const renderMatchingGroup = (group: any, groupIndex: number, shouldShowSeparator: boolean) => {
+  const renderMatchingGroup = (group: any, shouldShowSeparator: boolean) => {
     return (
-      <div key={`matching-group-${groupIndex}`}>
+      <div key={`matching-group`}>
         <div className="row mb-4">
           {/* Options and questions content column */}
           <div className="col-md-8">
@@ -443,9 +443,9 @@ function NewListeningTestPage() {
   };
 
   // Render diagram group
-  const renderDiagramGroup = (group: any, groupIndex: number, shouldShowSeparator: boolean) => {
+  const renderDiagramGroup = (group: any, shouldShowSeparator: boolean) => {
     return (
-      <div key={`diagram-group-${groupIndex}`}>
+      <div key={`diagram-group`}>
         <div className="row mb-4">
           {/* Left column: Image and question content */}
           <div className="col-md-8">
@@ -515,7 +515,7 @@ function NewListeningTestPage() {
   };
 
   // Render single question based on type
-  const renderSingleQuestion = (group: any, groupIndex: number, shouldShowSeparator: boolean) => {
+  const renderSingleQuestion = (group: any, shouldShowSeparator: boolean) => {
     const question = group.question;
     const questionNumber = getQuestionNumber(question.id);
     
@@ -907,7 +907,7 @@ function NewListeningTestPage() {
                         }
                       }
                       
-                      return renderQuestionGroup(group, groupIndex, shouldShowSeparator);
+                      return renderQuestionGroup(group, shouldShowSeparator);
                     })}
                   </div>
                 );
