@@ -281,6 +281,367 @@ function NewListeningTestPage() {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // Helper function to get question number across all sections
+  const getQuestionNumber = (questionId: number) => {
+    const allQuestions = sections.flatMap(s => s.questions);
+    const globalQuestionIndex = allQuestions.findIndex(q => q.id === questionId);
+    return globalQuestionIndex + 1;
+  };
+
+  // Render question group based on type
+  const renderQuestionGroup = (group: any, shouldShowSeparator: boolean) => {
+    switch (group.type) {
+      case 'form':
+        return renderFormCompletionGroup(group, shouldShowSeparator);
+      case 'matching':
+        return renderMatchingGroup(group, shouldShowSeparator);
+      case 'diagram':
+        return renderDiagramGroup(group, shouldShowSeparator);
+      case 'single':
+        return renderSingleQuestion(group, shouldShowSeparator);
+      default:
+        return (
+          <div key={`unknown-group`}>
+            <div className="alert alert-warning">
+              Unsupported group type: {group.type}
+            </div>
+            {shouldShowSeparator && <hr className="my-4" />}
+          </div>
+        );
+    }
+  };
+
+  // Render form completion group
+  const renderFormCompletionGroup = (group: any, shouldShowSeparator: boolean) => {
+    const currentSectionData = sections[currentSection];
+    
+    return (
+      <div key={`form-group`}>
+        <div className="row mb-4">
+          {/* Form content column */}
+          <div className="col-md-8">
+            <div className="border rounded bg-light p-3 h-100" style={{ lineHeight: "2.5" }}>
+              {currentSectionData.sectionContent ? (
+                currentSectionData.sectionContent.includes('<') ? (
+                  <div dangerouslySetInnerHTML={{ __html: currentSectionData.sectionContent }} />
+                ) : (
+                  <div style={{ whiteSpace: 'pre-line' }}>{currentSectionData.sectionContent}</div>
+                )
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-muted">Form content will appear here</p>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Input fields column for all questions in this group */}
+          <div className="col-md-4">
+            <div className="pt-3" style={{ lineHeight: '2.5', paddingTop: '120px' }}>
+              {group.questions.map((question: any) => {
+                const questionNumber = getQuestionNumber(question.id);
+                
+                return (
+                  <div 
+                    key={question.id}
+                    className={`mb-5 d-flex align-items-center ${
+                      highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
+                    }`} 
+                    style={{ 
+                      height: '2.5rem',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                      {questionNumber}
+                    </span>
+                    <input
+                      id={`question-${question.id}`}
+                      type="text"
+                      className="form-control form-control-sm"
+                      style={{ width: '200px' }}
+                      value={answers[question.id] as string || ''}
+                      onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        {shouldShowSeparator && <hr className="my-4" />}
+      </div>
+    );
+  };
+
+  // Render matching group
+  const renderMatchingGroup = (group: any, shouldShowSeparator: boolean) => {
+    return (
+      <div key={`matching-group`}>
+        <div className="row mb-4">
+          {/* Options and questions content column */}
+          <div className="col-md-8">
+            <div className="border rounded bg-light p-3 h-100">
+              {/* Display the list of options from the first question in the group */}
+              {group.questions[0].choices && (
+                <div className="mb-4">
+                  <h6 className="fw-bold mb-3">Options:</h6>
+                  <div style={{ whiteSpace: 'pre-line', lineHeight: '1.8' }}>
+                    {group.questions[0].choices}
+                  </div>
+                </div>
+              )}
+              
+              {/* Display all question contents */}
+              <div>
+                <h6 className="fw-bold mb-3">Questions:</h6>
+                {group.questions.map((question: any) => (
+                  <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
+                    <span>{question.content}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          {/* Input fields column for all questions in this group */}
+          <div className="col-md-4">
+            <div className="pt-3" style={{ lineHeight: '1.8' }}>
+              {group.questions.map((question: any) => {
+                const questionNumber = getQuestionNumber(question.id);
+                
+                return (
+                  <div 
+                    key={question.id}
+                    className={`mb-5 d-flex align-items-center ${
+                      highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
+                    }`} 
+                    style={{ 
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                      {questionNumber}
+                    </span>
+                    <input
+                      id={`question-${question.id}`}
+                      type="text"
+                      className="form-control form-control-sm"
+                      style={{ width: '200px' }}
+                      value={answers[question.id] as string || ''}
+                      onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        {shouldShowSeparator && <hr className="my-4" />}
+      </div>
+    );
+  };
+
+  // Render diagram group
+  const renderDiagramGroup = (group: any, shouldShowSeparator: boolean) => {
+    return (
+      <div key={`diagram-group`}>
+        <div className="row mb-4">
+          {/* Left column: Image and question content */}
+          <div className="col-md-8">
+            <div className="pe-3">
+              {/* Show image if available */}
+              {group.questions[0]?.link && (
+                <div className="mb-4">
+                  <div className="border rounded p-3 bg-light">
+                    <h6 className="fw-bold mb-3">Diagram:</h6>
+                    <img
+                      src={group.questions[0].link}
+                      alt="Diagram for labeling"
+                      className="img-fluid rounded mb-3"
+                      style={{ maxHeight: "400px", maxWidth: "100%" }}
+                    />
+                    {/* Display all question contents */}
+                    <div>
+                      <h6 className="fw-bold mb-3">Questions:</h6>
+                      {group.questions.map((question: any) => (
+                        <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
+                          <span>{question.content}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Input fields column for all questions in this group */}
+          <div className="col-md-4">
+            <div className="pt-3" style={{ lineHeight: '1.8' }}>
+              {group.questions.map((question: any) => {
+                const questionNumber = getQuestionNumber(question.id);
+                
+                return (
+                  <div 
+                    key={question.id}
+                    className={`mb-5 d-flex align-items-center ${
+                      highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
+                    }`} 
+                    style={{ 
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+                      {questionNumber}
+                    </span>
+                    <input
+                      id={`question-${question.id}`}
+                      type="text"
+                      className="form-control form-control-sm"
+                      style={{ width: '200px' }}
+                      value={answers[question.id] as string || ''}
+                      onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        {shouldShowSeparator && <hr className="my-4" />}
+      </div>
+    );
+  };
+
+  // Render single question based on type
+  const renderSingleQuestion = (group: any, shouldShowSeparator: boolean) => {
+    const question = group.question;
+    const questionNumber = getQuestionNumber(question.id);
+    
+    switch (question.questionType) {
+      case 'SingleChoice':
+      case 'MultipleChoice':
+        return renderChoiceQuestion(question, questionNumber, shouldShowSeparator);
+      case 'ShortAnswer':
+        return renderShortAnswerQuestion(question, questionNumber, shouldShowSeparator);
+      default:
+        return (
+          <div key={question.id}>
+            <div className="alert alert-warning">
+              Unsupported question type: {question.questionType}
+            </div>
+            {shouldShowSeparator && <hr className="my-4" />}
+          </div>
+        );
+    }
+  };
+
+  // Render choice questions (Single/Multiple)
+  const renderChoiceQuestion = (question: any, questionNumber: number, shouldShowSeparator: boolean) => {
+    const choices = question.choices.split('|').map((c: string) => c.trim()).filter((c: string) => c);
+    const isMultipleChoice = question.questionType === 'MultipleChoice';
+    
+    return (
+      <div key={question.id}>
+        <div 
+          id={`question-${question.id}`}
+          className={`question-item mb-4 ${
+            highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+          }`}
+          style={{ transition: 'all 0.3s ease' }}
+        >
+          <div className="d-flex align-items-start mb-3">
+            <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+              {questionNumber}
+            </span>
+            <div className="flex-grow-1">
+              <p className="mb-3"><strong>{question.content}</strong></p>
+              {choices.map((choice: string, index: number) => {
+                const choiceValue = choice.trim();
+                const currentAnswer = answers[question.id] || '';
+                const currentAnswers = currentAnswer 
+                  ? currentAnswer.split('|').filter(a => a.trim()) 
+                  : [];
+                const isChecked = isMultipleChoice 
+                  ? currentAnswers.includes(choiceValue)
+                  : answers[question.id] === choiceValue;
+                
+                return (
+                  <div key={index} className="form-check mb-2">
+                    <input
+                      className="form-check-input border-dark"
+                      type={isMultipleChoice ? "checkbox" : "radio"}
+                      name={isMultipleChoice ? undefined : `question-${question.id}`}
+                      id={`q${question.id}-${index}`}
+                      value={choiceValue}
+                      checked={isChecked}
+                      onChange={(e) => {
+                        if (isMultipleChoice) {
+                          const cleanCurrentAnswer = answers[question.id] || '';
+                          const cleanCurrentAnswers = cleanCurrentAnswer 
+                            ? cleanCurrentAnswer.split('|').filter(a => a.trim()) 
+                            : [];
+                          
+                          if (e.target.checked) {
+                            const newAnswers = [...cleanCurrentAnswers, choiceValue];
+                            const finalAnswer = newAnswers.join('|');
+                            handleAnswerChange(question.id, finalAnswer);
+                          } else {
+                            const newAnswers = cleanCurrentAnswers.filter(a => a !== choiceValue);
+                            const finalAnswer = newAnswers.join('|');
+                            handleAnswerChange(question.id, finalAnswer);
+                          }
+                        } else {
+                          handleAnswerChange(question.id, e.target.value);
+                        }
+                      }}
+                    />
+                    <label className="form-check-label" htmlFor={`q${question.id}-${index}`}>
+                      {choiceValue}
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        {shouldShowSeparator && <hr className="my-4" />}
+      </div>
+    );
+  };
+
+  // Render short answer question
+  const renderShortAnswerQuestion = (question: any, questionNumber: number, shouldShowSeparator: boolean) => {
+    return (
+      <div key={question.id}>
+        <div 
+          id={`question-${question.id}`}
+          className={`question-item mb-4 ${
+            highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+          }`}
+          style={{ transition: 'all 0.3s ease' }}
+        >
+          <div className="d-flex align-items-start mb-3">
+            <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
+              {questionNumber}
+            </span>
+            <div className="flex-grow-1">
+              <p className="mb-3"><strong>{question.content}</strong></p>
+              <input
+                type="text"
+                className="form-control w-50"
+                value={answers[question.id] as string || ''}
+                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+        {shouldShowSeparator && <hr className="my-4" />}
+      </div>
+    );
+  };
+
   return (
     <div className="container-fluid py-4 px-3 px-lg-4">
       {/* Loading State */}
@@ -490,31 +851,39 @@ function NewListeningTestPage() {
                 let currentGroup: any = null;
                 
                 sortedQuestions.forEach((question) => {
-                  if (question.questionType === 'FormCompletion' || question.questionType === 'fill-in-blank') {
-                    if (!currentGroup || currentGroup.type !== 'form') {
-                      currentGroup = { type: 'form', questions: [question] };
+                  switch (question.questionType) {
+                    case 'FormCompletion':
+                      if (!currentGroup || currentGroup.type !== 'form') {
+                        currentGroup = { type: 'form', questions: [question] };
+                        questionGroups.push(currentGroup);
+                      } else {
+                        currentGroup.questions.push(question);
+                      }
+                      break;
+                    
+                    case 'Matching':
+                      if (!currentGroup || currentGroup.type !== 'matching') {
+                        currentGroup = { type: 'matching', questions: [question] };
+                        questionGroups.push(currentGroup);
+                      } else {
+                        currentGroup.questions.push(question);
+                      }
+                      break;
+                    
+                    case 'DiagramLabeling':
+                      if (!currentGroup || currentGroup.type !== 'diagram') {
+                        currentGroup = { type: 'diagram', questions: [question] };
+                        questionGroups.push(currentGroup);
+                      } else {
+                        currentGroup.questions.push(question);
+                      }
+                      break;
+                    
+                    default:
+                      // All other question types (SingleChoice, MultipleChoice, etc.) are treated as single questions
+                      currentGroup = { type: 'single', question: question };
                       questionGroups.push(currentGroup);
-                    } else {
-                      currentGroup.questions.push(question);
-                    }
-                  } else if (question.questionType === 'Matching') {
-                    if (!currentGroup || currentGroup.type !== 'matching') {
-                      currentGroup = { type: 'matching', questions: [question] };
-                      questionGroups.push(currentGroup);
-                    } else {
-                      currentGroup.questions.push(question);
-                    }
-                  } else if (question.questionType === 'DiagramLabeling') {
-                    if (!currentGroup || currentGroup.type !== 'diagram') {
-                      currentGroup = { type: 'diagram', questions: [question] };
-                      questionGroups.push(currentGroup);
-                    } else {
-                      currentGroup.questions.push(question);
-                    }
-                  } else {
-                    // All other question types (SingleChoice, MultipleChoice, etc.) are treated as single questions
-                    currentGroup = { type: 'single', question: question };
-                    questionGroups.push(currentGroup);
+                      break;
                   }
                 });
                 
@@ -538,366 +907,7 @@ function NewListeningTestPage() {
                         }
                       }
                       
-                      if (group.type === 'form') {
-                        // Render form completion group with shared form content
-                        return (
-                          <div key={`form-group-${groupIndex}`}>
-                            <div className="row mb-4">
-                              {/* Form content column */}
-                              <div className="col-md-8">
-                                <div className="border rounded bg-light p-3 h-100" style={{ lineHeight: "2.5" }}>
-                                  {currentSectionData.sectionContent ? (
-                                    currentSectionData.sectionContent.includes('<') ? (
-                                      <div dangerouslySetInnerHTML={{ __html: currentSectionData.sectionContent }} />
-                                    ) : (
-                                      <div style={{ whiteSpace: 'pre-line' }}>{currentSectionData.sectionContent}</div>
-                                    )
-                                  ) : (
-                                    <div className="text-center py-4">
-                                      <p className="text-muted">Form content will appear here</p>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              {/* Input fields column for all questions in this group */}
-                              <div className="col-md-4">
-                                <div className="pt-3" style={{ lineHeight: '2.5', paddingTop: '120px' }}>
-                                  {group.questions.map((question: any) => {
-                                    // Calculate sequential question number across all sections
-                                    const allQuestions = sections.flatMap(s => s.questions);
-                                    const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
-                                    const questionNumber = globalQuestionIndex + 1;
-                                    
-                                    return (
-                                      <div 
-                                        key={question.id}
-                                        className={`mb-5 d-flex align-items-center ${
-                                          highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
-                                        }`} 
-                                        style={{ 
-                                          height: '2.5rem',
-                                          transition: 'all 0.3s ease'
-                                        }}
-                                      >
-                                        <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                          {questionNumber}
-                                        </span>
-                                        <input
-                                          id={`question-${question.id}`}
-                                          type="text"
-                                          className="form-control form-control-sm"
-                                          style={{ width: '200px' }}
-                                          value={answers[question.id] as string || ''}
-                                          onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                        />
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                            {/* Add separator only if next group is different type */}
-                            {shouldShowSeparator && <hr className="my-4" />}
-                          </div>
-                        );
-                      } else if (group.type === 'matching') {
-                        // Render matching questions group with shared options and input fields
-                        return (
-                          <div key={`matching-group-${groupIndex}`}>
-                            <div className="row mb-4">
-                              {/* Options and questions content column */}
-                              <div className="col-md-8">
-                                <div className="border rounded bg-light p-3 h-100">
-                                  {/* Display the list of options from the first question in the group */}
-                                  {group.questions[0].choices && (
-                                    <div className="mb-4">
-                                      <h6 className="fw-bold mb-3">Options:</h6>
-                                      <div style={{ whiteSpace: 'pre-line', lineHeight: '1.8' }}>
-                                        {group.questions[0].choices}
-                                      </div>
-                                    </div>
-                                  )}
-                                  
-                                  {/* Display all question contents */}
-                                  <div>
-                                    <h6 className="fw-bold mb-3">Questions:</h6>
-                                    {group.questions.map((question: any) => {
-                                      return (
-                                        <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
-                                          <span>{question.content}</span>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Input fields column for all questions in this group */}
-                              <div className="col-md-4">
-                                <div className="pt-3" style={{ lineHeight: '1.8' }}>
-                                  {/* <h6 className="fw-bold mb-3">Answers:</h6> */}
-                                  {group.questions.map((question: any) => {
-                                    // Calculate sequential question number across all sections
-                                    const allQuestions = sections.flatMap(s => s.questions);
-                                    const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
-                                    const questionNumber = globalQuestionIndex + 1;
-                                    
-                                    return (
-                                      <div 
-                                        key={question.id}
-                                        className={`mb-5 d-flex align-items-center ${
-                                          highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
-                                        }`} 
-                                        style={{ 
-                                          transition: 'all 0.3s ease'
-                                        }}
-                                      >
-                                        <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                          {questionNumber}
-                                        </span>
-                                        <input
-                                          id={`question-${question.id}`}
-                                          type="text"
-                                          className="form-control form-control-sm"
-                                          style={{ width: '200px' }}
-                                          value={answers[question.id] as string || ''}
-                                          onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                          // placeholder="Enter option"
-                                        />
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                            {/* Add separator only if next group is different type */}
-                            {shouldShowSeparator && <hr className="my-4" />}
-                          </div>
-                        );
-                      } else if (group.type === 'diagram') {
-                        // Render diagram labeling group with shared image and instructions
-                        return (
-                          <div key={`diagram-group-${groupIndex}`}>
-                            <div className="row mb-4">
-                              {/* Left column: Image and question content */}
-                              <div className="col-md-8">
-                                <div className="pe-3">
-                                  {/* Show image if available */}
-                                  {group.questions[0]?.link && (
-                                    <div className="mb-4">
-                                      <div className="border rounded p-3 bg-light">
-                                        <h6 className="fw-bold mb-3">Diagram:</h6>
-                                        <img
-                                          src={group.questions[0].link}
-                                          alt="Diagram for labeling"
-                                          className="img-fluid rounded mb-3"
-                                          style={{ maxHeight: "400px", maxWidth: "100%" }}
-                                        />
-                                        {/* Display all question contents */}
-                                        <div>
-                                          <h6 className="fw-bold mb-3">Questions:</h6>
-                                          {group.questions.map((question: any) => {
-                                            return (
-                                              <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
-                                                <span>{question.content}</span>
-                                              </div>
-                                            );
-                                          })}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              {/* Input fields column for all questions in this group */}
-                              <div className="col-md-4">
-                                <div className="pt-3" style={{ lineHeight: '1.8' }}>
-                                  {/* <h6 className="fw-bold mb-3">Answers:</h6> */}
-                                  {group.questions.map((question: any) => {
-                                    // Calculate sequential question number across all sections
-                                    const allQuestions = sections.flatMap(s => s.questions);
-                                    const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
-                                    const questionNumber = globalQuestionIndex + 1;
-                                    
-                                    return (
-                                      <div 
-                                        key={question.id}
-                                        className={`mb-4 d-flex align-items-center ${
-                                          highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
-                                        }`} 
-                                        style={{ 
-                                          transition: 'all 0.3s ease'
-                                        }}
-                                      >
-                                        <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                          {questionNumber}
-                                        </span>
-                                        <input
-                                          id={`question-${question.id}`}
-                                          type="text"
-                                          className="form-control form-control-sm"
-                                          style={{ width: '200px' }}
-                                          value={answers[question.id] as string || ''}
-                                          onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                          // placeholder="Enter label"
-                                        />
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                            {/* Add separator only if next group is different type */}
-                            {shouldShowSeparator && <hr className="my-4" />}
-                          </div>
-                        );
-                      } else {
-                        // Render single choice or other question types
-                        const question = group.question;
-                        const allQuestions = sections.flatMap(s => s.questions);
-                        const globalQuestionIndex = allQuestions.findIndex(q => q.id === question.id);
-                        const questionNumber = globalQuestionIndex + 1;
-                        
-                        if (question.questionType === 'SingleChoice' || question.questionType === 'MultipleChoice') {
-                          const choices = question.choices.split('|').map((c: string) => c.trim()).filter((c: string) => c);
-                          const isMultipleChoice = question.questionType === 'MultipleChoice';
-                          
-                          return (
-                            <div key={question.id}>
-                              <div 
-                                id={`question-${question.id}`}
-                                className={`question-item mb-4 ${
-                                  highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
-                                }`}
-                                style={{ transition: 'all 0.3s ease' }}
-                              >
-                                <div className="d-flex align-items-start mb-3">
-                                  <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                    {questionNumber}
-                                  </span>
-                                  <div className="flex-grow-1">
-                                    <p className="mb-3"><strong>{question.content}</strong></p>
-                                    {choices.map((choice: string, index: number) => {
-                                      const choiceValue = choice.trim();
-                                      const currentAnswer = answers[question.id] || '';
-                                      // Clean current answer to handle any mixed separators
-                                      const currentAnswers = currentAnswer 
-                                        ? currentAnswer.split('|').filter(a => a.trim()) 
-                                        : [];
-                                      const isChecked = isMultipleChoice 
-                                        ? currentAnswers.includes(choiceValue)
-                                        : answers[question.id] === choiceValue;
-                                      
-                                      return (
-                                        <div key={index} className="form-check mb-2">
-                                          <input
-                                            className="form-check-input border-dark"
-                                            type={isMultipleChoice ? "checkbox" : "radio"}
-                                            name={isMultipleChoice ? undefined : `question-${question.id}`}
-                                            id={`q${question.id}-${index}`}
-                                            value={choiceValue}
-                                            checked={isChecked}
-                                            onChange={(e) => {
-                                              if (isMultipleChoice) {
-                                                // Clean the current answer to remove any mixed separators
-                                                const cleanCurrentAnswer = answers[question.id] || '';
-                                                const cleanCurrentAnswers = cleanCurrentAnswer 
-                                                  ? cleanCurrentAnswer.split('|').filter(a => a.trim()) 
-                                                  : [];
-                                                
-                                                if (e.target.checked) {
-                                                  const newAnswers = [...cleanCurrentAnswers, choiceValue];
-                                                  const finalAnswer = newAnswers.join('|');
-                                                  handleAnswerChange(question.id, finalAnswer);
-                                                } else {
-                                                  const newAnswers = cleanCurrentAnswers.filter(a => a !== choiceValue);
-                                                  const finalAnswer = newAnswers.join('|');
-                                                  handleAnswerChange(question.id, finalAnswer);
-                                                }
-                                              } else {
-                                                handleAnswerChange(question.id, e.target.value);
-                                              }
-                                            }}
-                                          />
-                                          <label className="form-check-label" htmlFor={`q${question.id}-${index}`}>
-                                            {choiceValue}
-                                          </label>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              </div>
-                              {/* Add separator only if next group is different type */}
-                              {shouldShowSeparator && <hr className="my-4" />}
-                            </div>
-                          );
-                        } else if (question.questionType === 'ShortAnswer') {
-                          // Render short answer question with text input
-                          return (
-                            <div key={question.id}>
-                              <div 
-                                id={`question-${question.id}`}
-                                className={`question-item mb-4 ${
-                                  highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
-                                }`}
-                                style={{ transition: 'all 0.3s ease' }}
-                              >
-                                <div className="d-flex align-items-start mb-3">
-                                  <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                    {questionNumber}
-                                  </span>
-                                  <div className="flex-grow-1">
-                                    <p className="mb-3"><strong>{question.content}</strong></p>
-                                    <input
-                                      type="text"
-                                      className="form-control w-50"
-                                      // placeholder="Enter your short answer"
-                                      value={answers[question.id] as string || ''}
-                                      onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                              {/* Add separator only if next group is different type */}
-                              {shouldShowSeparator && <hr className="my-4" />}
-                            </div>
-                          );
-                        }
-                        
-                        // Handle other question types
-                        return (
-                          <div key={question.id}>
-                            <div 
-                              id={`question-${question.id}`}
-                              className={`question-item mb-4 ${
-                                highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
-                              }`}
-                              style={{ transition: 'all 0.3s ease' }}
-                            >
-                              <div className="d-flex align-items-start mb-3">
-                                <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
-                                  {questionNumber}
-                                </span>
-                                <div className="flex-grow-1">
-                                  <p className="mb-3"><strong>{question.content}</strong></p>
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Enter your answer"
-                                    value={answers[question.id] as string || ''}
-                                    onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            {/* Add separator only if next group is different type */}
-                            {shouldShowSeparator && <hr className="my-4" />}
-                          </div>
-                        );
-                      }
+                      return renderQuestionGroup(group, shouldShowSeparator);
                     })}
                   </div>
                 );
@@ -954,36 +964,39 @@ function NewListeningTestPage() {
                               setTimeout(() => setHighlightedQuestion(null), 500);
                               
                               // Focus based on question type
-                              if (q.questionType === 'FormCompletion' || q.questionType === 'fill-in-blank') {
-                                // For form completion, focus the input directly
-                                const inputElement = questionElement as HTMLInputElement;
-                                if (inputElement && inputElement.tagName === 'INPUT') {
-                                  inputElement.focus();
-                                } else {
-                                  // If questionElement is a container, find the input inside
-                                  const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
-                                  if (input) input.focus();
-                                }
-                              } else if (q.questionType === 'Matching') {
-                                // For matching questions, focus the input field
-                                const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
-                                if (input) input.focus();
-                              } else if (q.questionType === 'DiagramLabeling') {
-                                // For diagram labeling questions, focus the input field
-                                const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
-                                if (input) input.focus();
-                              } else if (q.questionType === 'ShortAnswer') {
-                                // For short answer questions, focus the input field
-                                const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
-                                if (input) input.focus();
-                              } else if (q.questionType === 'SingleChoice' || q.questionType === 'MultipleChoice') {
-                                // For single choice or multiple choice, focus the first input (radio or checkbox)
-                                const firstInput = questionElement.querySelector('input[type="radio"], input[type="checkbox"]') as HTMLInputElement;
-                                if (firstInput) firstInput.focus();
-                              } else {
-                                // For other question types, try to focus any input
-                                const input = questionElement.querySelector('input') as HTMLInputElement;
-                                if (input) input.focus();
+                              switch (q.questionType) {
+                                case 'FormCompletion':
+                                  // For form completion, focus the input directly
+                                  const inputElement = questionElement as HTMLInputElement;
+                                  if (inputElement && inputElement.tagName === 'INPUT') {
+                                    inputElement.focus();
+                                  } else {
+                                    // If questionElement is a container, find the input inside
+                                    const input = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
+                                    if (input) input.focus();
+                                  }
+                                  break;
+                                
+                                case 'Matching':
+                                case 'DiagramLabeling':
+                                case 'ShortAnswer':
+                                  // For matching, diagram labeling, and short answer questions, focus the input field
+                                  const textInput = questionElement.querySelector('input[type="text"]') as HTMLInputElement;
+                                  if (textInput) textInput.focus();
+                                  break;
+                                
+                                case 'SingleChoice':
+                                case 'MultipleChoice':
+                                  // For single choice or multiple choice, focus the first input (radio or checkbox)
+                                  const firstInput = questionElement.querySelector('input[type="radio"], input[type="checkbox"]') as HTMLInputElement;
+                                  if (firstInput) firstInput.focus();
+                                  break;
+                                
+                                default:
+                                  // For other question types, try to focus any input
+                                  const anyInput = questionElement.querySelector('input') as HTMLInputElement;
+                                  if (anyInput) anyInput.focus();
+                                  break;
                               }
                             }
                           }, 100);

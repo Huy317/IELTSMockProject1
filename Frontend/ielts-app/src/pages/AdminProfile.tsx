@@ -11,11 +11,11 @@ function AdminProfile() {
   const { user, isAuthenticated } = useAuth();
 
   return (
-    <div>
+    <div className="col-lg-9">
       <div className="page-title d-flex align-items-center justify-content-between">
         <h5 className="fw-bold">My Profile</h5>
         <NavLink to="/admin/settings" className="edit-profile-icon">
-          <i className="isax isax-edit-2"></i>
+          <a className="isax isax-edit"></a>
         </NavLink>
       </div>
       {/* <InforCard userId={currentUserId} /> */}
