@@ -8,7 +8,6 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { toast } from "react-toastify/unstyled";
 import { confirmToast } from "../../layout/confirmToast";
 
-
 interface ParagraphData {
   id: number;
   content: string;
@@ -131,17 +130,17 @@ function ReadingPage() {
   // Handle Escape key for image modal
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && imageModalOpen) {
+      if (event.key === "Escape" && imageModalOpen) {
         closeImageModal();
       }
     };
 
     if (imageModalOpen) {
-      document.addEventListener('keydown', handleEscapeKey);
+      document.addEventListener("keydown", handleEscapeKey);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
+      document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [imageModalOpen]);
 
@@ -237,7 +236,9 @@ function ReadingPage() {
   const handleSubmitTest = () => {
     console.log("Submitting test with answers:", userAnswers);
     confirmToast(
-      `You have ${40 - Object.keys(userAnswers).length} questions unanswered. Do you want to submit the test now?`,
+      `You have ${
+        40 - Object.keys(userAnswers).length
+      } questions unanswered. Do you want to submit the test now?`,
       async () => {
         try {
           const data = await SubmitTest({
@@ -484,7 +485,7 @@ function ReadingPage() {
     return (
       <div className="question-content">
         <p className="question-text">{question.content}</p>
-        
+
         {/* Display diagram image if link exists */}
         {question.link && (
           <div className="diagram-image mb-3">
@@ -492,11 +493,11 @@ function ReadingPage() {
               src={question.link}
               alt="Diagram for labeling"
               className="img-fluid border rounded"
-              style={{ 
-                maxHeight: "400px", 
-                maxWidth: "100%", 
+              style={{
+                maxHeight: "400px",
+                maxWidth: "100%",
                 cursor: "pointer",
-                transition: "transform 0.2s ease-in-out"
+                transition: "transform 0.2s ease-in-out",
               }}
               onClick={() => openImageModal(question.link)}
               onMouseEnter={(e) => {
@@ -513,7 +514,7 @@ function ReadingPage() {
             </small>
           </div>
         )}
-        
+
         {/* Input field for user answer */}
         <div className="diagram-labeling-input">
           <label className="form-label">Your answer:</label>
@@ -604,13 +605,35 @@ function ReadingPage() {
                     Paragraph {currentParagraph.paragraphNumber}
                   </h6>
                   <div className="paragraph-content p-3 border rounded bg-light">
-                    {currentParagraph.content
+                    {/* {currentParagraph.content
                       .split("\n")
                       .map((line, lineIndex) => (
                         <p key={lineIndex} className="mb-2">
                           {line}
                         </p>
-                      ))}
+                      ))} */}
+                    {currentParagraph.content
+                      .split("\n")
+                      .map((line, lineIndex) => {
+                        const isHeading = line.startsWith("[HEADING]");
+                        const content = isHeading
+                          ? line.replace("[HEADING]", "")
+                          : line;
+
+                        return (
+                          <p key={lineIndex} className="mb-2">
+                            {/* If it's the heading line, render it inside an H4 or a strong tag with a class */}
+                            {isHeading ? (
+                              <h4 style={{ fontWeight: "bold", margin: 0,textAlign: 'center' }}>
+                                {content}
+                              </h4>
+                            ) : (
+                              // Otherwise, render as normal text
+                              content
+                            )}
+                          </p>
+                        );
+                      })}
                   </div>
                 </div>
               )}
@@ -774,9 +797,9 @@ function ReadingPage() {
 
       {/* Image Modal for Diagram Viewing */}
       {imageModalOpen && (
-        <div 
-          className="modal show d-block" 
-          tabIndex={-1} 
+        <div
+          className="modal show d-block"
+          tabIndex={-1}
           style={{ backgroundColor: "rgba(0,0,0,0.8)", zIndex: 1050 }}
           onClick={closeImageModal}
         >
@@ -788,11 +811,11 @@ function ReadingPage() {
                   className="btn-close btn-close-white ms-auto"
                   aria-label="Close"
                   onClick={closeImageModal}
-                  style={{ 
+                  style={{
                     fontSize: "1.5rem",
                     backgroundColor: "rgba(255,255,255,0.2)",
                     borderRadius: "50%",
-                    padding: "10px"
+                    padding: "10px",
                   }}
                 ></button>
               </div>
@@ -801,10 +824,10 @@ function ReadingPage() {
                   src={modalImageSrc}
                   alt="Enlarged diagram"
                   className="img-fluid rounded"
-                  style={{ 
-                    maxHeight: "85vh", 
+                  style={{
+                    maxHeight: "85vh",
                     maxWidth: "100%",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
                   }}
                   onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking image
                 />

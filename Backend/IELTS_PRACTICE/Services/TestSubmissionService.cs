@@ -81,7 +81,10 @@ namespace IELTS_PRACTICE.Services
                               InstructorName = ins.FullName,
                               Score = ts.Score,
                               TypeName = t.TypeSkill.TypeName,
-                          }).ToList();
+                              SubmittedAt = ts.SubmittedAt,
+                          })
+                          .OrderByDescending(x => x.SubmittedAt)
+                          .ToList();
 
             return result;
         }
