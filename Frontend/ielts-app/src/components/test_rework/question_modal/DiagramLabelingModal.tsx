@@ -1,14 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { QuestionToCreate } from "../../../types/Question";
 import { toast } from "react-toastify";
 import { createQuestion } from "../../../services/questionService";
 import { uploadFile } from "../../../services/fileUploadService";
-
-interface DiagramEntry {
-    id: number;
-    label: string;
-    correctAnswer: string;
-}
 
 interface OtherData {
     parentId: number;
@@ -23,73 +17,33 @@ interface DiagramLabelingModalProps {
     otherData?: OtherData;
 }
 
-// DiagramEntryItem component - MUST be defined outside to prevent re-renders and focus loss
-interface DiagramEntryItemProps {
-    entry: DiagramEntry;
-    index: number;
-    onLabelChange: (id: number, label: string) => void;
-    onAnswerChange: (id: number, answer: string) => void;
-    onDelete: (id: number) => void;
-    canDelete: boolean;
-}
-
-function DiagramEntryItem({entry,index,onLabelChange,onAnswerChange,onDelete,canDelete,}: DiagramEntryItemProps) {
-    return (
-        <div className="border rounded p-3 mb-3 bg-light">
-            <div className="row align-items-center">
-                <div className="col-10">
-                    <div className="row">
-                        <div className="col-6">
-                            <label className="form-label fw-bold">Entry {index + 1}</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={entry.label}
-                                onChange={(e) => onLabelChange(entry.id, e.target.value)}
-                                placeholder={`Label for entry ${index + 1}`}
-                            />
-                        </div>
-                        <div className="col-6">
-                            <label className="form-label fw-bold">Correct Answer</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={entry.correctAnswer}
-                                onChange={(e) => onAnswerChange(entry.id, e.target.value)}
-                                placeholder="Enter correct answer"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="col-2 text-center">
-                    <button
-                        type="button"
-                        className="btn btn-outline-danger btn-md rounded-3"
-                        onClick={() => onDelete(entry.id)}
-                        disabled={!canDelete}
-                        title="Delete entry"
-                    >
-                        <i className="bi bi-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabelingModalProps) {
+function DiagramLabelingModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    otherData,
+}: DiagramLabelingModalProps) {
 
     const [questionContent, setQuestionContent] = useState("");
+    const [correctAnswer, setCorrectAnswer] = useState(""); // Simple string instead of entries
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
     const [imageLink, setImageLink] = useState<string>("");
     const [imageMode, setImageMode] = useState<'upload' | 'link'>('upload'); // Toggle between upload and link modes
-    const [entries, setEntries] = useState<DiagramEntry[]>([
-        { id: 1, label: "", correctAnswer: "" },
-        { id: 2, label: "", correctAnswer: "" },
-    ]);
     const [explanation, setExplanation] = useState("");
-    const [nextEntryId, setNextEntryId] = useState(3);
+
+    // Reset form when modal closes
+    useEffect(() => {
+        if (!isOpen) {
+            setQuestionContent("");
+            setCorrectAnswer("");
+            setSelectedImage(null);
+            setImagePreview("");
+            setImageLink("");
+            setImageMode('upload');
+            setExplanation("");
+        }
+    }, [isOpen]);
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -142,67 +96,24 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
         }
     };
 
-    const handleAddEntry = () => {
-        const newEntry: DiagramEntry = {
-            id: nextEntryId,
-            label: "",
-            correctAnswer: "",
-        };
-        setEntries([...entries, newEntry]);
-        setNextEntryId(nextEntryId + 1);
-    };
-
-    const handleEntryLabelChange = (id: number, label: string) => {
-        setEntries(
-            entries.map((entry) => (entry.id === id ? { ...entry, label } : entry))
-        );
-    };
-
-    const handleEntryAnswerChange = (id: number, correctAnswer: string) => {
-        setEntries(
-            entries.map((entry) =>
-                entry.id === id ? { ...entry, correctAnswer } : entry
-            )
-        );
-    };
-
-    const handleDeleteEntry = (id: number) => {
-        // Prevent deleting if only 1 entry remains
-        if (entries.length <= 1) return;
-        setEntries(entries.filter((entry) => entry.id !== id));
-    };
-
-    function formatEntriesToChoicesString(entries: DiagramEntry[]): string {
-        return entries.map((entry) => entry.label).join("|");
-    }
-
-    function formatCorrectAnswersToString(entries: DiagramEntry[]): string {
-        return entries.map((entry) => entry.correctAnswer).join("|");
-    }
-
     const validateForm = () => {
         if (!questionContent.trim()) {
             alert("Question content is required");
             return false;
         }
 
-        if (imageMode === 'upload' && !selectedImage) {
-            alert("Please select a diagram image");
-            return false;
-        }
+        // if (imageMode === 'upload' && !selectedImage) {
+        //     alert("Please select a diagram image");
+        //     return false;
+        // }
 
-        if (imageMode === 'link' && !imageLink.trim()) {
-            alert("Please provide an image URL");
-            return false;
-        }
+        // if (imageMode === 'link' && !imageLink.trim()) {
+        //     alert("Please provide an image URL");
+        //     return false;
+        // }
 
-        if (entries.some((entry) => !entry.label.trim())) {
-            alert("All entries must have a label");
-            return false;
-        }
-
-        if (entries.some((entry) => !entry.correctAnswer.trim())) {
-            alert("All entries must have a correct answer");
+        if (!correctAnswer.trim()) {
+            alert("Correct answer is required");
             return false;
         }
 
@@ -239,13 +150,13 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
             const data: QuestionToCreate = {
                 questionType: "DiagramLabeling",
                 content: questionContent,
-                choices: formatEntriesToChoicesString(entries),
-                correctAnswer: formatCorrectAnswersToString(entries),
+                choices: "", // No longer needed with simplified approach
+                correctAnswer: correctAnswer,
                 explanation: explanation,
                 parentId: otherData.parentId,
                 testId: otherData.testId,
                 order: otherData.order,
-                link: finalImageLink, // Store uploaded URL or provided image URL
+                link: finalImageLink || "", // Store uploaded URL or provided image URL
             };
 
             // Call API to create question after Discord upload succeeds
@@ -277,7 +188,7 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
             <div className="modal-dialog modal-lg modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Diagram Labeling Question</h5>
+                        <h5 className="modal-title">Create Diagram Labeling Question</h5>
                         <button
                             type="button"
                             className="btn-close border-0 rounded-1"
@@ -389,33 +300,20 @@ function DiagramLabelingModal({isOpen,onClose,onSubmit,otherData,}: DiagramLabel
 
                         {/* Entries Section */}
                         <div className="mb-3">
-                            <label className="form-label fw-bold">Diagram Entries</label>
-                            <small className="form-text text-muted d-block mb-3">
-                                Add labels and their corresponding correct answers for the diagram
+                            <label htmlFor="correctAnswer" className="form-label fw-bold">
+                                Correct Answer
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="correctAnswer"
+                                value={correctAnswer}
+                                onChange={(e) => setCorrectAnswer(e.target.value)}
+                                placeholder="Enter the correct answer for this question..."
+                            />
+                            <small className="form-text text-muted">
+                                Provide the correct answer that students should identify from the diagram
                             </small>
-
-                            {/* Render all entries */}
-                            {entries.map((entry, index) => (
-                                <DiagramEntryItem
-                                    key={entry.id}
-                                    entry={entry}
-                                    index={index}
-                                    onLabelChange={handleEntryLabelChange}
-                                    onAnswerChange={handleEntryAnswerChange}
-                                    onDelete={handleDeleteEntry}
-                                    canDelete={entries.length > 1}
-                                />
-                            ))}
-
-                            {/* Add Entry Button */}
-                            <button
-                                type="button"
-                                className="btn btn-outline-primary btn-sm rounded-1"
-                                onClick={handleAddEntry}
-                            >
-                                <i className="bi bi-plus me-1"></i>
-                                Add Entry
-                            </button>
                         </div>
 
                         {/* Explanation */}

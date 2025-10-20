@@ -7,5 +7,6 @@
         public string InstructorName { get; set; }
         public string TypeName { get; set; }
         public double Score { get; set; }
+        public DateTime SubmittedAt { get; set; }
     }
 }

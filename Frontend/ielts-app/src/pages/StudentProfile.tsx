@@ -22,7 +22,7 @@ function StudentProfile() {
       <div className="page-title d-flex align-items-center justify-content-between">
         <h5 className="fw-bold">My Profile</h5>
         <NavLink to="/student/settings" className="edit-profile-icon">
-          <i className="isax isax-edit-2"></i>
+          <a className="isax isax-edit"></a>
         </NavLink>
       </div>
       {/* <InforCard userId={studentUserId} /> */}

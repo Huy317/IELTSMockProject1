@@ -16,7 +16,7 @@ function TestDetail() {
         console.log("Start Test clicked", { id, test });
         // maybe other url, doTest/id or smth
         //navigate(`/reading-test/${id}`);
-        {test?.typeName === "Listening" ? navigate(`/new-listening-test/${id}`) : navigate(`/reading-test/${id}`)}
+        {test?.typeName === "Listening" ? navigate(`/listening-test/${id}`) : navigate(`/reading-test/${id}`)}
     };
 
     const formatDate = (isoLike: string | Date | undefined): string => {

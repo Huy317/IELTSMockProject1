@@ -81,7 +81,10 @@ namespace IELTS_PRACTICE.Services
                               InstructorName = ins.FullName,
                               Score = ts.Score,
                               TypeName = t.TypeSkill.TypeName,
-                          }).ToList();
+                              SubmittedAt = ts.SubmittedAt,
+                          })
+                          .OrderByDescending(x => x.SubmittedAt)
+                          .ToList();
 
             return result;
         }
@@ -143,6 +146,7 @@ namespace IELTS_PRACTICE.Services
                 Score = submission.Score,
                 Correct = countCorrect,
                 Incorrect = 40 - countCorrect,
+                SubmissionId = submission.Id
             };
         }
 
@@ -196,6 +200,7 @@ namespace IELTS_PRACTICE.Services
                 Score = submission.Score,
                 Correct = countCorrect,
                 Incorrect = 40 - countCorrect,
+                SubmissionId = submission.Id
             };
         }
 

@@ -20,6 +20,7 @@ export interface SubmitResponse {
     score : number;
     correct: number;
     incorrect: number;
+    submissionId: number | string;
 }
 
 export interface SubmitRequest {

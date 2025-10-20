@@ -7,6 +7,7 @@
         public double Score { get; set; }
         public int Correct { get; set; }
         public int Incorrect { get; set; }
+        public int SubmissionId {  get; set; }
         public DateTime SubmittedAt { get; set; }
     }
 }

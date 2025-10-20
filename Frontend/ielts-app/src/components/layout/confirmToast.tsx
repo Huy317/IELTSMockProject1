@@ -5,10 +5,10 @@ export function confirmToast(message: string, onConfirm: () => void, onCancel?: 
   toast(
     ({ closeToast }) => (
       <div className="d-flex flex-column">
-        <p className="mb-2">{message}</p>
+        <p className="mb-2 mt-2">{message}</p>
         <div className="d-flex justify-content-end gap-2">
           <button
-            className="btn btn-secondary btn-sm"
+            className="btn btn-danger btn-sm"
             onClick={() => {
               if (onCancel) onCancel();
               closeToast();
@@ -17,7 +17,7 @@ export function confirmToast(message: string, onConfirm: () => void, onCancel?: 
             NO
           </button>
           <button
-            className="btn btn-danger btn-sm"
+            className="btn btn-success btn-sm"
             onClick={() => {
               onConfirm();
               closeToast();
