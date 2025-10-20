@@ -71,6 +71,17 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
   }
   // --------------------------------------------------------------
 
+    // --- COLLAPSE STATE HANDLING ---
+  const [collapsedSections, setCollapsedSections] = useState<boolean[]>([false, false, false, false]);
+
+  const toggleCollapse = (index: number) => {
+    setCollapsedSections((prev) => {
+      const newState = [...prev];
+      newState[index] = !newState[index];
+      return newState;
+    });
+  };
+  
   // --- TEST METADATA HANDLING ---
   const [test, setTest] = useState<TestWithAuthorName | null>(testPrefetch);
   const [changed, setChanged] = useState(false);
@@ -632,12 +643,18 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
           {/* Map and create 4 audio sections */}
           {[1, 2, 3, 4].map((sectionNumber, index) => (
             <div key={sectionNumber} className="card mb-4">
-              <div className="card-header bg-light">
+              <div 
+                className="card-header bg-light d-flex justify-content-between align-items-center" 
+                style={{ cursor: 'pointer' }}
+                onClick={() => toggleCollapse(index)}
+              >
                 <h5 className="mb-0">
                   <i className="bi bi-volume-up me-2"></i>
                   Section {sectionNumber}
                 </h5>
+                <i className={`bi bi-chevron-${collapsedSections[index] ? 'down' : 'up'}`}></i>
               </div>
+              <div className={`collapse ${!collapsedSections[index] ? 'show' : ''}`} id={`section${sectionNumber}Collapse`}>
               <div className="card-body">
                 {/* Audio File Upload */}
                 <div className="mb-4">
@@ -873,11 +890,12 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                   </div>
                 </div>
               </div>
+              </div>
             </div>
           ))}
 
           {/* Action Buttons */}
-          <div className="row mt-4">
+          {/* <div className="row mt-4">
             <div className="col-12 d-flex justify-content-end gap-2">
               <button className="btn btn-outline-secondary">
                 <i className="bi bi-eye me-1"></i>
@@ -892,7 +910,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                 Create Test
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
