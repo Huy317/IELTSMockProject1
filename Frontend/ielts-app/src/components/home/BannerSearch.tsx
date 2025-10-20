@@ -1,11 +1,33 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 function BannerSearch() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('Select Category');
+    
+    let navigate = useNavigate();
+
     function handleSubmit(){
         console.log("Search submitted", searchTerm, selectedCategory);
+
+        // Build query params conditionally
+        const params = new URLSearchParams();
+        
+        // Only add skillName if a valid category is selected
+        if (selectedCategory && selectedCategory !== 'Select Category') {
+            params.append('skillName', selectedCategory);
+        }
+        
+        // Only add search term if it's not empty
+        if (searchTerm && searchTerm.trim() !== '') {
+            params.append('search', searchTerm.trim());
+        }
+        
+        // Navigate with query string (or empty if no params)
+        const queryString = params.toString();
+        console.log("Navigating to:", `/test/list${queryString ? `?${queryString}` : ''}`);
+        navigate(`/test/list${queryString ? `?${queryString}` : ''}`);
     }
 
     return (
@@ -16,9 +38,9 @@ function BannerSearch() {
                 </a>
                 <ul className="dropdown-menu p-1">
                     <li><a className="dropdown-item" href="#" onClick={() => setSelectedCategory('Select Category')}>Select Category</a></li>
-                    <li><a className="dropdown-item" href="#" onClick={() => setSelectedCategory('2024')}>2024</a></li>
-                    <li><a className="dropdown-item" href="#" onClick={() => setSelectedCategory('2023')}>2023</a></li>
-                    <li><a className="dropdown-item" href="#" onClick={() => setSelectedCategory('2022')}>2022</a></li>
+                    <li><a className="dropdown-item" href="#" onClick={() => setSelectedCategory('reading')}>Reading</a></li>
+                    <li><a className="dropdown-item" href="#" onClick={() => setSelectedCategory('listening')}>Listening</a></li>
+                    <li><a className="dropdown-item" href="#" onClick={() => setSelectedCategory('writing')}>Writing</a></li>
                 </ul>
             </div>
             <input
