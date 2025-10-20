@@ -6,7 +6,7 @@ import { getSubmissionDetailById } from "../../services/submissionDetailService"
 import type { Submission } from "../../types/Submission";
 import type { QuestionWithUserChoice } from "../../types/Question";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../services/questionService";
-import type { Test, TestWithAuthorName } from "../../types/Test";
+import type { TestWithAuthorName } from "../../types/Test";
 import { getTestById } from "../../services/testService";
 import SubmissionQuestionDisplay from "./SubmissionQuestionDisplay";
 import SubmissionParentDisplay from "./SubmissionParentDisplay";

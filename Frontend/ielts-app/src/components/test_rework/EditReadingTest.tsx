@@ -100,6 +100,18 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
     return result;
   };
 
+  
+  // --- COLLAPSE STATE HANDLING ---
+  const [collapsedParagraphs, setCollapsedParagraphs] = useState<boolean[]>([false, false, false]);
+
+  const toggleCollapse = (index: number) => {
+    setCollapsedParagraphs((prev) => {
+      const newState = [...prev];
+      newState[index] = !newState[index];
+      return newState;
+    });
+  };
+
   // useEffect being called twice is cuz of StrictMode in main.tsx
   // should not cause issues in production though
   useEffect(() => {
@@ -518,12 +530,18 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
           {/* Map and create 3 paragraphs */}
           {[1, 2, 3].map((paragraphNumber, index) => (
             <div key={paragraphNumber} className="card mb-4">
-              <div className="card-header bg-light">
+              <div 
+                className="card-header bg-light d-flex justify-content-between align-items-center" 
+                style={{ cursor: 'pointer' }}
+                onClick={() => toggleCollapse(index)}
+              >
                 <h5 className="mb-0">
                   <i className="bi bi-file-earmark-text me-2"></i>
                   Paragraph {paragraphNumber}
                 </h5>
+                <i className={`bi bi-chevron-${collapsedParagraphs[index] ? 'down' : 'up'}`}></i>
               </div>
+              <div className={`collapse ${!collapsedParagraphs[index] ? 'show' : ''}`} id={`paragraph${paragraphNumber}Collapse`}>
               <div className="card-body">
                 {/* Paragraph Text Area */}
                 <div className="mb-4">
@@ -616,11 +634,12 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
                   </div>
                 </div>
               </div>
+              </div>
             </div>
           ))}
 
           {/* Action Buttons */}
-          <div className="row mt-4">
+          {/* <div className="row mt-4">
             <div className="col-12 d-flex justify-content-end gap-2">
               <button className="btn btn-outline-secondary">
                 <i className="bi bi-eye me-1"></i>
@@ -635,7 +654,7 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
                 Create Test
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
