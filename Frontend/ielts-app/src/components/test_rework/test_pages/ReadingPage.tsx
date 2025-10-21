@@ -605,35 +605,32 @@ function ReadingPage() {
                     Paragraph {currentParagraph.paragraphNumber}
                   </h6>
                   <div className="paragraph-content p-3 border rounded bg-light">
-                    {/* {currentParagraph.content
-                      .split("\n")
-                      .map((line, lineIndex) => (
-                        <p key={lineIndex} className="mb-2">
-                          {line}
-                        </p>
-                      ))} */}
-                    {currentParagraph.content
-                      .split("\n")
-                      .map((line, lineIndex) => {
-                        const isHeading = line.startsWith("[HEADING]");
-                        const content = isHeading
-                          ? line.replace("[HEADING]", "")
-                          : line;
+                    {currentParagraph.content.includes('<') ? (
+                      <div dangerouslySetInnerHTML={{ __html: currentParagraph.content }} />
+                    ) : (
+                      currentParagraph.content
+                        .split("\n")
+                        .map((line, lineIndex) => {
+                          const isHeading = line.startsWith("[HEADING]");
+                          const content = isHeading
+                            ? line.replace("[HEADING]", "")
+                            : line;
 
-                        return (
-                          <p key={lineIndex} className="mb-2">
-                            {/* If it's the heading line, render it inside an H4 or a strong tag with a class */}
-                            {isHeading ? (
-                              <h4 style={{ fontWeight: "bold", margin: 0,textAlign: 'center' }}>
-                                {content}
-                              </h4>
-                            ) : (
-                              // Otherwise, render as normal text
-                              content
-                            )}
-                          </p>
-                        );
-                      })}
+                          return (
+                            <p key={lineIndex} className="mb-2">
+                              {/* If it's the heading line, render it inside an H4 or a strong tag with a class */}
+                              {isHeading ? (
+                                <h4 style={{ fontWeight: "bold", margin: 0,textAlign: 'center' }}>
+                                  {content}
+                                </h4>
+                              ) : (
+                                // Otherwise, render as normal text
+                                content
+                              )}
+                            </p>
+                          );
+                        })
+                    )}
                   </div>
                 </div>
               )}
