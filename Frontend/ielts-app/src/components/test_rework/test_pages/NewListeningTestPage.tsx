@@ -168,6 +168,20 @@ function NewListeningTestPage() {
     );
   };
 
+  const handleLeave = () => {
+    confirmToast("Are you sure you want to leave the test? Your progress will be lost.",
+      async () => {
+        // User confirmed, handle the leave action
+        console.log("User confirmed leave");
+        // You can add any additional logic here, e.g., navigating away
+        navigate(`/test/${testId}`);
+      },
+      () => {
+        console.log("Leave cancelled");
+      }
+    );
+  };
+
   // Reset currentSection when sections change and update timer when config changes
   useEffect(() => {
     if (sections.length > 0 && currentSection >= sections.length) {
@@ -397,7 +411,11 @@ function NewListeningTestPage() {
                 <h6 className="fw-bold mb-3">Questions:</h6>
                 {group.questions.map((question: any) => (
                   <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
-                    <span>{question.content}</span>
+                    {question.content.includes('<') ? (
+                      <span dangerouslySetInnerHTML={{ __html: question.content }} />
+                    ) : (
+                      <span>{question.content}</span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -466,7 +484,11 @@ function NewListeningTestPage() {
                       <h6 className="fw-bold mb-3">Questions:</h6>
                       {group.questions.map((question: any) => (
                         <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
-                          <span>{question.content}</span>
+                          {question.content.includes('<') ? (
+                            <span dangerouslySetInnerHTML={{ __html: question.content }} />
+                          ) : (
+                            <span>{question.content}</span>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -556,7 +578,11 @@ function NewListeningTestPage() {
               {questionNumber}
             </span>
             <div className="flex-grow-1">
-              <p className="mb-3"><strong>{question.content}</strong></p>
+              {question.content.includes('<') ? (
+                <div className="mb-3"><strong dangerouslySetInnerHTML={{ __html: question.content }} /></div>
+              ) : (
+                <p className="mb-3"><strong>{question.content}</strong></p>
+              )}
               {choices.map((choice: string, index: number) => {
                 const choiceValue = choice.trim();
                 const currentAnswer = answers[question.id] || '';
@@ -627,7 +653,11 @@ function NewListeningTestPage() {
               {questionNumber}
             </span>
             <div className="flex-grow-1">
-              <p className="mb-3"><strong>{question.content}</strong></p>
+              {question.content.includes('<') ? (
+                <div className="mb-3"><strong dangerouslySetInnerHTML={{ __html: question.content }} /></div>
+              ) : (
+                <p className="mb-3"><strong>{question.content}</strong></p>
+              )}
               <input
                 type="text"
                 className="form-control w-50"
@@ -685,7 +715,7 @@ function NewListeningTestPage() {
                   <h4 className="mb-0">{testConfig.title}</h4>
                 </div>
                 <div>
-                  <button className="btn btn-outline-secondary">Leave</button>
+                  <button className="btn btn-outline-secondary" onClick={handleLeave}>Leave</button>
                 </div>
               </div>
             </div>
@@ -933,7 +963,7 @@ function NewListeningTestPage() {
                 <span className="fw-bold">{section.title}</span>
               </div>
               <div className="card-body">
-                <div className="row g-2">
+                <div className="row g-2 row-cols-5">
                   {section.questions.map((q) => {
                     // Calculate sequential question number across all sections
                     const allQuestions = sections.flatMap(s => s.questions);
@@ -941,7 +971,7 @@ function NewListeningTestPage() {
                     const questionNumber = globalQuestionIndex + 1;
                     
                     return (
-                    <div key={q.id} className="col-2">
+                    <div key={q.id} className="col">
                       <button 
                         className={`btn btn-sm w-100 ${
                           answers[q.id] ? 'btn-success' : 
