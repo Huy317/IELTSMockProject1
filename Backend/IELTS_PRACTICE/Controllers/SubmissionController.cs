@@ -60,6 +60,17 @@ namespace IELTS_PRACTICE.Controllers
             return Ok(result);
         }
 
+        [HttpGet("getrecentlysubmitcondition")]
+        public async Task<IActionResult> GetRecentlySubmissionByCondition(DateTime start, string condition)
+        {
+            var result = await _testSubmissionService.ViewRecentlySubmissionByConditions(start, condition);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
         [HttpPost("submit")]
         public async Task<IActionResult> SubmitTest(SubmitRequest rq) { 
             var  result = await _testSubmissionService.SubmitTest2(rq);

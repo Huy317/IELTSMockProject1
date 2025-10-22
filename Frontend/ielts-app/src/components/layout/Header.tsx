@@ -19,10 +19,10 @@ function Header() {
               </span>
             </a>
             <div className="navbar-logo">
-              <Link className="logo-white header-logo" to="/">
+              <Link className="logo-white header-logo" to={user !== null ? `/${user.role.toLowerCase()}/dashboard` : "/"}>
                 <img src="/assets/img/logo.svg" className="logo" alt="Logo" />
               </Link>
-              <Link className="logo-dark header-logo" to="/">
+              <Link className="logo-dark header-logo" to={user !== null ? `/${user.role.toLowerCase()}/dashboard` : "/"}>
                 <img
                   src="/assets/img/logo-white.svg"
                   className="logo"

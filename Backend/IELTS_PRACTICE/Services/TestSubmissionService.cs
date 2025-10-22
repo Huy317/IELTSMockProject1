@@ -66,7 +66,8 @@ namespace IELTS_PRACTICE.Services
             _context.TestSubmissions.Remove(test);
             _context.SaveChanges();
         }
-
+        
+        //this for student site
         public async Task<List<ViewSubmissionDTO>> ViewRecentlySubmission(int id)
         {
             var result = (from u in _context.Users
@@ -86,6 +87,41 @@ namespace IELTS_PRACTICE.Services
                           .OrderByDescending(x => x.SubmittedAt)
                           .ToList();
 
+            return result;
+        }
+
+        //this for admin site
+        public async Task<List<ViewSubmissionDTO>> ViewRecentlySubmissionByConditions(DateTime start, string condition)
+        {
+            var query = (from u in _context.Users
+                          join ts in _context.TestSubmissions on u.Id equals ts.UserId
+                          join t in _context.Tests on ts.TestId equals t.Id
+                          join ins in _context.Users on t.CreatedBy equals ins.Id
+                          select new ViewSubmissionDTO
+                          {
+                              Id = ts.Id,
+                              TestName = t.TestName,
+                              InstructorName = ins.FullName,
+                              Score = ts.Score,
+                              TypeName = t.TypeSkill.TypeName,
+                              SubmittedAt = ts.SubmittedAt,
+                          });
+            DateTime startDate = start;
+            DateTime endDate;
+            switch (condition) {
+                case "day":
+                    endDate = startDate.AddDays(1);
+                    break;
+                case "week":
+                    endDate = startDate.AddDays(7);
+                    break;
+                default:
+                    return query.ToList();
+            }
+            var result = query
+                .Where(x => x.SubmittedAt >= startDate && x.SubmittedAt < endDate)
+                .OrderByDescending(x => x.SubmittedAt)
+                .ToList();
             return result;
         }
 
