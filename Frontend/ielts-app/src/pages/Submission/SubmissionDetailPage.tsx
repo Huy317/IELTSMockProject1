@@ -10,8 +10,6 @@ import type { TestWithAuthorName } from "../../types/Test";
 import { getTestById } from "../../services/testService";
 import SubmissionQuestionDisplay from "./SubmissionQuestionDisplay";
 import SubmissionParentDisplay from "./SubmissionParentDisplay";
-import { set } from "react-hook-form";
-
 
 function SubmissionDetailPage() {
 
