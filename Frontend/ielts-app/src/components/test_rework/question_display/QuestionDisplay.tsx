@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { deleteQuestion } from "../../../services/questionService";
 import type { Question } from "../../../types/Question";
+import { confirmToast } from "../../layout/confirmToast";
 
 interface QuestionDisplayProps {
     question: Question;
@@ -88,14 +89,24 @@ function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActio
 
     // Handle delete click
     const handleDelete = () => {
-        if (onDelete && window.confirm("Are you sure you want to delete this question?")) {
-            deleteQuestion(question.id).then(() => {
-                onDelete(question.id);
-            }).catch((error) => {
-                console.error("Failed to delete question:", error);
-                toast.error("Failed to delete question. Please try again.");
-            });
-        }
+        // if (onDelete && window.confirm("Are you sure you want to delete this question?")) {
+        //     deleteQuestion(question.id).then(() => {
+        //         onDelete(question.id);
+        //     }).catch((error) => {
+        //         console.error("Failed to delete question:", error);
+        //         toast.error("Failed to delete question. Please try again.");
+        //     });
+        // }
+        confirmToast("Are you sure you want to delete this question?", () => {
+            if (onDelete) {
+                deleteQuestion(question.id).then(() => {
+                    onDelete(question.id);
+                }).catch((error) => {
+                    console.error("Failed to delete question:", error);
+                    toast.error("Failed to delete question. Please try again.");
+                });
+            }
+        });
     };
 
     const choices = parseChoices(question.choices);
