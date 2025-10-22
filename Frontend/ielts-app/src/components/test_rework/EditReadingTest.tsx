@@ -494,7 +494,7 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
                       <i className="bi bi-link me-1"></i>
                       Resource
                     </label>
-                    <input
+                    {/* <input
                       type="text"
                       className="form-control"
                       style={{ minHeight: "80px" }}
@@ -507,11 +507,10 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
                           setChanged(true);
                         }
                       }}
-                    />
-                    {/* <textarea
+                    /> */}
+                    <textarea
                       className="form-control"
                       id="resource"
-                      rows={2}   // shows 2 lines by default
                       placeholder="Enter resource reference..."
                       value={test ? test.resource : ""}
                       onChange={(e) => {
@@ -520,7 +519,7 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
                           setChanged(true);
                         }
                       }}
-                    /> */}
+                    />
                   </div>
                 </div>
               </div>

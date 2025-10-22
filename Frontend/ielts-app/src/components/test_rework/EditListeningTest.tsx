@@ -607,10 +607,22 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                       <i className="bi bi-link me-1"></i>
                       Resource
                     </label>
-                    <input
+                    {/* <input
                       type="text"
                       className="form-control"
                       style={{ minHeight: "80px" }}
+                      id="resource"
+                      placeholder="Enter resource reference..."
+                      value={test ? test.resource : ""}
+                      onChange={(e) => {
+                        if (test) {
+                          setTest({ ...test, resource: e.target.value });
+                          setChanged(true);
+                        }
+                      }}
+                    /> */}
+                    <textarea
+                      className="form-control"
                       id="resource"
                       placeholder="Enter resource reference..."
                       value={test ? test.resource : ""}
