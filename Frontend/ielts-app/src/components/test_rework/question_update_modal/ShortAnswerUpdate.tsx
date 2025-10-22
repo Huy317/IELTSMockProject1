@@ -232,6 +232,7 @@ function ShortAnswerUpdateModal({
                         <button
                             type="button"
                             className={`btn rounded-3 ${hasChanges ? 'btn-primary' : 'btn-secondary'}`}
+                            style={!hasChanges ? { backgroundColor: "#808080 ", borderColor: "#808080"} : {}}
                             onClick={handleSubmit}
                             disabled={isSubmitting || !hasChanges || !questionContent.trim() || !correctAnswer.trim()}
                         >

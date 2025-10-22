@@ -580,31 +580,6 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                       readOnly
                     />
                   </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="resource" className="form-label fw-bold">
-                      <i className="bi bi-link me-1"></i>
-                      Resource
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="resource"
-                      placeholder="Enter resource reference..."
-                      value={test ? test.resource : ""}
-                      onChange={(e) => {
-                        if (test) {
-                          setTest({ ...test, resource: e.target.value });
-                          setChanged(true);
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
                   <div className="form-check mb-3">
                     <input
                       className="form-check-input"
@@ -626,9 +601,33 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                     </label>
                   </div>
                 </div>
-                <div className="col-md-6 d-flex align-items-end">
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label htmlFor="resource" className="form-label fw-bold">
+                      <i className="bi bi-link me-1"></i>
+                      Resource
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      style={{ minHeight: "80px" }}
+                      id="resource"
+                      placeholder="Enter resource reference..."
+                      value={test ? test.resource : ""}
+                      onChange={(e) => {
+                        if (test) {
+                          setTest({ ...test, resource: e.target.value });
+                          setChanged(true);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-12 d-flex justify-content-center">
                   <button
-                    className="btn btn-outline-primary w-100"
+                    className="btn btn-outline-primary w-50"
                     onClick={handleSaveMetadata}
                   >
                     <i className="bi bi-save me-1"></i>
