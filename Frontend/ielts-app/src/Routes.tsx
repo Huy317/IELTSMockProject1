@@ -33,13 +33,14 @@ import NewListeningTestPage from "./components/test_rework/test_pages/NewListeni
 import ReadingPage from "./components/test_rework/test_pages/ReadingPage";
 import TestEditChoser from "./components/test_rework/TestEditChoser";
 import SubmissionDetailPage from "./pages/Submission/SubmissionDetailPage";
+import ErrorPage from "./pages/ErrorPage";
 
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: <div>Page not found</div>,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
@@ -191,8 +192,8 @@ const router = createBrowserRouter([
     element: <ListeningTestPage />,
   },
   {
-    path: "unauthorized",
-    element: <div>Unauthorized Access</div>,
+    path: "404",
+    element: <ErrorPage />,
   },
   {
     path: "listening-test/:id",

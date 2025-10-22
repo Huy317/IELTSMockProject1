@@ -27,12 +27,12 @@ export function ProtectedRoute({
   // Handle multiple roles
   if (allowedRoles && allowedRoles.length > 0) {
     if (!user?.role || !allowedRoles.includes(user.role)) {
-      return <Navigate to="/unauthorized" replace />;
+      return <Navigate to="/404" replace />;
     }
   }
 
   if (requiredRole && user?.role !== requiredRole) {
-    return <Navigate to="/unauthorized" replace />;
+    return <Navigate to="/404" replace />;
   }
 
   return <>{children}</>;

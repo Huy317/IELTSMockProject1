@@ -11,7 +11,6 @@ import { getTestById } from "../../services/testService";
 import SubmissionQuestionDisplay from "./SubmissionQuestionDisplay";
 import SubmissionParentDisplay from "./SubmissionParentDisplay";
 
-
 function SubmissionDetailPage() {
 
     const {id} = useParams<{id: string}>();
@@ -22,6 +21,15 @@ function SubmissionDetailPage() {
 
     const [questionData, setquestionData] = useState<QuestionWithUserChoice[] | null>(null);
 
+    const [collapsedSection, setCollapsedSections] = useState<boolean[]>([false,false,false,false]);
+
+    function toggleCollapse(index : number){
+        setCollapsedSections(prevState => {
+            const newState = [...prevState];
+            newState[index] = !newState[index];
+            return newState;
+        })
+    }
 
     function fetchAndCombineData() {
         const combinedPromise = getSubmissionById(id!)
@@ -188,26 +196,35 @@ function SubmissionDetailPage() {
                                     {organizeQuestionsByParagraphs().map((section, index) => (
                                         <div key={section.paragraph.id} className="mb-5">
                                             {/* Parent Section (Paragraph, Audio, etc.) */}
-                                            <div className="mb-4">
-                                                <h5 className="text-primary mb-3">
+                                            <div 
+                                                className="card-header bg-light d-flex justify-content-between align-items-center"
+                                                onClick={() => toggleCollapse(index)}
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                <h5 className="text-primary mb-0">
                                                     <i className={`bi ${section.paragraph.questionType === 'Paragraph' ? 'bi-book' : 'bi-volume-up'} me-2`}></i>
                                                     {section.paragraph.questionType === 'Paragraph' ? `Passage ${index + 1}` : `Section ${index + 1}`}
                                                 </h5>
-                                                
-                                                {/* Use the new SubmissionParentDisplay component */}
-                                                <SubmissionParentDisplay question={section.paragraph} />
+                                                <i className={`bi bi-chevron-${collapsedSection[index] ? 'down' : 'up'}`}></i>
                                             </div>
-
-                                            {/* Questions for this section */}
-                                            <div className="ms-3">
-                                                <h6 className="text-muted mb-3">Questions:</h6>
-                                                {section.questions.map((question, qIndex) => (
-                                                    <SubmissionQuestionDisplay 
-                                                        key={question.id} 
-                                                        question={question}
-                                                        questionNumber={qIndex + 1}
-                                                    />
-                                                ))}
+                                            
+                                            <div className={`collapse ${!collapsedSection[index] ? 'show' : ''}`}>
+                                                <div className="card-body">
+                                                    {/* Use the new SubmissionParentDisplay component */}
+                                                    <SubmissionParentDisplay question={section.paragraph} />
+                                                    
+                                                    {/* Questions for this section */}
+                                                    <div className="ms-3 mt-4">
+                                                        <h6 className="text-muted mb-3">Questions:</h6>
+                                                        {section.questions.map((question, qIndex) => (
+                                                            <SubmissionQuestionDisplay 
+                                                                key={question.id} 
+                                                                question={question}
+                                                                questionNumber={qIndex + 1}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
