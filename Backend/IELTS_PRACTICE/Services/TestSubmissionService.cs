@@ -91,38 +91,45 @@ namespace IELTS_PRACTICE.Services
         }
 
         //this for admin site
-        public async Task<List<ViewSubmissionDTO>> ViewRecentlySubmissionByConditions(DateTime start, string condition)
+        public async Task<int> CountSubmissionByConditions(DateTime start, string condition)
         {
-            var query = (from u in _context.Users
-                          join ts in _context.TestSubmissions on u.Id equals ts.UserId
-                          join t in _context.Tests on ts.TestId equals t.Id
-                          join ins in _context.Users on t.CreatedBy equals ins.Id
-                          select new ViewSubmissionDTO
-                          {
-                              Id = ts.Id,
-                              TestName = t.TestName,
-                              InstructorName = ins.FullName,
-                              Score = ts.Score,
-                              TypeName = t.TypeSkill.TypeName,
-                              SubmittedAt = ts.SubmittedAt,
-                          });
-            DateTime startDate = start;
+            DateTime startDate = start.Date;
             DateTime endDate;
             switch (condition) {
+                //start day must be 00:00, end day must be 23:59
                 case "day":
                     endDate = startDate.AddDays(1);
                     break;
                 case "week":
+                    DayOfWeek dayOfWeek = startDate.DayOfWeek;
+                    int dayToSubtracts;
+                    if (dayOfWeek == DayOfWeek.Sunday)
+                    {
+                        dayToSubtracts = 6;
+                    }
+                    else {
+                        dayToSubtracts = (int)dayOfWeek - (int)DayOfWeek.Monday;
+                    }
+                    startDate = startDate.AddDays(-dayToSubtracts);
                     endDate = startDate.AddDays(7);
                     break;
                 default:
-                    return query.ToList();
+                    return await _context.TestSubmissions.CountAsync();
             }
-            var result = query
+            var result = await _context.TestSubmissions
                 .Where(x => x.SubmittedAt >= startDate && x.SubmittedAt < endDate)
-                .OrderByDescending(x => x.SubmittedAt)
-                .ToList();
+                .CountAsync();
             return result;
+        }
+
+        public async Task<string> FindMostPopularTest(int adminId) {
+            string result = await _context.TestSubmissions
+                .Where(x => x.Test.CreatedBy == adminId)
+                .GroupBy(x => new { x.TestId, x.Test.TestName })
+                .OrderByDescending(x => x.Count())
+                .Select(x => x.Key.TestName)
+                .FirstOrDefaultAsync();
+            return result ?? "Not found";
         }
 
         public async Task<SubmitResponse> SubmitTest(SubmitRequest rq) {

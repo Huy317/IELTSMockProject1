@@ -60,14 +60,17 @@ namespace IELTS_PRACTICE.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getrecentlysubmitcondition")]
-        public async Task<IActionResult> GetRecentlySubmissionByCondition(DateTime start, string condition)
+        [HttpGet("countsubmissionbycondition")]
+        public async Task<IActionResult> CountSubmissionByConditions(DateTime start, string condition)
         {
-            var result = await _testSubmissionService.ViewRecentlySubmissionByConditions(start, condition);
-            if (result == null)
-            {
-                return NotFound();
-            }
+            var result = await _testSubmissionService.CountSubmissionByConditions(start, condition);
+            return Ok(result);
+        }
+
+        [HttpGet("findmostpopulartest")]
+        public async Task<IActionResult> FindMostPopularTest(int adminID)
+        {
+            var result = await _testSubmissionService.FindMostPopularTest(adminID);
             return Ok(result);
         }
 
