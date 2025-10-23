@@ -358,13 +358,7 @@ function NewListeningTestPage() {
                 return (
                   <div 
                     key={question.id}
-                    className={`mb-5 d-flex align-items-center ${
-                      highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
-                    }`} 
-                    style={{ 
-                      height: '2.5rem',
-                      transition: 'all 0.3s ease'
-                    }}
+                    className={`mb-5 d-flex align-items-center`}
                   >
                     <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
                       {questionNumber}
@@ -431,12 +425,7 @@ function NewListeningTestPage() {
                 return (
                   <div 
                     key={question.id}
-                    className={`mb-5 d-flex align-items-center ${
-                      highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
-                    }`} 
-                    style={{ 
-                      transition: 'all 0.3s ease'
-                    }}
+                    className={`mb-5 d-flex align-items-center`}
                   >
                     <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
                       {questionNumber}
@@ -507,12 +496,7 @@ function NewListeningTestPage() {
                 return (
                   <div 
                     key={question.id}
-                    className={`mb-5 d-flex align-items-center ${
-                      highlightedQuestion === question.id ? 'border border-warning rounded p-2' : ''
-                    }`} 
-                    style={{ 
-                      transition: 'all 0.3s ease'
-                    }}
+                    className={`mb-5 d-flex align-items-center`}
                   >
                     <span className="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
                       {questionNumber}
@@ -568,10 +552,10 @@ function NewListeningTestPage() {
       <div key={question.id}>
         <div 
           id={`question-${question.id}`}
-          className={`question-item mb-4 ${
-            highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+          className={`question-item p-3 ${
+            highlightedQuestion === question.id ? 'border border-warning rounded p-4' : ''
           }`}
-          style={{ transition: 'all 0.3s ease' }}
+          style={{ transition: 'all 0.5s ease' }}
         >
           <div className="d-flex align-items-start mb-3">
             <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
@@ -643,10 +627,10 @@ function NewListeningTestPage() {
       <div key={question.id}>
         <div 
           id={`question-${question.id}`}
-          className={`question-item mb-4 ${
-            highlightedQuestion === question.id ? 'border border-warning rounded p-3' : ''
+          className={`question-item p-3 ${
+            highlightedQuestion === question.id ? 'border border-warning rounded p-4' : ''
           }`}
-          style={{ transition: 'all 0.3s ease' }}
+          style={{ transition: 'all 0.5s ease' }}
         >
           <div className="d-flex align-items-start mb-3">
             <span className="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px', fontSize: '1rem' }}>
