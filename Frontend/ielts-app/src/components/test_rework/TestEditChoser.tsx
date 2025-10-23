@@ -22,7 +22,7 @@ function TestEditChoser() {
 
         toast.promise(loadPromise, {
             pending: "Loading test...",
-            success: "Test loaded",
+            // success: "Test loaded",
             error: "Failed to load test details.",
         });
     };

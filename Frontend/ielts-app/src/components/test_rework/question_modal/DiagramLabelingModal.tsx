@@ -159,7 +159,7 @@ function DiagramLabelingModal({
                 link: finalImageLink || "", // Store uploaded URL or provided image URL
             };
 
-            // Call API to create question after Discord upload succeeds
+            // Call API to create question after upload succeeds
             await toast.promise(createQuestion(data), {
                 pending: "Creating diagram labeling question...",
                 success: "Diagram labeling question created successfully!",
@@ -186,7 +186,7 @@ function DiagramLabelingModal({
             style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
         >
             <div className="modal-dialog modal-lg modal-dialog-centered">
-                <div className="modal-content">
+                <div className="modal-content" style={{ maxHeight: "90vh" }}>
                     <div className="modal-header">
                         <h5 className="modal-title">Create Diagram Labeling Question</h5>
                         <button
@@ -196,7 +196,7 @@ function DiagramLabelingModal({
                             onClick={onClose}
                         ></button>
                     </div>
-                    <div className="modal-body">
+                    <div className="modal-body" style={{ maxHeight: "calc(90vh - 120px)", overflowY: "auto" }}>
                         {/* Image Mode Selector */}
                         <div className="mb-3">
                             <label className="form-label fw-bold">Diagram Image</label>

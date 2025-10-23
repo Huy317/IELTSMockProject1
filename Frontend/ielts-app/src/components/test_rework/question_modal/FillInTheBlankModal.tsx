@@ -94,7 +94,7 @@ function FillInTheBlankModal({
             style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
         >
             <div className="modal-dialog modal-lg modal-dialog-centered">
-                <div className="modal-content">
+                <div className="modal-content" style={{ maxHeight: "90vh" }}>
                     <div className="modal-header">
                         <h5 className="modal-title">Form Completion Question</h5>
                         <button
@@ -104,7 +104,7 @@ function FillInTheBlankModal({
                             onClick={onClose}
                         ></button>
                     </div>
-                    <div className="modal-body">
+                    <div className="modal-body" style={{ maxHeight: "calc(90vh - 120px)", overflowY: "auto" }}>
                         {/* Question Content */}
                         <div className="mb-3">
                             <label htmlFor="questionContent" className="form-label fw-bold">

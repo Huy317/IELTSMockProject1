@@ -102,7 +102,7 @@ function MatchingModal({
             style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
         >
             <div className="modal-dialog modal-lg modal-dialog-centered">
-                <div className="modal-content">
+                <div className="modal-content" style={{ maxHeight: "90vh" }}>
                     <div className="modal-header">
                         <h5 className="modal-title">Matching Question</h5>
                         <button
@@ -112,7 +112,7 @@ function MatchingModal({
                             onClick={onClose}
                         ></button>
                     </div>
-                    <div className="modal-body">
+                    <div className="modal-body" style={{ maxHeight: "calc(90vh - 120px)", overflowY: "auto" }}>
                         {/* List of Options */}
                         <div className="mb-3">
                             <label htmlFor="listOfOptions" className="form-label fw-bold">
