@@ -15,3 +15,13 @@ export async function getSubmissionById(submissionId:string) : Promise<Submissio
     const res = await client.get<Submission>(`/Submission/${submissionId}`);
     return res.data;
 }
+
+export async function countSubmissionByCondition(start : Date, condition : string) : Promise<number> {
+    const res = await client.get<number>(`Submission/countsubmissionbycondition?start=${start.toISOString()}&condition=${condition}`);
+    return res.data;
+}
+
+export async function getMostPopularTest(adminId : number | string) : Promise<string> {
+    const res = await client.get<string>(`Submission/findmostpopulartest?adminID=${adminId}`);
+    return res.data;
+}

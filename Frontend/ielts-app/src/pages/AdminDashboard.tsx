@@ -6,6 +6,7 @@ import CourseTable from "../components/admin/CourseTable";
 import Pagination from "../components/utils/Pagination";
 import { useAuth } from "../contexts/AuthContext";
 import { getTotalStudentsByAdminId, getTotalSubmissionsByAdminId, getTotalTestsByAdminId } from "../services/userService";
+import { countSubmissionByCondition, getMostPopularTest } from "../services/submissionService";
 
 function AdminDashboard() {
   const [tests, setTests] = useState<TestWithAuthorName[]>([]);
@@ -15,7 +16,9 @@ function AdminDashboard() {
   const [totalCreatedTests, setTotalCreatedTests] = useState<number>(0);
   const [totalSubmissions, setTotalSubmissions] = useState<number>(0);
   const [totalStudents, setTotalStudents] = useState<number>(0);
-
+  const [testsPerDay, setTestsPerDay] = useState<number>(0);
+  const [testsPerWeek, setTestsPerWeek] = useState<number>(0);
+  const [nameOfPopularTest, setNameOfPopularTest] = useState<string>("");
   useEffect(() => {
     loadTests();
     const fetchData = async () => {
@@ -23,9 +26,15 @@ function AdminDashboard() {
         const data1 = await getTotalTestsByAdminId(user.id);
         const data2 = await getTotalSubmissionsByAdminId(user.id);
         const data3 = await getTotalStudentsByAdminId(user.id);
+        const data4 = await countSubmissionByCondition(new Date(), "day");
+        const data5 = await countSubmissionByCondition(new Date(), "week");
+        const data6 = await getMostPopularTest(user.id);
         setTotalCreatedTests(data1);
         setTotalSubmissions(data2);
         setTotalStudents(data3);
+        setTestsPerDay(data4);
+        setTestsPerWeek(data5);
+        setNameOfPopularTest(data6);
       }
     }
 
@@ -92,6 +101,51 @@ function AdminDashboard() {
                 <div>
                   <span className="d-block">Total Students</span>
                   <h4 className="fs-24 mt-1">{totalStudents}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 col-xl-4">
+          <div className="card">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <span className="icon-box bg-primary-transparent me-2 me-xxl-3 flex-shrink-0">
+                  <img src="/assets/img/icon/graduation.svg" alt="" />
+                </span>
+                <div>
+                  <span className="d-block">Today Submissions</span>
+                  <h4 className="fs-24 mt-1">{testsPerDay}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 col-xl-4">
+          <div className="card">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <span className="icon-box bg-secondary-transparent me-2 me-xxl-3 flex-shrink-0">
+                  <img src="/assets/img/icon/book.svg" alt="" />
+                </span>
+                <div>
+                  <span className="d-block">Week Submissions</span>
+                  <h4 className="fs-24 mt-1">{testsPerWeek}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 col-xl-4">
+          <div className="card">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <span className="icon-box bg-success-transparent me-2 me-xxl-3 flex-shrink-0">
+                  <img src="/assets/img/icon/bookmark.svg" alt="" />
+                </span>
+                <div>
+                  <span className="d-block">Most popular test</span>
+                  <h4 className="fs-24 mt-1">{nameOfPopularTest}</h4>
                 </div>
               </div>
             </div>
