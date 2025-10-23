@@ -102,7 +102,6 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
     });
     const result = await toast.promise(loadPromise, {
       pending: "Loading questions...",
-      success: "Questions loaded",
       error: "Failed to load questions.",
     });
     //console.log("Result after fetch:", result);
@@ -427,7 +426,6 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
 
     toast.promise(savePromise, {
       pending: "Saving metadata...",
-      success: "Metadata updated successfully.",
       error: "Failed to update metadata.",
     });
   }
