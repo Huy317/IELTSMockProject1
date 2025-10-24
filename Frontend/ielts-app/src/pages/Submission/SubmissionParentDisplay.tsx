@@ -68,7 +68,18 @@ function SubmissionParentDisplay({ question }: SubmissionParentDisplayProps) {
                 {question.content && (
                     <div className="mb-3">
                         <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>
-                            {question.content}
+                            {/* {question.content} */}
+                            {question.content.includes('<') ? (
+                                <div dangerouslySetInnerHTML={{ __html: question.content }} />
+                                ) : (
+                                question.content
+                                .split("\n")
+                                .map((line, lineIndex) => (
+                                    <p key={lineIndex} className="mb-2">
+                                    {line}
+                                    </p>
+                                ))
+                            )}
                         </p>
                     </div>
                 )}

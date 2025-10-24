@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import type { TestWithAuthorName } from "../../../types/Test";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
 import { getTestById } from "../../../services/testService";
@@ -485,7 +485,7 @@ function ReadingPage() {
             value={userAnswer}
             onChange={(e) => handleAnswerChange(question.id, e.target.value)}
             placeholder="Enter letter (A, B, C, etc.)"
-            maxLength={1}
+            maxLength={10}
           />
         </div>
       </div>
@@ -558,6 +558,7 @@ function ReadingPage() {
   }
 
   return (
+    <>
     <div className="reading-test-container p-3">
       {/* Header Row - Test Name and Leave Button */}
       <div className="row mb-4">
@@ -642,27 +643,12 @@ function ReadingPage() {
                       <div dangerouslySetInnerHTML={{ __html: currentParagraph.content }} />
                     ) : (
                       currentParagraph.content
-                        .split("\n")
-                        .map((line, lineIndex) => {
-                          const isHeading = line.startsWith("[HEADING]");
-                          const content = isHeading
-                            ? line.replace("[HEADING]", "")
-                            : line;
-
-                          return (
-                            <p key={lineIndex} className="mb-2">
-                              {/* If it's the heading line, render it inside an H4 or a strong tag with a class */}
-                              {isHeading ? (
-                                <h4 style={{ fontWeight: "bold", margin: 0,textAlign: 'center' }}>
-                                  {content}
-                                </h4>
-                              ) : (
-                                // Otherwise, render as normal text
-                                content
-                              )}
-                            </p>
-                          );
-                        })
+                      .split("\n")
+                      .map((line, lineIndex) => (
+                        <p key={lineIndex} className="mb-2">
+                          {line}
+                        </p>
+                      ))
                     )}
                   </div>
                 </div>
@@ -816,6 +802,28 @@ function ReadingPage() {
         </div>
       )}
     </div>
+    <footer className="footer">
+        <div className="footer-bottom">
+        <div className="container">
+          <div className="row row-gap-2">
+            <div className="col-md-6">
+              <div className="text-center text-md-start">
+                <p className="text-white">Copyright &copy; 2025 IELTS-MOCK. All rights reserved.</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div>
+                <ul className="d-flex align-items-center justify-content-center justify-content-md-end footer-link">
+                  <li><Link to="/terms-and-conditions">Terms & Conditions</Link></li>
+                  <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+    </footer>
+    </>
   );
 }
 
