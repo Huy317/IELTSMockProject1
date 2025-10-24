@@ -15,6 +15,7 @@ import {
 import { uploadFile } from "../../services/fileUploadService";
 import QuestionDisplay from "./question_display/QuestionDisplay";
 import ModalManager from "./ModalManager";
+import { Editor } from "@tinymce/tinymce-react";
 
 interface EditListeningTestProps {
   testPrefetch: TestWithAuthorName;
@@ -789,7 +790,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                     <i className="bi bi-file-text me-1"></i>
                     Section Content
                   </label>
-                  <textarea
+                  {/* <textarea
                     className="form-control"
                     id={`sectionContent${sectionNumber}`}
                     rows={6}
@@ -798,7 +799,29 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                     onChange={(e) =>
                       handleAudioTranscriptChange(index, e.target.value)
                     }
-                  ></textarea>
+                  ></textarea> */}
+                  <Editor
+                    tinymceScriptSrc="/tinymce/tinymce.min.js"
+                    licenseKey='gpl'
+                    value={audioTranscripts[index]}
+                    onEditorChange={(content: string) => handleAudioTranscriptChange(index, content)}
+                    init={{
+                      height: 300,
+                      menubar: false,
+                      plugins: [
+                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                      ],
+                      toolbar: 'undo redo | blocks | ' +
+                        'bold italic underline strikethrough | forecolor backcolor | ' +
+                        'alignleft aligncenter alignright alignjustify | ' +
+                        'bullist numlist outdent indent | ' +
+                        'removeformat | table | link image | help',
+                      placeholder: `Enter the content for section ${sectionNumber}...`,
+                      content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }',
+                    }}
+                  />
                 </div>
 
                 {/* Explanation/Audio Transcript Text Area */}

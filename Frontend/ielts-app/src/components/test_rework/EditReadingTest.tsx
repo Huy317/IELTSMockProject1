@@ -14,6 +14,7 @@ import {
 } from "../../services/questionService";
 import QuestionDisplay from "./question_display/QuestionDisplay";
 import ModalManager from "./ModalManager";
+import { Editor } from "@tinymce/tinymce-react";
 
 interface EditReadingTestProps {
   testPrefetch: TestWithAuthorName;
@@ -582,7 +583,7 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
                   >
                     Paragraph Content
                   </label>
-                  <textarea
+                  {/* <textarea
                     className="form-control"
                     id={`paragraph${paragraphNumber}`}
                     rows={8}
@@ -591,7 +592,29 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
                     onChange={(e) =>
                       handleParagraphChange(index, e.target.value)
                     }
-                  ></textarea>
+                  ></textarea> */}
+                  <Editor
+                    tinymceScriptSrc="/tinymce/tinymce.min.js"
+                    licenseKey='gpl'
+                    value={paragraphTexts[index]}
+                    onEditorChange={(content: string) => handleParagraphChange(index, content)}
+                    init={{
+                      height: 300,
+                      menubar: false,
+                      plugins: [
+                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                      ],
+                      toolbar: 'undo redo | blocks | ' +
+                        'bold italic underline strikethrough | forecolor backcolor | ' +
+                        'alignleft aligncenter alignright alignjustify | ' +
+                        'bullist numlist outdent indent | ' +
+                        'removeformat | table | link image | help',
+                      placeholder: `Enter the content for paragraph ${paragraphNumber}...`,
+                      content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }',
+                    }}
+                  />
                   <div className="mt-2 d-flex justify-content-end">
                     <button
                       className="btn btn-outline-primary"

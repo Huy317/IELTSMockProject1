@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { Question } from "../../../types/Question";
 import { getTestById } from "../../../services/testService";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
@@ -657,6 +657,7 @@ function NewListeningTestPage() {
   };
 
   return (
+    <>
     <div className="container-fluid py-4 px-3 px-lg-4">
       {/* Loading State */}
       {loading && (
@@ -1031,6 +1032,28 @@ function NewListeningTestPage() {
       </>
       )}
     </div>
+    <footer className="footer">
+        <div className="footer-bottom">
+        <div className="container">
+          <div className="row row-gap-2">
+            <div className="col-md-6">
+              <div className="text-center text-md-start">
+                <p className="text-white">Copyright &copy; 2025 IELTS-MOCK. All rights reserved.</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div>
+                <ul className="d-flex align-items-center justify-content-center justify-content-md-end footer-link">
+                  <li><Link to="/terms-and-conditions">Terms & Conditions</Link></li>
+                  <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+    </footer>
+    </>
   );
 }
 
