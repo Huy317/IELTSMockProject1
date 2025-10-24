@@ -1,4 +1,4 @@
-import type { Question, QuestionFullDetail, QuestionGetReturn, QuestionParagraphReturn, QuestionPostReturn, QuestionToCreate, QuestionToUpdate } from "../types/Question";
+import type { Question, QuestionFullDetail, QuestionGetReturn, QuestionParagraphReturn, QuestionToCreate, QuestionToUpdate } from "../types/Question";
 import { client } from "./authService";
 
 export async function createParagraph(question : QuestionToCreate): Promise<QuestionParagraphReturn> {
@@ -35,3 +35,7 @@ export async function getAllQuestionsAndParagraphsWithTestId(testId: number): Pr
     return response.data;
 }
 
+export async function getQuestionCountInTestId(testId: string): Promise<number> {
+    const response = await client.get(`/Question/questioncountintestid?id=${testId}`);
+    return response.data;
+}

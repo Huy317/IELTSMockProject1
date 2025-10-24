@@ -53,6 +53,13 @@ namespace IELTS_PRACTICE.Controllers
             return Ok(questions);
         }
 
+        [HttpGet("questioncountintestid")]
+        public async Task<ActionResult<int>> GetQuestionCountInTestId(int id)
+        {
+            var count = await _questionService.GetQuestionCountInTestId(id);
+            return Ok(count);
+        }
+
         [HttpPost]
         public async Task<ActionResult<QuestionFullDetailDTO>> CreateQuestion(CreateQuestionDTO rq)
         {
@@ -83,5 +90,7 @@ namespace IELTS_PRACTICE.Controllers
             await _questionService.DeleteQuestion(id);
             return NoContent();
         }
+
+        
     }
 }
