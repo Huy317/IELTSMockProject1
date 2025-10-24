@@ -86,6 +86,14 @@ namespace IELTS_PRACTICE.Services
                 }).ToList();
         }
 
+
+        public async Task<int> GetQuestionCountInTestId(int id)
+        {
+            return _context.Questions
+                .Where(x => x.TestId == id && x.ParentId != 0).Count();
+        }
+
+
         public async Task<List<QuestionFullDetailDTO>> getAllQuestionsAndParagraphByTestId(int id)
         {
             return _context.Questions

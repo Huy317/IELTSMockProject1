@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Test, TestWithAuthorName } from "../types/Test";
+import type { TestWithAuthorName } from "../types/Test";
 import { getTestById } from "../services/testService";
+import { getQuestionCountInTestId } from "../services/questionService";
 
 function TestDetail() {
     const { id } = useParams<{ id: string }>();
 
     const [test, setTest] = useState<TestWithAuthorName | null>(null);
+    const [questionCount, setQuestionCount] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+
+    let timeDuration: { [key: string]: string } = {
+        "Listening": "30 minutes",
+        "Reading": "60 minutes",
+    }
 
     let navigate = useNavigate();
 
@@ -37,6 +44,10 @@ function TestDetail() {
             setError(null);
             const data = await getTestById(id);
             setTest(data);
+            getQuestionCountInTestId(id).then((count) => {
+                console.log("Question count:", count);
+                setQuestionCount(count);
+            });
         } catch (e) {
             setError("Failed to load test details.");
         } finally {
@@ -79,8 +90,6 @@ function TestDetail() {
         );
     }
 
-    const statusLabel = test.isActive ? "Active" : "Inactive";
-
     return (
         <div className="container py-5">
             <div className="row justify-content-center">
@@ -91,20 +100,24 @@ function TestDetail() {
                         </div>
                         <div className="card-body">
                             <dl className="row mb-0">
-                                <dt className="col-sm-4 mb-3">Created By</dt>
-                                <dd className="col-sm-8 mb-3">{test.instructorName}</dd>
+                                <dt className="col-sm-4 mb-3">Type</dt>
+                                <dd className="col-sm-8 mb-3">
+                                    <span className="badge btn-primary">{test.typeName}</span>
+                                </dd>
 
-                                <dt className="col-sm-4 mb-3">Created At</dt>
-                                <dd className="col-sm-8 mb-3">{formatDate(test.createdAt)}</dd>
+                                <dt className="col-sm-4 mb-3">Questions</dt>
+                                <dd className="col-sm-8 mb-3">
+                                    <span className="text-break">{questionCount} {questionCount === 1 ? 'question' : 'questions'}</span>
+                                </dd>
 
                                 <dt className="col-sm-4 mb-3">Resource</dt>
                                 <dd className="col-sm-8 mb-3">
                                     <span className="text-break">{test.resource}</span>
                                 </dd>
 
-                                <dt className="col-sm-4 mb-3">Type</dt>
+                                <dt className="col-sm-4 mb-3">Time Duration</dt>
                                 <dd className="col-sm-8 mb-3">
-                                    <span className="text-break">{test.typeName}</span>
+                                    <span className="text-break">{timeDuration[test.typeName]}</span>
                                 </dd>
 
                                 <dt className="col-sm-4 mb-3">Attempts</dt>
@@ -112,14 +125,11 @@ function TestDetail() {
                                     <span className="text-break">{test.submissionCount}</span>
                                 </dd>
 
-                                <dt className="col-sm-4 mb-3">Status</dt>
-                                <dd className="col-sm-8 mb-3">
-                                    <span className={
-                                        statusLabel === "Active" ? "badge text-bg-success" : "badge text-bg-secondary"
-                                    }>
-                                        {statusLabel}
-                                    </span>
-                                </dd>
+                                <dt className="col-sm-4 mb-3">Created By</dt>
+                                <dd className="col-sm-8 mb-3">{test.instructorName}</dd>
+
+                                <dt className="col-sm-4 mb-3">Created At</dt>
+                                <dd className="col-sm-8 mb-3">{formatDate(test.createdAt)}</dd>
                             </dl>
                         </div>
                         <div className="card-footer bg-white border-0">
