@@ -135,9 +135,13 @@ function SubmissionParentDisplay({ question }: SubmissionParentDisplayProps) {
                             <i className="bi bi-file-text me-1"></i>
                             {isAudioUrl(question.link) ? 'Transcript:' : 'Additional Information:'}
                         </small>
-                        <p className="mb-0 text-dark" style={{ whiteSpace: 'pre-wrap' }}>
-                            {question.explanation}
-                        </p>
+                        <div className="mb-0 text-dark" style={{ whiteSpace: 'pre-wrap' }}>
+                            {question.explanation.includes('<') ? (
+                                <div dangerouslySetInnerHTML={{ __html: question.explanation }} />
+                            ) : (
+                                question.explanation
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
