@@ -813,13 +813,13 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                       plugins: [
                         'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                         'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                        'insertdatetime', 'media', 'table', 'help', 'wordcount', 'hr'
                       ],
                       toolbar: 'undo redo | blocks | ' +
                         'bold italic underline strikethrough | forecolor backcolor | ' +
                         'alignleft aligncenter alignright alignjustify | ' +
                         'bullist numlist outdent indent | ' +
-                        'removeformat | table | link image | help',
+                        'hr | removeformat | table | link image | help',
                       placeholder: `Enter the content for section ${sectionNumber}...`,
                       content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }',
                     }}
@@ -835,7 +835,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                     <i className="bi bi-chat-left-text me-1"></i>
                     Explanation/Audio Transcript
                   </label>
-                  <textarea
+                  {/* <textarea
                     className="form-control"
                     id={`audioExplanation${sectionNumber}`}
                     rows={6}
@@ -844,7 +844,29 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                     onChange={(e) =>
                       handleAudioExplanationChange(index, e.target.value)
                     }
-                  ></textarea>
+                  ></textarea> */}
+                  <Editor
+                    tinymceScriptSrc="/tinymce/tinymce.min.js"
+                    licenseKey='gpl'
+                    value={audioExplanations[index]}
+                    onEditorChange={(content: string) => handleAudioExplanationChange(index, content)}
+                    init={{
+                      height: 300,
+                      menubar: false,
+                      plugins: [
+                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                      ],
+                      toolbar: 'undo redo | blocks | ' +
+                        'bold italic underline strikethrough | forecolor backcolor | ' +
+                        'alignleft aligncenter alignright alignjustify | ' +
+                        'bullist numlist outdent indent | ' +
+                        'removeformat | table | link image | help',
+                      placeholder: `Enter the content for section ${sectionNumber}...`,
+                      content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }',
+                    }}
+                  />
                   <div className="mt-2 d-flex justify-content-end">
                     <button
                       className={`btn ${audioTranscriptChange[index] || audioExplanationChange[index] || pendingAudioUploads[index] || audioLinkChanges[index]
