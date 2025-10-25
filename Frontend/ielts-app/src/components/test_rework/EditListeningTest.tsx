@@ -767,7 +767,9 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
                         <div className="mt-2">
                           <small className="text-muted">
                             <i className="bi bi-link me-1"></i>
-                            Source: {audioSrc}
+                            <a href={audioSrc} target="_blank" rel="noopener noreferrer">
+                              {audioSrc}
+                            </a>
                           </small>
                         </div>
                       </div>

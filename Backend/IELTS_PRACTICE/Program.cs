@@ -3,6 +3,7 @@ using IELTS_PRACTICE.Services;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -118,6 +119,23 @@ namespace IELTS_PRACTICE
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // --- FILE UPLOAD SETUP ---
+            // Serve static files from "UploadedFiles" folder
+            var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "UploadedFiles");
+
+            // Ensure the directory exists
+            if (!Directory.Exists(uploadsPath))
+            {
+                Directory.CreateDirectory(uploadsPath);
+            }
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(uploadsPath),
+                RequestPath = "/uploadedfiles"
+            });
+            // --- END FILE UPLOAD SETUP ---
 
             app.UseHttpsRedirection();
 
