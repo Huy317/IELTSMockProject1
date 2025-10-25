@@ -1,162 +1,61 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Text;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IELTS_PRACTICE.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class FileUploadController : ControllerBase
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-
-        // Catbox.moe API configuration
-        private const string CATBOX_API_URL = "https://catbox.moe/user/api.php";
         private const long MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB in bytes
+        private readonly string _uploadFolder;
 
-        // Catbox user hash
-        private const string CATBOX_USER_HASH = "41e0413dc4f428359bad06306"; // Leave empty for anonymous uploads or add your hash
-
-        public FileUploadController(IHttpClientFactory httpClientFactory)
+        public FileUploadController(IWebHostEnvironment env)
         {
-            _httpClientFactory = httpClientFactory;
+            // Set up upload folder
+            _uploadFolder = Path.Combine(env.ContentRootPath, "UploadedFiles");
+            if (!Directory.Exists(_uploadFolder))
+            {
+                Directory.CreateDirectory(_uploadFolder);
+            }
         }
 
         [HttpPost("upload")]
         [RequestSizeLimit(MAX_FILE_SIZE)]
         [RequestFormLimits(MultipartBodyLengthLimit = MAX_FILE_SIZE)]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public IActionResult UploadFile(IFormFile file)
         {
-            try
+            if (file == null || file.Length == 0)
             {
-                // Validate file
-                if (file == null || file.Length == 0)
-                {
-                    return BadRequest(new { error = "No file provided" });
-                }
-
-                if (file.Length > MAX_FILE_SIZE)
-                {
-                    return BadRequest(new { error = $"File size exceeds 200MB limit. Current size: {file.Length / 1024.0 / 1024.0:F2}MB" });
-                }
-
-                Console.WriteLine($"Uploading file: {file.FileName}, Size: {file.Length / 1024.0 / 1024.0:F2}MB, Type: {file.ContentType}");
-
-                // Create HTTP client with proper configuration
-                using var httpClient = _httpClientFactory.CreateClient();
-                httpClient.Timeout = TimeSpan.FromMinutes(10); // Extended timeout for large files
-
-                // Add User-Agent header (some services require this)
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "IELTS-Practice-App/1.0");
-
-                // Prepare form data - DO NOT set Content-Type header manually for multipart
-                using var formData = new MultipartFormDataContent();
-
-                // Add request type
-                formData.Add(new StringContent("fileupload"), "reqtype");
-
-                // Add user hash if available (for authenticated uploads)
-                if (!string.IsNullOrEmpty(CATBOX_USER_HASH))
-                {
-                    formData.Add(new StringContent(CATBOX_USER_HASH), "userhash");
-                    Console.WriteLine("Using authenticated upload with user hash");
-                }
-                else
-                {
-                    Console.WriteLine("Using anonymous upload");
-                }
-
-                // Add file data
-                var fileContent = new StreamContent(file.OpenReadStream());
-
-                // Set content type for the file
-                if (!string.IsNullOrEmpty(file.ContentType))
-                {
-                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-                }
-
-                // Add file to form data with proper field name
-                formData.Add(fileContent, "fileToUpload", file.FileName);
-
-                Console.WriteLine("Sending request to Catbox.moe...");
-
-                // Make request to Catbox
-                var response = await httpClient.PostAsync(CATBOX_API_URL, formData);
-
-                Console.WriteLine($"Catbox response status: {response.StatusCode}");
-
-                // Read the response content
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Catbox response content: '{responseContent}'");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine($"Catbox API error: Status {response.StatusCode}, Content: {responseContent}");
-                    return StatusCode(500, new
-                    {
-                        error = $"Upload service returned error: {response.StatusCode}",
-                        details = responseContent
-                    });
-                }
-
-                // Get the file URL from response
-                var fileUrl = responseContent.Trim();
-
-                // Validate response
-                if (string.IsNullOrEmpty(fileUrl))
-                {
-                    Console.WriteLine("Empty response from Catbox");
-                    return StatusCode(500, new { error = "Empty response from upload service" });
-                }
-
-                // Check if response is an error message
-                if (fileUrl.Contains("error") || fileUrl.Contains("Error") || !fileUrl.StartsWith("https://"))
-                {
-                    Console.WriteLine($"Invalid response from Catbox: {fileUrl}");
-                    return StatusCode(500, new { error = "Invalid response from upload service", details = fileUrl });
-                }
-
-                Console.WriteLine($"File uploaded successfully: {fileUrl}");
-
-                return Ok(new
-                {
-                    url = fileUrl,
-                    fileName = file.FileName,
-                    fileSize = file.Length,
-                    contentType = file.ContentType
-                });
-
+                return BadRequest(new { error = "No file provided" });
             }
-            catch (HttpRequestException httpEx)
+
+            if (file.Length > MAX_FILE_SIZE)
             {
-                Console.WriteLine($"HTTP request error: {httpEx.Message}");
-                Console.WriteLine($"Stack trace: {httpEx.StackTrace}");
-                return StatusCode(500, new
-                {
-                    error = "Network error while uploading file",
-                    details = httpEx.Message
-                });
+                return BadRequest(new { error = $"File size exceeds 200MB limit. Current size: {file.Length / 1024.0 / 1024.0:F2}MB" });
             }
-            catch (TaskCanceledException tcEx)
+
+            // Generate unique file name
+            var uniqueName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+            var filePath = Path.Combine(_uploadFolder, uniqueName);
+
+            // Save to disk
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                Console.WriteLine($"Request timeout: {tcEx.Message}");
-                return StatusCode(500, new
-                {
-                    error = "Upload request timed out",
-                    details = "The file upload took too long to complete"
-                });
+                file.CopyTo(stream);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Unexpected error: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                return StatusCode(500, new
-                {
-                    error = "Internal server error during file upload",
-                    details = ex.Message
-                });
-            }
+
+            // return success response
+            var fileUrl = $"{Request.Scheme}://{Request.Host}/UploadedFiles/{uniqueName}";
+
+
+            return Ok(new {
+                url = fileUrl,
+                fileName = file.FileName,
+                fileSize = file.Length,
+                contentType = file.ContentType
+            });
         }
 
-  
     }
 }
