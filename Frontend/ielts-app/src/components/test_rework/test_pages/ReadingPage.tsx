@@ -296,6 +296,7 @@ function ReadingPage() {
       case "OneChoice": // Used for T/F/NG questions - single selection from choices
         return renderSingleChoiceQuestion(question, userAnswer);
       case "FormCompletion":
+      case "ShortAnswer":
         return renderFormCompletionQuestion(question, userAnswer);
       case "Matching":
         return renderMatchingQuestion(question, userAnswer);
