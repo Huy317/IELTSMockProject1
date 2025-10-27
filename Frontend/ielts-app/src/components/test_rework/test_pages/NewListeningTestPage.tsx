@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { Question } from "../../../types/Question";
 import { getTestById } from "../../../services/testService";
@@ -7,6 +7,8 @@ import { SubmitTest } from '../../../services/submissionService';
 import { useAuth } from '../../../contexts/AuthContext';
 import { toast } from "react-toastify/unstyled"
 import { confirmToast } from '../../layout/confirmToast';
+import parse from 'html-react-parser';
+import DOMPurify from 'dompurify';
 
 interface ListeningSection {
   id: number;
@@ -130,6 +132,10 @@ function NewListeningTestPage() {
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [highlightedQuestion, setHighlightedQuestion] = useState<number | null>(null);
+  // Store highlights per section - now with start/end positions
+  const [highlights, setHighlights] = useState<{
+    [sectionId: number]: { text: string; start: number; end: number }[];
+  }>({});
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const lastTimeUpdateRef = useRef(0);
@@ -217,6 +223,65 @@ function NewListeningTestPage() {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
   };
 
+  // Handle text highlighting with position-based approach
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      return;
+    }
+
+    const selectedText = selection.toString().trim();
+    if (!selectedText || selectedText.length < 2) {
+      return;
+    }
+
+    const currentSectionData = sections[currentSection];
+    if (!currentSectionData || !currentSectionData.sectionContent) {
+      return;
+    }
+
+    // Get the range to find position in the full text content
+    const range = selection.getRangeAt(0);
+    const preSelectionRange = range.cloneRange();
+    const containerEl = document.querySelector('.section-content');
+    
+    if (!containerEl) {
+      selection.removeAllRanges();
+      return;
+    }
+
+    preSelectionRange.selectNodeContents(containerEl);
+    preSelectionRange.setEnd(range.startContainer, range.startOffset);
+    const start = preSelectionRange.toString().length;
+    const end = start + selectedText.length;
+
+    const sectionId = currentSectionData.id;
+    const currentHighlights = highlights[sectionId] || [];
+
+    // Check if this specific position overlaps with any existing highlight
+    const overlappingIndex = currentHighlights.findIndex(
+      (h) => (start >= h.start && start < h.end) || (end > h.start && end <= h.end) || (start <= h.start && end >= h.end)
+    );
+
+    if (overlappingIndex !== -1) {
+      // Remove the overlapping highlight
+      const newHighlights = currentHighlights.filter((_, idx) => idx !== overlappingIndex);
+      setHighlights((prev) => ({
+        ...prev,
+        [sectionId]: newHighlights,
+      }));
+    } else {
+      // Add new highlight with position
+      setHighlights((prev) => ({
+        ...prev,
+        [sectionId]: [...currentHighlights, { text: selectedText, start, end }],
+      }));
+    }
+
+    // Clear selection
+    selection.removeAllRanges();
+  };
+
   const handlePlayPause = () => {
     if (audioRef.current) {
       if (isPlaying) {
@@ -295,6 +360,88 @@ function NewListeningTestPage() {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // Apply highlights to section content - memoized to avoid recalculation
+  const highlightedSectionContent = useMemo(() => {
+    const currentSectionData = sections[currentSection];
+    if (!currentSectionData || !currentSectionData.sectionContent) return "";
+
+    const sectionHighlights = highlights[currentSectionData.id] || [];
+    if (sectionHighlights.length === 0) {
+      return currentSectionData.sectionContent;
+    }
+
+    // Work with HTML content directly
+    let htmlContent = currentSectionData.sectionContent;
+    
+    // Create a temporary DOM to work with
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = DOMPurify.sanitize(htmlContent);
+    
+    // Sort highlights by start position (latest first to avoid position shifts)
+    const sortedHighlights = [...sectionHighlights].sort(
+      (a, b) => b.start - a.start
+    );
+
+    // Apply highlights by wrapping text nodes at specific positions
+    sortedHighlights.forEach((highlight) => {
+      let currentPos = 0;
+      const walker = document.createTreeWalker(
+        tempDiv,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      let node;
+      while ((node = walker.nextNode())) {
+        const textNode = node as Text;
+        const textLength = textNode.textContent?.length || 0;
+        const nodeStart = currentPos;
+        const nodeEnd = currentPos + textLength;
+
+        // Check if this text node contains the highlight range
+        if (highlight.start < nodeEnd && highlight.end > nodeStart) {
+          const text = textNode.textContent || '';
+          
+          // Calculate positions within this text node
+          const highlightStartInNode = Math.max(0, highlight.start - nodeStart);
+          const highlightEndInNode = Math.min(textLength, highlight.end - nodeStart);
+          
+          // Split the text node
+          const beforeText = text.substring(0, highlightStartInNode);
+          const highlightedText = text.substring(highlightStartInNode, highlightEndInNode);
+          const afterText = text.substring(highlightEndInNode);
+          
+          // Create new nodes
+          const fragment = document.createDocumentFragment();
+          
+          if (beforeText) {
+            fragment.appendChild(document.createTextNode(beforeText));
+          }
+          
+          const mark = document.createElement('mark');
+          mark.style.backgroundColor = '#ffeb3b';
+          mark.style.cursor = 'pointer';
+          mark.style.display = 'inline';
+          mark.style.padding = '0';
+          mark.style.margin = '0';
+          mark.textContent = highlightedText;
+          fragment.appendChild(mark);
+          
+          if (afterText) {
+            fragment.appendChild(document.createTextNode(afterText));
+          }
+          
+          // Replace the original text node
+          textNode.parentNode?.replaceChild(fragment, textNode);
+        }
+        
+        currentPos = nodeEnd;
+      }
+    });
+
+    return tempDiv.innerHTML;
+  }, [sections, currentSection, highlights]);
+
   // Helper function to get question number across all sections
   const getQuestionNumber = (questionId: number) => {
     const allQuestions = sections.flatMap(s => s.questions);
@@ -334,10 +481,14 @@ function NewListeningTestPage() {
         <div className="row mb-4">
           {/* Form content column */}
           <div className="col-md-8">
-            <div className="border rounded bg-light p-3 h-100" style={{ lineHeight: "2.5" }}>
+            <div 
+              className="section-content border rounded bg-light p-3 h-100" 
+              style={{ lineHeight: "2.5", userSelect: "text", cursor: "text" }}
+              onMouseUp={handleTextSelection}
+            >
               {currentSectionData.sectionContent ? (
                 currentSectionData.sectionContent.includes('<') ? (
-                  <div dangerouslySetInnerHTML={{ __html: currentSectionData.sectionContent }} />
+                  <div>{parse(DOMPurify.sanitize(highlightedSectionContent))}</div>
                 ) : (
                   <div style={{ whiteSpace: 'pre-line' }}>{currentSectionData.sectionContent}</div>
                 )
@@ -406,7 +557,7 @@ function NewListeningTestPage() {
                 {group.questions.map((question: any) => (
                   <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
                     {question.content.includes('<') ? (
-                      <span dangerouslySetInnerHTML={{ __html: question.content }} />
+                      <span>{parse(DOMPurify.sanitize(question.content))}</span>
                     ) : (
                       <span>{question.content}</span>
                     )}
@@ -474,7 +625,7 @@ function NewListeningTestPage() {
                       {group.questions.map((question: any) => (
                         <div key={question.id} className="mb-3" style={{ lineHeight: '1.8' }}>
                           {question.content.includes('<') ? (
-                            <span dangerouslySetInnerHTML={{ __html: question.content }} />
+                            <span>{parse(DOMPurify.sanitize(question.content))}</span>
                           ) : (
                             <span>{question.content}</span>
                           )}
@@ -563,7 +714,7 @@ function NewListeningTestPage() {
             </span>
             <div className="flex-grow-1">
               {question.content.includes('<') ? (
-                <div className="mb-3"><strong dangerouslySetInnerHTML={{ __html: question.content }} /></div>
+                <div className="mb-3"><strong>{parse(DOMPurify.sanitize(question.content))}</strong></div>
               ) : (
                 <p className="mb-3"><strong>{question.content}</strong></p>
               )}
@@ -638,7 +789,7 @@ function NewListeningTestPage() {
             </span>
             <div className="flex-grow-1">
               {question.content.includes('<') ? (
-                <div className="mb-3"><strong dangerouslySetInnerHTML={{ __html: question.content }} /></div>
+                <div className="mb-3"><strong>{parse(DOMPurify.sanitize(question.content))}</strong></div>
               ) : (
                 <p className="mb-3"><strong>{question.content}</strong></p>
               )}
