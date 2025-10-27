@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import parse from 'html-react-parser';
+import DOMPurify from 'dompurify';
 import type { TestWithAuthorName } from "../../../types/Test";
 import { getAllQuestionsAndParagraphsWithTestId } from "../../../services/questionService";
 import { getTestById } from "../../../services/testService";
@@ -44,6 +46,10 @@ function ReadingPage() {
   const [timeRemaining, setTimeRemaining] = useState(60 * 60); // 60 minutes in seconds
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState("");
+  // Store highlights per paragraph - now with start/end positions
+  const [highlights, setHighlights] = useState<{
+    [paragraphId: number]: { text: string; start: number; end: number }[];
+  }>({});
   const navigate = useNavigate();
 
   //Fetch test data
@@ -163,6 +169,64 @@ function ReadingPage() {
     setModalImageSrc("");
   };
 
+  // Handle text highlighting with position-based approach
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      return;
+    }
+
+    const selectedText = selection.toString().trim();
+    if (!selectedText || selectedText.length < 2) {
+      return;
+    }
+
+    if (!currentParagraph) {
+      return;
+    }
+
+    // Get the range to find position in the full text content
+    const range = selection.getRangeAt(0);
+    const preSelectionRange = range.cloneRange();
+    const containerEl = document.querySelector('.paragraph-content');
+    
+    if (!containerEl) {
+      selection.removeAllRanges();
+      return;
+    }
+
+    preSelectionRange.selectNodeContents(containerEl);
+    preSelectionRange.setEnd(range.startContainer, range.startOffset);
+    const start = preSelectionRange.toString().length;
+    const end = start + selectedText.length;
+
+    const paragraphId = currentParagraph.id;
+    const currentHighlights = highlights[paragraphId] || [];
+
+    // Check if this specific position overlaps with any existing highlight
+    const overlappingIndex = currentHighlights.findIndex(
+      (h) => (start >= h.start && start < h.end) || (end > h.start && end <= h.end) || (start <= h.start && end >= h.end)
+    );
+
+    if (overlappingIndex !== -1) {
+      // Remove the overlapping highlight
+      const newHighlights = currentHighlights.filter((_, idx) => idx !== overlappingIndex);
+      setHighlights((prev) => ({
+        ...prev,
+        [paragraphId]: newHighlights,
+      }));
+    } else {
+      // Add new highlight with position
+      setHighlights((prev) => ({
+        ...prev,
+        [paragraphId]: [...currentHighlights, { text: selectedText, start, end }],
+      }));
+    }
+
+    // Clear selection
+    selection.removeAllRanges();
+  };
+
   // Paragraph navigation functions
   const goToNextParagraph = () => {
     const totalParagraphs = paragraphs.length;
@@ -185,6 +249,87 @@ function ReadingPage() {
     (q) => q.paragraphNumber === currentParagraphNumber
   );
   const totalParagraphs = paragraphs.length;
+
+  // Apply highlights to paragraph content - memoized to avoid recalculation
+  const highlightedContent = useMemo(() => {
+    if (!currentParagraph) return "";
+
+    const paragraphHighlights = highlights[currentParagraph.id] || [];
+    if (paragraphHighlights.length === 0) {
+      return currentParagraph.content;
+    }
+
+    // Work with HTML content directly
+    let htmlContent = currentParagraph.content;
+    
+    // Create a temporary DOM to work with
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = DOMPurify.sanitize(htmlContent);
+    
+    // Sort highlights by start position (latest first to avoid position shifts)
+    const sortedHighlights = [...paragraphHighlights].sort(
+      (a, b) => b.start - a.start
+    );
+
+    // Apply highlights by wrapping text nodes at specific positions
+    sortedHighlights.forEach((highlight) => {
+      let currentPos = 0;
+      const walker = document.createTreeWalker(
+        tempDiv,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      let node;
+      while ((node = walker.nextNode())) {
+        const textNode = node as Text;
+        const textLength = textNode.textContent?.length || 0;
+        const nodeStart = currentPos;
+        const nodeEnd = currentPos + textLength;
+
+        // Check if this text node contains the highlight range
+        if (highlight.start < nodeEnd && highlight.end > nodeStart) {
+          const text = textNode.textContent || '';
+          
+          // Calculate positions within this text node
+          const highlightStartInNode = Math.max(0, highlight.start - nodeStart);
+          const highlightEndInNode = Math.min(textLength, highlight.end - nodeStart);
+          
+          // Split the text node
+          const beforeText = text.substring(0, highlightStartInNode);
+          const highlightedText = text.substring(highlightStartInNode, highlightEndInNode);
+          const afterText = text.substring(highlightEndInNode);
+          
+          // Create new nodes
+          const fragment = document.createDocumentFragment();
+          
+          if (beforeText) {
+            fragment.appendChild(document.createTextNode(beforeText));
+          }
+          
+          const mark = document.createElement('mark');
+          mark.style.backgroundColor = '#ffeb3b';
+          mark.style.cursor = 'pointer';
+          mark.style.display = 'inline';
+          mark.style.padding = '0';
+          mark.style.margin = '0';
+          mark.textContent = highlightedText;
+          fragment.appendChild(mark);
+          
+          if (afterText) {
+            fragment.appendChild(document.createTextNode(afterText));
+          }
+          
+          // Replace the original text node
+          textNode.parentNode?.replaceChild(fragment, textNode);
+        }
+        
+        currentPos = nodeEnd;
+      }
+    });
+
+    return tempDiv.innerHTML;
+  }, [currentParagraph, highlights]);
 
   // Calculate global question numbers
   // may be not necessary, it is possible to render sequence of questions directly
@@ -639,18 +784,12 @@ function ReadingPage() {
                   <h6 className="paragraph-title">
                     Paragraph {currentParagraph.paragraphNumber}
                   </h6>
-                  <div className="paragraph-content p-3 border rounded bg-light">
-                    {currentParagraph.content.includes('<') ? (
-                      <div dangerouslySetInnerHTML={{ __html: currentParagraph.content }} />
-                    ) : (
-                      currentParagraph.content
-                      .split("\n")
-                      .map((line, lineIndex) => (
-                        <p key={lineIndex} className="mb-2">
-                          {line}
-                        </p>
-                      ))
-                    )}
+                  <div
+                    className="paragraph-content p-3 border rounded bg-light"
+                    onMouseUp={handleTextSelection}
+                    style={{ userSelect: "text", cursor: "text" }}
+                  >
+                    {parse(DOMPurify.sanitize(highlightedContent))}
                   </div>
                 </div>
               )}
