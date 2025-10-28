@@ -1,13 +1,19 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from "../../contexts/AuthContext";
 
 function Footer() {
+  const { user } = useAuth();
+
   return (
     <footer className="footer">
-      <div className="footer-bg">
-        <img src="/assets/img/bg/footer-bg-01.png" className="footer-bg-1" alt="" />
-        <img src="/assets/img/bg/footer-bg-02.png" className="footer-bg-2" alt="" />
-      </div>
-      <div className="footer-top">
+      {user?.role !== "Admin" && (
+        <div className="footer-bg" >
+          <img src="/assets/img/bg/footer-bg-01.png" className="footer-bg-1" alt="" />
+          <img src="/assets/img/bg/footer-bg-02.png" className="footer-bg-2" alt="" />
+        </div>
+      )}
+      {user?.role !== "Admin" && (
+        <div className="footer-top">
         <div className="container">
           <div className="row row-gap-4">
             <div className="col-lg-4">
@@ -109,6 +115,7 @@ function Footer() {
           </div>
         </div>
       </div>
+      )}
       <div className="footer-bottom">
         <div className="container">
           <div className="row row-gap-2">

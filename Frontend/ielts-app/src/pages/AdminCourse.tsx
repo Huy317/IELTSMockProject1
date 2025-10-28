@@ -102,7 +102,6 @@ function AdminCourse() {
               <ul className="dropdown-menu dropdown-menu-end p-3">
                 <li><a href="#" className="dropdown-item rounded-1">Active</a></li>
                 <li><a href="#" className="dropdown-item rounded-1">Deactive</a></li>
-                <li><a href="#" className="dropdown-item rounded-1">Incoming</a></li>
               </ul>
             </div>
           </div>
