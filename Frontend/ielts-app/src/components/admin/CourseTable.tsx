@@ -56,7 +56,7 @@ function CourseTable({ tests, onTestsChange }: CourseTableProps) {
         <tr key={idx}>
           <td>
             <div className="d-flex align-items-center">
-              <a href="#" className="avatar avatar-lg me-2 flex-shrink-0">
+              <a className="avatar avatar-lg me-2 flex-shrink-0" onClick={() => handleEdit(test.id)}>
                 <img
                   className="img-fluid object-fit-cover"
                   src="/assets/img/icon/graduation.svg"
@@ -65,7 +65,7 @@ function CourseTable({ tests, onTestsChange }: CourseTableProps) {
               </a>
               <div>
                 <h6 className="fw-medium mb-2">
-                  <a href="#">{test.testName}</a>
+                  <a onClick={() => handleEdit(test.id)}>{test.testName}</a>
                 </h6>
               </div>
             </div>
