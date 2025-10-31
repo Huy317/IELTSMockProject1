@@ -2,9 +2,12 @@
 using IELTS_PRACTICE.DTOs.Responses;
 using IELTS_PRACTICE.DTOs.Resquests;
 using IELTS_PRACTICE.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using System.Threading.Tasks;
 
 namespace IELTS_PRACTICE.Services
 {
@@ -207,6 +210,88 @@ namespace IELTS_PRACTICE.Services
             var question = _context.Questions.Find(id);
             _context.Questions.Remove(question);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<(bool Success, string Message, int ImportedCount)> UploadQuestionByExcelFile(IFormFile formFile) {
+            //validation
+            if (formFile == null || formFile.Length == 0)
+            {
+                return (false, "No file provided or file is empty", 0);
+            }
+
+            var allowedExtensions = new[] { ".xlsx", ".xls" };
+            var fileExtension = Path.GetExtension(formFile.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                return (false, "Invalid file format. Only .xlsx and .xls files are allowed", 0);
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var questions = new List<Question>();
+                using var memoryStream = new MemoryStream();
+                await formFile.CopyToAsync(memoryStream);
+                using (var excelPackage = new ExcelPackage(memoryStream)) 
+                {
+                    var workSheet = excelPackage.Workbook.Worksheets["Questions"];
+                    if (workSheet == null) {
+                        return (false, "Cannot found this worksheet", 0);
+                    }
+
+                    //check data of worksheet
+                    if (workSheet.Dimension == null) {
+                        return (false, "Worksheet is empty", 0);
+                    }
+
+                    int rowCount = workSheet.Dimension.Rows;
+                    if (rowCount < 2)
+                    {
+                        return (false, "Excel file must contain at least one data row", 0);
+                    }
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        // Helper function to safely get string value from cell
+                        string GetCellValue(int col) => workSheet.Cells[row, col].Value?.ToString()?.Trim() ?? string.Empty;
+
+                        // Helper function to safely parse integer value from cell
+                        int GetIntCellValue(int col) => int.TryParse(GetCellValue(col), out int result) ? result : 0;
+
+                        var currentQuestion = new Question
+                        {
+                            QuestionType = GetCellValue(1),
+                            Content = GetCellValue(2),
+                            CorrectAnswer = GetCellValue(3),
+                            Choices = GetCellValue(4),
+                            Explanation = GetCellValue(5),
+                            ParentId = GetIntCellValue(6),
+                            TestId = GetIntCellValue(7),
+                            Link = GetCellValue(8),
+                            Order = GetIntCellValue(9)
+                        };
+
+                        questions.Add(currentQuestion);
+                    }
+
+                    if (questions.Count == 0)
+                    {
+                        return (false, "No valid questions found in the Excel file", 0);
+                    }
+                    await _context.Questions.AddRangeAsync(questions);
+                    await _context.SaveChangesAsync();
+
+                    //commit transaction
+                    await transaction.CommitAsync();
+                    return (true, $"Successfully imported {questions.Count} question(s)", questions.Count);
+                }
+            }
+            catch (Exception ex) 
+            {
+                await transaction.RollbackAsync();
+                return (false, $"Error importing questions: {ex.Message}", 0);
+            }
         }
     }
 }
