@@ -11,4 +11,9 @@ export const getMediaById = async (id: number): Promise<Media> => {
     return response.data;
 }
 
+export const deleteMedia = async (id: number): Promise<void> => {
+    const response = await client.delete(`/media/${id}`);
+    return response.data;
+}
+
 

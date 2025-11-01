@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import type { Media } from "../../types/Media";
-import { getAllMedia } from "../../services/mediaService";
+import { getAllMedia, deleteMedia } from "../../services/mediaService";
 import { toast } from "react-toastify";
 import Pagination from "../utils/Pagination";
 import UploadMediaModal from "../utils/UploadMediaModal";
 import OpenImageModal from "../utils/PreviewModal";
+import { confirmToast } from "../layout/confirmToast";
 
 interface MediaListProps {
     onSelectMedia?: (mediaUrl: string) => void;
@@ -20,6 +21,17 @@ function MediaList({ onSelectMedia }: MediaListProps) {
     const [selectedMediaUrl, setSelectedMediaUrl] = useState("");
     const [selectedMediaType, setSelectedMediaType] = useState<'image' | 'audio'>('image');
     const itemsPerPage = 12; // 12 items per page (3x4 grid)
+
+    
+    const fetchMediaItems = async () => {
+        toast.promise(getAllMedia().then((data) => {
+            console.log(data);
+            setMediaItems(data);
+        }), {
+            pending: "Loading media...",
+            error: "Failed to load media."
+        });
+    };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
@@ -49,6 +61,26 @@ function MediaList({ onSelectMedia }: MediaListProps) {
         });
     };
 
+    const handleDeleteMedia = (mediaId: number, fileName: string) => {
+        confirmToast(
+            `Are you sure you want to delete "${fileName}"?`,
+            () => confirmDelete(mediaId)
+        );
+    };
+
+    const confirmDelete = async (mediaId: number) => {
+        await toast.promise(
+            deleteMedia(mediaId).then(() => {
+                fetchMediaItems();
+            }),
+            {
+                pending: "Deleting media...",
+                success: "Media deleted successfully.",
+                error: "Failed to delete media."
+            }
+        );
+    };
+
     const handleViewImage = (mediaUrl: string, fileName: string) => {
         // Determine if it's an image or audio
         const isImage = fileName.match(/\.(jpg|jpeg|png|gif|webp)$/i);
@@ -67,15 +99,6 @@ function MediaList({ onSelectMedia }: MediaListProps) {
         }
     };
 
-    const fetchMediaItems = async () => {
-        toast.promise(getAllMedia().then((data) => {
-            console.log(data);
-            setMediaItems(data);
-        }), {
-            pending: "Loading media...",
-            error: "Failed to load media."
-        });
-    };
 
     useEffect(() => {
         fetchMediaItems();
@@ -207,6 +230,7 @@ function MediaList({ onSelectMedia }: MediaListProps) {
                                                                 className="btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center"
                                                                 style={{ width: '32px', height: '32px' }}
                                                                 title="Delete"
+                                                                onClick={() => handleDeleteMedia(media.id, media.originalFileName)}
                                                             >
                                                                 <i className="isax isax-trash"></i>
                                                             </button>
