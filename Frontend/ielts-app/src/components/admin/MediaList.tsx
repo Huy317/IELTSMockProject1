@@ -3,16 +3,22 @@ import type { Media } from "../../types/Media";
 import { getAllMedia } from "../../services/mediaService";
 import { toast } from "react-toastify";
 import Pagination from "../utils/Pagination";
+import UploadMediaModal from "../utils/UploadMediaModal";
+import OpenImageModal from "../utils/PreviewModal";
 
 interface MediaListProps {
-    // Will be added later when API is integrated
+    onSelectMedia?: (mediaUrl: string) => void;
 }
 
-function MediaList({ }: MediaListProps) {
+function MediaList({ onSelectMedia }: MediaListProps) {
     const [mediaItems, setMediaItems] = useState<Media[]>([]); // To be fetched from API
     const [searchTerm, setSearchTerm] = useState("");
     const [filterType, setFilterType] = useState("all"); // all, image, audio
     const [currentPage, setCurrentPage] = useState(1);
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+    const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+    const [selectedMediaUrl, setSelectedMediaUrl] = useState("");
+    const [selectedMediaType, setSelectedMediaType] = useState<'image' | 'audio'>('image');
     const itemsPerPage = 12; // 12 items per page (3x4 grid)
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +33,38 @@ function MediaList({ }: MediaListProps) {
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
+    };
+
+    const handleMediaClick = (mediaUrl: string) => {
+        if (onSelectMedia) {
+            onSelectMedia(mediaUrl);
+        }
+    };
+
+    const handleCopyUrl = (mediaUrl: string) => {
+        navigator.clipboard.writeText(mediaUrl).then(() => {
+            toast.success("Media URL copied to clipboard!");
+        }).catch(() => {
+            toast.error("Failed to copy URL.");
+        });
+    };
+
+    const handleViewImage = (mediaUrl: string, fileName: string) => {
+        // Determine if it's an image or audio
+        const isImage = fileName.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+        const isAudio = fileName.match(/\.(mp3|wav|ogg|m4a|aac)$/i);
+        
+        if (isImage) {
+            setSelectedMediaUrl(mediaUrl);
+            setSelectedMediaType('image');
+            setIsMediaModalOpen(true);
+        } else if (isAudio) {
+            setSelectedMediaUrl(mediaUrl);
+            setSelectedMediaType('audio');
+            setIsMediaModalOpen(true);
+        } else {
+            toast.info("Preview is only available for images and audio files.");
+        }
     };
 
     const fetchMediaItems = async () => {
@@ -64,7 +102,7 @@ function MediaList({ }: MediaListProps) {
             {/* Page title and actions */}
             <div className="page-title d-flex align-items-center justify-content-between mb-3">
                 <h5 className="fw-bold">Media Library</h5>
-                <button className="btn btn-primary">
+                <button className="btn btn-primary" onClick={() => setIsUploadModalOpen(true)}>
                     <i className="isax isax-add me-2"></i>
                     Upload Media
                 </button>
@@ -124,8 +162,10 @@ function MediaList({ }: MediaListProps) {
                                                         style={{
                                                             height: '150px',
                                                             borderRadius: '6px',
-                                                            overflow: 'hidden'
+                                                            overflow: 'hidden',
+                                                            cursor: onSelectMedia ? 'pointer' : 'default'
                                                         }}
+                                                        onClick={() => onSelectMedia && handleMediaClick(media.fileUrl)}
                                                     >
                                                         {media.fileName.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
                                                             <img
@@ -151,6 +191,7 @@ function MediaList({ }: MediaListProps) {
                                                                 className="btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center"
                                                                 style={{ width: '32px', height: '32px' }}
                                                                 title="View"
+                                                                onClick={() => handleViewImage(media.fileUrl, media.fileName)}
                                                             >
                                                                 <i className="isax isax-eye"></i>
                                                             </button>
@@ -158,6 +199,7 @@ function MediaList({ }: MediaListProps) {
                                                                 className="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center"
                                                                 style={{ width: '32px', height: '32px' }}
                                                                 title="Copy URL"
+                                                                onClick={() => handleCopyUrl(media.fileUrl)}
                                                             >
                                                                 <i className="isax isax-copy"></i>
                                                             </button>
@@ -196,6 +238,21 @@ function MediaList({ }: MediaListProps) {
                 currentPage={currentPage}
                 itemsPerPage={itemsPerPage}
                 onPageChange={handlePageChange}
+            />
+
+            {/* Upload Media Modal */}
+            <UploadMediaModal
+                isOpen={isUploadModalOpen}
+                onClose={() => setIsUploadModalOpen(false)}
+                onUploadSuccess={fetchMediaItems}
+            />
+
+            {/* Image Preview Modal */}
+            <OpenImageModal
+                isOpen={isMediaModalOpen}
+                onClose={() => setIsMediaModalOpen(false)}
+                mediaUrl={selectedMediaUrl}
+                mediaType={selectedMediaType}
             />
         </>
     );

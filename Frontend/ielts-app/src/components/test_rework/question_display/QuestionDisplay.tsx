@@ -257,6 +257,7 @@ function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActio
                                         <div className="mt-3">
                                             <div className="btn-group btn-group-lg">
                                                 <button
+                                                    type="button"
                                                     className="btn btn-outline-primary"
                                                     onClick={handleEdit}
                                                     title="Edit Question"
@@ -264,6 +265,7 @@ function QuestionDisplay({ question, questionNumber, onEdit, onDelete, showActio
                                                     <i className="bi bi-pencil"></i>
                                                 </button>
                                                 <button
+                                                    type="button"
                                                     className="btn btn-outline-danger"
                                                     onClick={handleDelete}
                                                     title="Delete Question"

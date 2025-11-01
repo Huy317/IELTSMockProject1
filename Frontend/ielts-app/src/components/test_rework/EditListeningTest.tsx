@@ -16,6 +16,7 @@ import { uploadFile } from "../../services/fileUploadService";
 import QuestionDisplay from "./question_display/QuestionDisplay";
 import ModalManager from "./ModalManager";
 import { Editor } from "@tinymce/tinymce-react";
+import FloatingOpenMediaButton from "../utils/FloatingOpenMediaButton";
 
 interface EditListeningTestProps {
   testPrefetch: TestWithAuthorName;
@@ -987,6 +988,7 @@ function EditListeningTest({ testPrefetch }: EditListeningTestProps) {
         handleCloseUpdateModal={handleCloseUpdateModal}
         handleUpdateModalSubmit={handleUpdateModalSubmit}
       />
+      <FloatingOpenMediaButton />
     </div>
   );
 }
