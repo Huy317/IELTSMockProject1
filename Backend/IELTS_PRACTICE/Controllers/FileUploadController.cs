@@ -1,17 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IELTS_PRACTICE.Contexts;
+using IELTS_PRACTICE.Models;
+using IELTS_PRACTICE.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Net.Mime;
+using System.Threading.Tasks;
 
 namespace IELTS_PRACTICE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class FileUploadController : ControllerBase
-    {
+    {   
         private const long MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB in bytes
         private readonly string _uploadFolder;
-
-        public FileUploadController(IWebHostEnvironment env)
+        private readonly MediaService _mediaService;
+        public FileUploadController(IWebHostEnvironment env, MediaService mediaService)
         {
+            _mediaService = mediaService;
             // Set up upload folder
             _uploadFolder = Path.Combine(env.ContentRootPath, "UploadedFiles");
             if (!Directory.Exists(_uploadFolder))
@@ -23,7 +30,7 @@ namespace IELTS_PRACTICE.Controllers
         [HttpPost("upload")]
         [RequestSizeLimit(MAX_FILE_SIZE)]
         [RequestFormLimits(MultipartBodyLengthLimit = MAX_FILE_SIZE)]
-        public IActionResult UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
@@ -36,9 +43,10 @@ namespace IELTS_PRACTICE.Controllers
             }
 
             // Generate unique file name
-            var uniqueName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+            var fileName = Path.GetFileName(file.FileName);
+            var uniqueName = $"{Guid.NewGuid()}_{fileName}";
             var filePath = Path.Combine(_uploadFolder, uniqueName);
-
+            
             // Save to disk
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -48,13 +56,24 @@ namespace IELTS_PRACTICE.Controllers
             // return success response
             var fileUrl = $"{Request.Scheme}://{Request.Host}/UploadedFiles/{uniqueName}";
 
+            var med = new Media
+            {
+                OriginalFileName = fileName,
+                FileName = uniqueName,
+                FilePath = $"/UploadedFiles/{uniqueName}",
+                FileUrl = fileUrl,
+                UploadedAt = DateTime.UtcNow
+            };
 
+            // store to media table
+            await _mediaService.AddMediaAsync(med);
+            
             return Ok(new {
                 url = fileUrl,
                 fileName = file.FileName,
                 fileSize = file.Length,
                 contentType = file.ContentType
-            });
+               });
         }
 
     }

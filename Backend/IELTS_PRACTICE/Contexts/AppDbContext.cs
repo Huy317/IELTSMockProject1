@@ -16,7 +16,7 @@ namespace IELTS_PRACTICE.Contexts
         public DbSet<TestSubmissionDetail> TestSubmissionDetails { get; set; }
         public DbSet<TypeSkill> TypeSkills { get; set; }
         public DbSet<User> Users { get; set; }
-
+        public DbSet<Media> Media { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
