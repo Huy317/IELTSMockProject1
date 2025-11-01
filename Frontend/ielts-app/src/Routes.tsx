@@ -32,6 +32,7 @@ import ReadingPage from "./components/test_rework/test_pages/ReadingPage";
 import TestEditChoser from "./components/test_rework/TestEditChoser";
 import SubmissionDetailPage from "./pages/Submission/SubmissionDetailPage";
 import ErrorPage from "./pages/ErrorPage";
+import MediaList from "./components/admin/MediaList";
 
 
 const router = createBrowserRouter([
@@ -121,6 +122,10 @@ const router = createBrowserRouter([
             path: "type-skill",
             element: <AdminTypeSkill />,
           },
+          {
+            path: "media",
+            element: <MediaList />,
+          }
         ],
       },
       {
