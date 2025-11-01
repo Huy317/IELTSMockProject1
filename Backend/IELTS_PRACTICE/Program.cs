@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OfficeOpenXml;
 using System.Text;
 
 namespace IELTS_PRACTICE
@@ -111,7 +112,7 @@ namespace IELTS_PRACTICE
                 });
 
             builder.Services.AddAuthorization();
-
+            ExcelPackage.License.SetNonCommercialPersonal("<ThanhDuy>");
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
