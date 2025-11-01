@@ -91,6 +91,22 @@ namespace IELTS_PRACTICE.Controllers
             return NoContent();
         }
 
-        
+        [HttpPost("upload-excel")]
+        [RequestSizeLimit(10 * 1024 * 1024)]
+        public async Task<IActionResult> UploadQuestionExcel(IFormFile file)
+        {
+            var (success, message, importedCount) = await _questionService.UploadQuestionByExcelFile(file);
+
+            if (!success)
+            {
+                return BadRequest(new { error = message });
+            }
+
+            return Ok(new
+            {
+                message = message,
+                importedCount = importedCount
+            });
+        }
     }
 }
