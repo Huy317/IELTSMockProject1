@@ -244,7 +244,18 @@ function AdminDashboardLayout() {
                                                 `d-inline-flex align-items-center ${isActive ? 'active' : ''}`
                                             }
                                         >
-                                            <i className="isax isax-profile-2user5 me-2"></i>Skills
+                                            <i className="isax isax-magicpen5 me-2"></i>Skills
+                                        </NavLink>
+                                    </li>
+
+                                    <li>
+                                        <NavLink
+                                            to="/admin/media"
+                                            className={({ isActive }) =>
+                                                `d-inline-flex align-items-center ${isActive ? 'active' : ''}`
+                                            }
+                                        >
+                                            <i className="isax isax-image5 me-2"></i>Media
                                         </NavLink>
                                     </li>
                                     {/* <li>

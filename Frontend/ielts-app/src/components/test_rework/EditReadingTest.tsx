@@ -15,6 +15,7 @@ import {
 import QuestionDisplay from "./question_display/QuestionDisplay";
 import ModalManager from "./ModalManager";
 import { Editor } from "@tinymce/tinymce-react";
+import FloatingOpenMediaButton from "../utils/FloatingOpenMediaButton";
 
 interface EditReadingTestProps {
   testPrefetch: TestWithAuthorName;
@@ -730,6 +731,7 @@ function EditReadingTest({ testPrefetch }: EditReadingTestProps) {
         handleCloseUpdateModal={handleCloseUpdateModal}
         handleUpdateModalSubmit={handleUpdateModalSubmit}
       />
+      <FloatingOpenMediaButton />
     </div>
   );
 }

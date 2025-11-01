@@ -7,9 +7,13 @@ namespace IELTS_PRACTICE.Services
     public class MediaService
     {
         private readonly AppDbContext _context;
-        public MediaService(AppDbContext context)
+        private readonly IWebHostEnvironment _env;
+        private readonly string _uploadFolder;
+        public MediaService(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
+            _uploadFolder = Path.Combine(_env.ContentRootPath, "UploadedFiles");
         }
 
         public async Task<List<Media>> GetAllMediaAsync()
@@ -43,6 +47,14 @@ namespace IELTS_PRACTICE.Services
             {
                 return false;
             }
+
+            var fullPath = Path.Combine(_uploadFolder, media.FileName);
+
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
+
             _context.Media.Remove(media);
             await _context.SaveChangesAsync();
             return true;
