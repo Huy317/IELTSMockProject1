@@ -138,7 +138,7 @@ function AdminDashboard() {
         </div>
         <div className="col-md-6 col-xl-4">
           <div className="card">
-            <div className="card-body">
+            <div className="card-body text-truncate">
               <div className="d-flex align-items-center">
                 <span className="icon-box bg-success-transparent me-2 me-xxl-3 flex-shrink-0">
                   <img src="/assets/img/icon/bookmark.svg" alt="" />
