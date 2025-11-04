@@ -78,8 +78,18 @@ function SubmissionQuestionDisplay({ question, questionNumber }: SubmissionQuest
     // Check if user's answer is correct
     const isCorrect = (): boolean => {
         if (!question.answer || !question.correctAnswer) return false;
-        // Normalize answers for comparison (trim and lowercase)
-        return question.answer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
+        
+        // Normalize user's answer
+        const userAnswer = question.answer.trim().toLowerCase();
+        
+        // Split correct answers by | delimiter
+        const correctAnswers = question.correctAnswer
+            .split('|')
+            .map(ans => ans.trim().toLowerCase())
+            .filter(ans => ans.length > 0);
+        
+        // Check if user's answer matches any of the correct answers
+        return correctAnswers.includes(userAnswer);
     };
 
     const choices = parseChoices(question.choices);
