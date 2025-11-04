@@ -809,6 +809,13 @@ function NewListeningTestPage() {
 
   return (
     <>
+    <style>{`
+      .form-control:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+        outline: 0 !important;
+      }
+    `}</style>
     <div className="container-fluid py-4 px-3 px-lg-4">
       {/* Loading State */}
       {loading && (
