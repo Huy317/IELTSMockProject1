@@ -714,9 +714,9 @@ function NewListeningTestPage() {
             </span>
             <div className="flex-grow-1">
               {question.content.includes('<') ? (
-                <div className="mb-3"><strong>{parse(DOMPurify.sanitize(question.content))}</strong></div>
+                <div className="mb-3">{parse(DOMPurify.sanitize(question.content))}</div>
               ) : (
-                <p className="mb-3"><strong>{question.content}</strong></p>
+                <p className="mb-3">{question.content}</p>
               )}
               {choices.map((choice: string, index: number) => {
                 const choiceValue = choice.trim();
@@ -789,9 +789,9 @@ function NewListeningTestPage() {
             </span>
             <div className="flex-grow-1">
               {question.content.includes('<') ? (
-                <div className="mb-3"><strong>{parse(DOMPurify.sanitize(question.content))}</strong></div>
+                <div className="mb-3">{parse(DOMPurify.sanitize(question.content))}</div>
               ) : (
-                <p className="mb-3"><strong>{question.content}</strong></p>
+                <p className="mb-3">{question.content}</p>
               )}
               <input
                 type="text"
