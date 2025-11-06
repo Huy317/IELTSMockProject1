@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import type { QuestionWithUserChoice } from "../../types/Question";
+import parse from 'html-react-parser';
+import DOMPurify from 'dompurify';
 
 interface SubmissionQuestionDisplayProps {
     question: QuestionWithUserChoice;
@@ -131,7 +133,8 @@ function SubmissionQuestionDisplay({ question, questionNumber }: SubmissionQuest
 
                         {/* Question Content */}
                         <h6 className="mb-3 fw-semibold text-dark">
-                            {question.content}
+                            {/* {question.content} */}
+                            {parse(DOMPurify.sanitize(question.content))}
                         </h6>
 
                         {/* Image Preview (if link is an image) */}
