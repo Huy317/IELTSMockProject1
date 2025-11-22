@@ -92,14 +92,14 @@ namespace IELTS_PRACTICE.Services
 
         public async Task<int> GetQuestionCountInTestId(int id)
         {
-            return _context.Questions
-                .Where(x => x.TestId == id && x.ParentId != 0).Count();
+            return await _context.Questions
+                .Where(x => x.TestId == id && x.ParentId != 0).CountAsync();
         }
 
 
         public async Task<List<QuestionFullDetailDTO>> getAllQuestionsAndParagraphByTestId(int id)
         {
-            return _context.Questions
+            return await _context.Questions
                 .Where(x => x.TestId == id)
                 .Select(x => new QuestionFullDetailDTO
                 {
@@ -113,7 +113,7 @@ namespace IELTS_PRACTICE.Services
                     ParentId = x.ParentId,
                     Order = x.Order,
                     Link = x.Link,
-                }).ToList();
+                }).ToListAsync();
         }
 
         public async Task<QuestionFullDetailDTO> CreateQuestion(CreateQuestionDTO rq) {
@@ -132,7 +132,7 @@ namespace IELTS_PRACTICE.Services
                     Order = rq.Order,
                 };
                 _context.Questions.Add(content);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return new QuestionFullDetailDTO
                 {
                     Id = content.Id,
@@ -156,7 +156,7 @@ namespace IELTS_PRACTICE.Services
                 Order = rq.Order,
             };
             _context.Questions.Add(question);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new QuestionFullDetailDTO
             {
                 Id = question.Id,
