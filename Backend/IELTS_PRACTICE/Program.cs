@@ -139,7 +139,7 @@ namespace IELTS_PRACTICE
             });
             // --- END FILE UPLOAD SETUP ---
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseCors("AllowFrontend");
 
