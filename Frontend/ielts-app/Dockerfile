@@ -8,7 +8,7 @@ RUN npm install
 
 # Copy toàn bộ code và Build
 COPY . .
-COPY .env .
+COPY .env.production .env
 RUN npm run build
 
 # --- Stage 2: Chạy bằng Nginx ---

@@ -88,7 +88,7 @@ namespace IELTS_PRACTICE
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowFrontend", policy =>
-                    policy.WithOrigins("http://localhost:5173")
+                    policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
                           .AllowAnyHeader()
                           .AllowAnyMethod());
             });
@@ -116,11 +116,13 @@ namespace IELTS_PRACTICE
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            // if (app.Environment.IsDevelopment())
+            // {
+            //     app.UseSwagger();
+            //     app.UseSwaggerUI();
+            // }
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             // --- FILE UPLOAD SETUP ---
             // Serve static files from "UploadedFiles" folder

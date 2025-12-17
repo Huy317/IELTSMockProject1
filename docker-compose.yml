@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ielts-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql_root_password_123
+      MYSQL_DATABASE: ieltsapp
+      MYSQL_INNODB_BUFFER_POOL_SIZE: 256M
+    ports:
+      - "3307:3306"
+    volumes:
+      - C:/Users/ADMIN/Desktop/local_volume/ieltsapp_volume:/var/lib/mysql
+      - ./Database/ieltsapp.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ielts-network
+
+  backend:
+    build:
+      context: ./Backend/IELTS_PRACTICE
+      dockerfile: Dockerfile
+    container_name: ielts-backend
+    restart: unless-stopped
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      # CORS configuration to allow frontend
+      - ASPNETCORE_CORS_ORIGINS=http://localhost:3000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./Backend/IELTS_PRACTICE/UploadedFiles:/app/UploadedFiles
+    networks:
+      - ielts-network
+
+  frontend:
+    build:
+      context: ./Frontend/ielts-app
+      dockerfile: Dockerfile
+      # Build argument for API base URL (baked into build)
+      args:
+        VITE_API_BASE: http://localhost:5000
+    container_name: ielts-frontend
+    restart: unless-stopped
+    # Port mapping: HOST:CONTAINER
+    # Map container's 80 to host's 3000
+    ports:
+      - "3000:80"
+    # Wait for backend to be ready
+    depends_on:
+      - backend
+    networks:
+      - ielts-network
+
+networks:
+  ielts-network:
+    driver: bridge
